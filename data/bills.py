@@ -1,8 +1,9 @@
 from flet import Page, dropdown
 import httpx
 import json
+import asyncio
 
-def get_bills(page: Page, user_id: str, BASE_URL: str):
+async def get_bills(page: Page, user_id: str, BASE_URL: str):
         data = {"userId": user_id}  # Include user ID in the request data
         response = httpx.post(f"{BASE_URL}flet_login", json=data)
         if response.status_code == 200:
@@ -35,7 +36,7 @@ def get_bills(page: Page, user_id: str, BASE_URL: str):
                     unpaid_bills = user_data[2] if len(user_data) > 2 else []
 
 
-                    return {"profile_pic": profile_pic, "user_pay_hours": user_pay_hours, "my_bills": my_bills, "unpaid_bills": unpaid_bills, "error": ""}
+                    return dict(profile_pic=profile_pic, user_pay_hours=user_pay_hours, my_bills=my_bills, unpaid_bills=unpaid_bills, error="")
             except (KeyError, json.JSONDecodeError):
                 # Handle error parsing the response
                 print("Error: Invalid response from server")

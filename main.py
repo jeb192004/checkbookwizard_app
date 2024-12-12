@@ -13,7 +13,7 @@ from ui.charts_ui import charts_page
 from ui.alert import create_loader, show_loader, hide_loader
 
 BASE_URL = "https://checkbookwizard.com/"
-# BASE_URL = 'http://localhost:1338/'
+# BASE_URL = 'http://localhost:1338/'  # For development
 
 
 def main(page: ft.Page):
@@ -28,7 +28,7 @@ def main(page: ft.Page):
     user_id = page.client_storage.get("burnison.me.user.id")
 
     loader = create_loader(page)
-    show_loader(page, loader)
+    #show_loader(page, loader)
     # page.close(loader)
 
     def route_change(route):
@@ -52,7 +52,7 @@ def main(page: ft.Page):
         elif page.route == "/edit_bills":
             edit_bills_page(current_theme, page, BASE_URL, user_id)
         elif page.route == "/charts":
-            page.views.append(charts_page(current_theme, page, BASE_URL, user_id))
+            charts_page(current_theme, page, BASE_URL, user_id)
         elif page.route == "/pay":
             page.views.append(pay_page(current_theme, page, BASE_URL))
         elif page.route == "/settings":

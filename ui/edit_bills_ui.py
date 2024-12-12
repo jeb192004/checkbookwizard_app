@@ -1,22 +1,17 @@
 import re
 import flet as ft
 import datetime
+import asyncio
 
 from data.bills import get_bills, add_update_bills, remove_bill_item
 from ui.alert import create_loader, show_loader, hide_loader
 
-
+appbar = []
 def edit_bills_page(current_theme, page:ft.Page, BASE_URL:str, user_id:str):
     #bills = Bills(page, BASE_URL)
     loader = create_loader(page)
-    
+
     bill_id_to_update = None
-    data = get_bills(page, user_id, BASE_URL)
-    if data['error'] is None or data['error'] == "":
-        profile_pic = data["profile_pic"]
-        user_pay_hours = data["user_pay_hours"]
-        my_bills = data["my_bills"]
-        unpaid_bills = data["unpaid_bills"]
 
     date_text = ft.Text(bgcolor=current_theme["list_item_colors"]['base'], color=current_theme["text_color"])
     def handle_change(e):
@@ -306,10 +301,6 @@ def edit_bills_page(current_theme, page:ft.Page, BASE_URL:str, user_id:str):
         page.go("/bills")
 
 
-    if profile_pic:
-        appbar = ft.AppBar(leading=ft.Row(controls=[ft.IconButton(icon=ft.icons.ARROW_BACK, icon_color=current_theme["top_appbar_colors"]["icon_color"], on_click=lambda _: go_back(page)),ft.Image(src=current_theme["top_appbar_colors"]["icon"], width=200, fit=ft.ImageFit.FIT_WIDTH)]), leading_width=200, bgcolor=current_theme["top_appbar_colors"]["background"], actions=[ft.Container(content=ft.Image(src=profile_pic, width=40, height=40), border_radius=50, margin=ft.margin.only(right=10))])
-    else:
-        appbar = ft.AppBar(leading=ft.Row(controls=[ft.IconButton(icon=ft.icons.ARROW_BACK, icon_color=current_theme["top_appbar_colors"]["icon_color"], on_click=lambda _: go_back(page)),ft.Image(src=current_theme["top_appbar_colors"]["icon"], width=200, fit=ft.ImageFit.FIT_WIDTH)]), leading_width=200, bgcolor=current_theme["top_appbar_colors"]["background"])
     floating_action_button = ft.FloatingActionButton(icon=ft.icons.ADD, on_click=save, bgcolor=ft.colors.LIME_300)
 
     bill_list_button = ft.Column(
@@ -398,49 +389,14 @@ def edit_bills_page(current_theme, page:ft.Page, BASE_URL:str, user_id:str):
         bill_bottom_sheet.visible = False
         page.update()
                 
-
-    bill_list = []
-    for bill in my_bills:
-        #print(bill)
-        due_text = due_text = ft.Text("Due:", size=14, color=current_theme['calc_theme']['text_title'])
-        if bill["frequency"] != "weekly" and bill["due"]:
-            due_text = ft.Text(f"Due: {bill['due']}", size=14, color=current_theme['calc_theme']['text_title'])
-        elif bill["frequency"] != "weekly" and (bill["due_date"]):
-            due_text = ft.Text(f"Due: {bill['due_date']}", size=14, color=current_theme['calc_theme']['text_title'])
-        elif bill["frequency"] == "weekly":
-            due_text = ft.Text(f"Due: Weekly", size=14, color=current_theme['calc_theme']['text_title'])
-        bill_list.append(ft.Container(
-            content=ft.Column(
-                controls=[
-                    ft.Text(bill["name"], size=18, color=current_theme['calc_theme']['text_title'],style=ft.TextStyle(weight=ft.FontWeight.BOLD)),
-                    due_text,
-                    ft.Text(f'Amount: {bill["amount"]}', size=14, color=current_theme['calc_theme']['text_title']),
-                    ft.Text(f'Frequency: {bill["frequency"]}', size=14, color=current_theme['calc_theme']['text_title']),
-                    ft.Text(f'Phone: {bill["phone"]}', size=14, color=current_theme['calc_theme']['text_title']),
-                    ft.Text(f'Email: {bill["email"]}', size=14, color=current_theme['calc_theme']['text_title']),
-                    ft.Text(f'Website: {bill["website"]}', size=14, color=current_theme['calc_theme']['text_title']),
-                    ft.Row(controls=[
-                            ft.ElevatedButton("Delete", on_click=lambda e, bill=bill: remove_bill(e, f"{bill['id']}")),
-                            ft.ElevatedButton("Edit", on_click=lambda e: edit_bill(e)),
-                        ],
-                        data=bill,
-                        spacing=10,
-                        alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
-                    ),
-                ]
-            ),
-            bgcolor=current_theme["list_item_colors"]["total_amount_background_color"],
-            border_radius=ft.border_radius.all(5),
-            padding=ft.padding.all(10),
-            margin=ft.margin.all(0),
-        ))
-
-    bill_bottom_sheet = ft.Container(
-        content=ft.Container(
-            content=ft.ListView(bill_list,
+    bottom_sheet_bill_list = ft.ListView(
                 expand=False,
                 spacing=10,
-            ),
+            )
+    
+    bill_bottom_sheet = ft.Container(
+        content=ft.Container(
+            content=bottom_sheet_bill_list,
             bgcolor=current_theme['bottom_sheet']['background_color'],
             border=None,
             border_radius=ft.border_radius.only(top_left=5, top_right=5),
@@ -464,7 +420,8 @@ def edit_bills_page(current_theme, page:ft.Page, BASE_URL:str, user_id:str):
             bill_bottom_sheet.visible = True
         
         page.update()
-
+    appbar = ft.AppBar(leading=ft.Row(controls=[ft.IconButton(icon=ft.icons.ARROW_BACK, icon_color=current_theme["top_appbar_colors"]["icon_color"], on_click=lambda _: go_back(page)),ft.Image(src=current_theme["top_appbar_colors"]["icon"], width=200, fit=ft.ImageFit.FIT_WIDTH)]), leading_width=200, bgcolor=current_theme["top_appbar_colors"]["background"])
+            
     bottom_appbar = ft.BottomAppBar(
         bgcolor=current_theme["bottom_navigation_colors"]["background"],
         shape=ft.NotchShape.CIRCULAR,
@@ -514,3 +471,61 @@ def edit_bills_page(current_theme, page:ft.Page, BASE_URL:str, user_id:str):
                                 bgcolor=current_theme["background"]
                             )
                         )
+    
+    def create_bill_list(page, current_theme, my_bills):
+        bill_list = []
+        for bill in my_bills:
+            #print(bill)
+            due_text = due_text = ft.Text("Due:", size=14, color=current_theme['calc_theme']['text_title'])
+            if bill["frequency"] != "weekly" and bill["due"]:
+                due_text = ft.Text(f"Due: {bill['due']}", size=14, color=current_theme['calc_theme']['text_title'])
+            elif bill["frequency"] != "weekly" and (bill["due_date"]):
+                due_text = ft.Text(f"Due: {bill['due_date']}", size=14, color=current_theme['calc_theme']['text_title'])
+            elif bill["frequency"] == "weekly":
+                due_text = ft.Text(f"Due: Weekly", size=14, color=current_theme['calc_theme']['text_title'])
+            bill_list.append(ft.Container(
+                content=ft.Column(
+                    controls=[
+                        ft.Text(bill["name"], size=18, color=current_theme['calc_theme']['text_title'],style=ft.TextStyle(weight=ft.FontWeight.BOLD)),
+                        due_text,
+                        ft.Text(f'Amount: {bill["amount"]}', size=14, color=current_theme['calc_theme']['text_title']),
+                        ft.Text(f'Frequency: {bill["frequency"]}', size=14, color=current_theme['calc_theme']['text_title']),
+                        ft.Text(f'Phone: {bill["phone"]}', size=14, color=current_theme['calc_theme']['text_title']),
+                        ft.Text(f'Email: {bill["email"]}', size=14, color=current_theme['calc_theme']['text_title']),
+                        ft.Text(f'Website: {bill["website"]}', size=14, color=current_theme['calc_theme']['text_title']),
+                        ft.Row(controls=[
+                                ft.ElevatedButton("Delete", on_click=lambda e, bill=bill: remove_bill(e, f"{bill['id']}")),
+                                ft.ElevatedButton("Edit", on_click=lambda e: edit_bill(e)),
+                            ],
+                            data=bill,
+                            spacing=10,
+                            alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+                        ),
+                    ]
+                ),
+                bgcolor=current_theme["list_item_colors"]["total_amount_background_color"],
+                border_radius=ft.border_radius.all(5),
+                padding=ft.padding.all(10),
+                margin=ft.margin.all(0),
+            ))
+
+        return bill_list
+
+
+    async def build_bill_list():
+        data = await get_bills(page, user_id, BASE_URL)
+        if data["error"] is not None or data["error"] != "":
+            profile_pic = data["profile_pic"]
+            user_pay_hours = data["user_pay_hours"]
+            my_bills = data["my_bills"]
+            unpaid_bills = data["unpaid_bills"]
+            bill_list = create_bill_list(page, current_theme, my_bills)
+            bottom_sheet_bill_list.controls = bill_list
+            if profile_pic:
+                appbar_actions = [ft.Container(content=ft.Image(src=profile_pic, width=40, height=40), border_radius=50, margin=ft.margin.only(right=10))]
+                appbar.actions = appbar_actions;
+                page.update();
+        else:
+            print(data["error"])
+    
+    asyncio.run(build_bill_list())

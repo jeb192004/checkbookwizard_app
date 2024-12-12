@@ -1,11 +1,21 @@
 import flet as ft
+import asyncio
 
 from data.bills import get_bills
 from ui.alert import create_loader, show_loader, hide_loader
 
 
 def charts_page(current_theme, page:ft.Page, BASE_URL:str, user_id:str):
-    #bills = Bills(page, BASE_URL)
+    async def build_bill_list():
+        data = await get_bills(page, user_id, BASE_URL)
+        if data["error"] is not None or data["error"] != "":
+            profile_pic = data["profile_pic"]
+            user_pay_hours = data["user_pay_hours"]
+            my_bills = data["my_bills"]
+            unpaid_bills = data["unpaid_bills"]
+            return {"profile_pic":profile_pic, "user_pay_hours":user_pay_hours, "my_bills":my_bills}
+        else:
+            print(data["error"])
     loader = create_loader(page)
     pie_chart_container = ft.Container()
     colors = [
@@ -97,12 +107,12 @@ def charts_page(current_theme, page:ft.Page, BASE_URL:str, user_id:str):
 
     pie_chart.on_chart_event=on_chart_event
 
-    data = get_bills(page, user_id, BASE_URL)
-    if data['error'] is None or data['error'] == "":
+    data = asyncio.run(build_bill_list())
+    if "error" not in data:
         profile_pic = data["profile_pic"]
         user_pay_hours = data["user_pay_hours"]
         my_bills = data["my_bills"]
-        unpaid_bills = data["unpaid_bills"]
+        #unpaid_bills = data["unpaid_bills"]
 
         
         max_y_graph = 0
@@ -157,7 +167,7 @@ def charts_page(current_theme, page:ft.Page, BASE_URL:str, user_id:str):
         
     else:
         print(data['error'])
-        
+        page.go("/bills")
 
     def go_back(_):
         show_loader(page, loader)
@@ -168,7 +178,7 @@ def charts_page(current_theme, page:ft.Page, BASE_URL:str, user_id:str):
     else:
         appbar = ft.AppBar(leading=ft.Row(controls=[ft.IconButton(icon=ft.icons.ARROW_BACK, icon_color=current_theme["top_appbar_colors"]["icon_color"], on_click=lambda _: go_back(_)),ft.Image(src=current_theme["top_appbar_colors"]["icon"], width=200, fit=ft.ImageFit.FIT_WIDTH)]), leading_width=200, bgcolor=current_theme["top_appbar_colors"]["background"])
     
-    return ft.View(
+    page.views.append(ft.View(
         "/charts",
                     [ft.Stack(
                         
@@ -190,3 +200,6 @@ def charts_page(current_theme, page:ft.Page, BASE_URL:str, user_id:str):
                     ],
                 appbar=appbar
                 )
+    )
+
+    
