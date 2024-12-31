@@ -13,14 +13,15 @@ from ui.charts_ui import charts_page
 from ui.alert import create_loader, show_loader, hide_loader
 
 BASE_URL = "https://checkbookwizard.com/"
-# BASE_URL = 'http://localhost:1338/'  # For development
+BASE_URL = 'http://localhost:1338/'  # For development
 
 
 def main(page: ft.Page):
 
     page.title = "Checkbook Wizard"
-    # if page.platform is page.platform.WINDOWS or page.platform is page.platform.LINUX or page.platform is page.platform.MACOS:
-    # page.window.width = 400
+    if page.platform is page.platform.WINDOWS or page.platform is page.platform.LINUX or page.platform is page.platform.MACOS:
+        page.window.width = 400
+        page.window.height = 600
 
     # page.platform = ft.PagePlatform.ANDROID
 
@@ -54,7 +55,7 @@ def main(page: ft.Page):
         elif page.route == "/charts":
             charts_page(current_theme, page, BASE_URL, user_id)
         elif page.route == "/pay":
-            page.views.append(pay_page(current_theme, page, BASE_URL))
+            pay_page(current_theme, page, BASE_URL, user_id)
         elif page.route == "/settings":
             page.views.append(settings_page(current_theme, page, BASE_URL))
 

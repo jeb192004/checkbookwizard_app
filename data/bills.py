@@ -69,6 +69,16 @@ def remove_bill_item(page: Page, BASE_URL: str, data):
           return "success"
      else:
           return "error"
+     
+def add_update_earnings(page: Page, BASE_URL: str, data):
+     
+     response = httpx.post(f"{BASE_URL}data/earnings", json=data)
+     if response.status_code == 200:
+          print(response)
+          return "success"
+     else:
+          return "error"
+     
 
 def get_bills_object(data):
      try:

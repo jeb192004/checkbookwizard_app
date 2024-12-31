@@ -19,24 +19,24 @@ def charts_page(current_theme, page:ft.Page, BASE_URL:str, user_id:str):
     loader = create_loader(page)
     pie_chart_container = ft.Container()
     colors = [
-    ft.colors.RED, ft.colors.BLUE, ft.colors.GREEN, ft.colors.YELLOW,
-    ft.colors.ORANGE, ft.colors.PINK, ft.colors.PURPLE, ft.colors.TEAL,
-    ft.colors.CYAN, ft.colors.INDIGO, ft.colors.LIME, ft.colors.AMBER,
-    ft.colors.BROWN, ft.colors.GREY, ft.colors.AMBER, ft.colors.LIGHT_BLUE,
-    ft.colors.LIGHT_GREEN, ft.colors.GREEN_300, ft.colors.TEAL_700, ft.colors.YELLOW_300
+    ft.Colors.RED, ft.Colors.BLUE, ft.Colors.GREEN, ft.Colors.YELLOW,
+    ft.Colors.ORANGE, ft.Colors.PINK, ft.Colors.PURPLE, ft.Colors.TEAL,
+    ft.Colors.CYAN, ft.Colors.INDIGO, ft.Colors.LIME, ft.Colors.AMBER,
+    ft.Colors.BROWN, ft.Colors.GREY, ft.Colors.AMBER, ft.Colors.LIGHT_BLUE,
+    ft.Colors.LIGHT_GREEN, ft.Colors.GREEN_300, ft.Colors.TEAL_700, ft.Colors.YELLOW_300
 
     ]
     
     normal_radius = 100
     hover_radius = 120
     normal_title_style = ft.TextStyle(
-        size=0, color=ft.colors.WHITE, weight=ft.FontWeight.BOLD,
+        size=0, color=ft.Colors.WHITE, weight=ft.FontWeight.BOLD,
     )
     hover_title_style = ft.TextStyle(
         size=22,
-        color=ft.colors.WHITE,
+        color=ft.Colors.WHITE,
         weight=ft.FontWeight.BOLD,
-        shadow=ft.BoxShadow(blur_radius=2, color=ft.colors.BLACK54),
+        shadow=ft.BoxShadow(blur_radius=2, color=ft.Colors.BLACK54),
     )
 
     def create_chart_items(chart_type, chart, monthly_pay, my_bills):
@@ -83,7 +83,7 @@ def charts_page(current_theme, page:ft.Page, BASE_URL:str, user_id:str):
                 100 - total_bill_percentage,
                 title=f"Left over\n${monthly_pay - total_bills:,.2f}",
                 title_style=normal_title_style,
-                color=ft.colors.ORANGE,
+                color=ft.Colors.ORANGE,
                 radius=normal_radius,
             ),
         )
@@ -130,11 +130,11 @@ def charts_page(current_theme, page:ft.Page, BASE_URL:str, user_id:str):
                 max_y_graph = pay
 
         chart = ft.BarChart(
-            border=ft.border.all(1, ft.colors.GREY_400),
+            border=ft.border.all(1, ft.Colors.GREY_400),
             left_axis=ft.ChartAxis(labels_size=40, title=ft.Text("Earnings"), title_size=40),
             bottom_axis=ft.ChartAxis(labels_size=0, title=ft.Text("Bills"), title_size=40),
-            horizontal_grid_lines=ft.ChartGridLines(color=ft.colors.GREY_300, width=1, dash_pattern=[3, 3]),
-            tooltip_bgcolor=ft.colors.with_opacity(0.5, ft.colors.GREY_300),
+            horizontal_grid_lines=ft.ChartGridLines(color=ft.Colors.GREY_300, width=1, dash_pattern=[3, 3]),
+            tooltip_bgcolor=ft.Colors.with_opacity(0.5, ft.Colors.GREY_300),
             max_y=max_y_graph,
             interactive=True,
             expand=True,
@@ -174,9 +174,9 @@ def charts_page(current_theme, page:ft.Page, BASE_URL:str, user_id:str):
         page.go("/bills")
     
     if profile_pic:
-        appbar = ft.AppBar(leading=ft.Row(controls=[ft.IconButton(icon=ft.icons.ARROW_BACK, icon_color=current_theme["top_appbar_colors"]["icon_color"], on_click=lambda _: go_back(_)),ft.Image(src=current_theme["top_appbar_colors"]["icon"], width=200, fit=ft.ImageFit.FIT_WIDTH)]), leading_width=200, bgcolor=current_theme["top_appbar_colors"]["background"], actions=[ft.Container(content=ft.Image(src=profile_pic, width=40, height=40), border_radius=50, margin=ft.margin.only(right=10))])
+        appbar = ft.AppBar(leading=ft.Row(controls=[ft.IconButton(icon=ft.Icons.ARROW_BACK, icon_color=current_theme["top_appbar_colors"]["icon_color"], on_click=lambda _: go_back(_)),ft.Image(src=current_theme["top_appbar_colors"]["icon"], width=200, fit=ft.ImageFit.FIT_WIDTH)]), leading_width=200, bgcolor=current_theme["top_appbar_colors"]["background"], actions=[ft.Container(content=ft.Image(src=profile_pic, width=40, height=40), border_radius=50, margin=ft.margin.only(right=10))])
     else:
-        appbar = ft.AppBar(leading=ft.Row(controls=[ft.IconButton(icon=ft.icons.ARROW_BACK, icon_color=current_theme["top_appbar_colors"]["icon_color"], on_click=lambda _: go_back(_)),ft.Image(src=current_theme["top_appbar_colors"]["icon"], width=200, fit=ft.ImageFit.FIT_WIDTH)]), leading_width=200, bgcolor=current_theme["top_appbar_colors"]["background"])
+        appbar = ft.AppBar(leading=ft.Row(controls=[ft.IconButton(icon=ft.Icons.ARROW_BACK, icon_color=current_theme["top_appbar_colors"]["icon_color"], on_click=lambda _: go_back(_)),ft.Image(src=current_theme["top_appbar_colors"]["icon"], width=200, fit=ft.ImageFit.FIT_WIDTH)]), leading_width=200, bgcolor=current_theme["top_appbar_colors"]["background"])
     
     page.views.append(ft.View(
         "/charts",
@@ -193,12 +193,13 @@ def charts_page(current_theme, page:ft.Page, BASE_URL:str, user_id:str):
                             expand=True,
                             horizontal_alignment="center",
                             scroll=ft.ScrollMode.ADAPTIVE),
-                            #loader
+                            
                             ]
                     )
                         
                     ],
-                appbar=appbar
+                appbar=appbar,
+                bgcolor=current_theme["background"]
                 )
     )
 

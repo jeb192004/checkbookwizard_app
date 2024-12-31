@@ -59,14 +59,14 @@ def edit_bills_page(current_theme, page:ft.Page, BASE_URL:str, user_id:str):
                                 on_change=handle_change,
                                 on_dismiss=handle_dismissal,
                                 )
-    error_text = ft.TextField(bgcolor=ft.colors.RED, color="white", visible=False)
+    error_text = ft.TextField(bgcolor=ft.Colors.RED, color="white", visible=False)
     bill_id_text = ft.TextField(visible=False)
     name_text = ft.TextField(label="Company/Person/Name: ", bgcolor=current_theme["list_item_colors"]['base'], color=current_theme["text_color"], label_style=ft.TextStyle(color=current_theme["text_color"]))
     amount_due = ft.TextField(label="Amount Due: ", prefix_text="$", bgcolor=current_theme["list_item_colors"]['base'], color=current_theme["text_color"], label_style=ft.TextStyle(color=current_theme["text_color"]), on_change=on_amount_due_change)
     website = ft.TextField(label="Website(optional): ", bgcolor=current_theme["list_item_colors"]['base'], color=current_theme["text_color"], label_style=ft.TextStyle(color=current_theme["text_color"]))
     phone_number = ft.TextField(label="Phone Number(optional): ", bgcolor=current_theme["list_item_colors"]['base'], color=current_theme["text_color"], label_style=ft.TextStyle(color=current_theme["text_color"]))
     email = ft.TextField(label="Email(optional): ", bgcolor=current_theme["list_item_colors"]['base'], color=current_theme["text_color"], label_style=ft.TextStyle(color=current_theme["text_color"]))
-    due_date_picker = ft.ElevatedButton("Pick date",icon=ft.icons.CALENDAR_MONTH,
+    due_date_picker = ft.ElevatedButton("Pick date",icon=ft.Icons.CALENDAR_MONTH,
                                         on_click=lambda e: open_date_picker(e, date_picker=date_picker),
                                                     bgcolor=current_theme["list_item_colors"]['base'], color=current_theme["text_color"]
                                                     )
@@ -177,7 +177,7 @@ def edit_bills_page(current_theme, page:ft.Page, BASE_URL:str, user_id:str):
         show_loader(page, loader)
         date_to_save = ""
         if name_text.value == "":
-            name_text.border_color = ft.colors.RED
+            name_text.border_color = ft.Colors.RED
             name_text.update()
             hide_loader(page, loader)
             return
@@ -197,7 +197,7 @@ def edit_bills_page(current_theme, page:ft.Page, BASE_URL:str, user_id:str):
                     print("date_to_save: ", date_to_save)
                 else:
                     date_text.value = "Please select a due date"
-                    date_text.bgcolor = ft.colors.RED
+                    date_text.bgcolor = ft.Colors.RED
                     page.update()
                     hide_loader(page, loader)
                     return
@@ -210,7 +210,7 @@ def edit_bills_page(current_theme, page:ft.Page, BASE_URL:str, user_id:str):
                             week_of_month_dropdown.border_color = None
                             week_of_month_dropdown.update()
                         else:
-                            week_of_month_dropdown.border_color = ft.colors.RED
+                            week_of_month_dropdown.border_color = ft.Colors.RED
                             week_of_month_dropdown.update()
                             hide_loader(page, loader)
                             return
@@ -219,7 +219,7 @@ def edit_bills_page(current_theme, page:ft.Page, BASE_URL:str, user_id:str):
                             day_of_week_dropdown.update()
                             hide_loader(page, loader)
                         else:
-                            day_of_week_dropdown.border_color = ft.colors.RED
+                            day_of_week_dropdown.border_color = ft.Colors.RED
                             day_of_week_dropdown.update()
                             hide_loader(page, loader)
                             return
@@ -231,22 +231,22 @@ def edit_bills_page(current_theme, page:ft.Page, BASE_URL:str, user_id:str):
                             date_to_save = day_of_month_dropdown.value
                             day_of_month_dropdown.update()
                         else:
-                            day_of_month_dropdown.border_color = ft.colors.RED
+                            day_of_month_dropdown.border_color = ft.Colors.RED
                             day_of_month_dropdown.update()
                             hide_loader(page, loader)
                             return
                 else:
-                    day_of_week_or_month_dropdown.border_color = ft.colors.RED
+                    day_of_week_or_month_dropdown.border_color = ft.Colors.RED
                     day_of_week_or_month_dropdown.update()
                     hide_loader(page, loader)
                     return
         else:
-            frequency_dropdown.border_color = ft.colors.RED
+            frequency_dropdown.border_color = ft.Colors.RED
             frequency_dropdown.update()
             hide_loader(page, loader)
             return
         if amount_due.value == "":
-            amount_due.border_color = ft.colors.RED
+            amount_due.border_color = ft.Colors.RED
             amount_due.update()
             hide_loader(page, loader)
             return
@@ -301,7 +301,7 @@ def edit_bills_page(current_theme, page:ft.Page, BASE_URL:str, user_id:str):
         page.go("/bills")
 
 
-    floating_action_button = ft.FloatingActionButton(icon=ft.icons.ADD, on_click=save, bgcolor=ft.colors.LIME_300)
+    floating_action_button = ft.FloatingActionButton(icon=ft.Icons.ADD, on_click=save, bgcolor=ft.Colors.LIME_300)
 
     bill_list_button = ft.Column(
         controls=[ft.Image(src="/receipt_long.png", width=25, height=25, color=current_theme["bottom_navigation_colors"]["icon"]),
@@ -313,7 +313,7 @@ def edit_bills_page(current_theme, page:ft.Page, BASE_URL:str, user_id:str):
     )
 
     charts_button = ft.Column(
-        controls=[ft.Icon(name=ft.icons.TRENDING_UP,color=current_theme["bottom_navigation_colors"]["icon"]),
+        controls=[ft.Icon(name=ft.Icons.TRENDING_UP,color=current_theme["bottom_navigation_colors"]["icon"]),
                   ft.Text("Charts", size=12, color=current_theme["bottom_navigation_colors"]["text"], style=ft.TextStyle(weight=ft.FontWeight.BOLD))],
         spacing=2,
         expand=True,
@@ -322,7 +322,7 @@ def edit_bills_page(current_theme, page:ft.Page, BASE_URL:str, user_id:str):
     )
 
     clear_button = ft.Column(
-        controls=[ft.Icon(name=ft.icons.CLEAR, color=current_theme["bottom_navigation_colors"]["icon"]),
+        controls=[ft.Icon(name=ft.Icons.CLEAR, color=current_theme["bottom_navigation_colors"]["icon"]),
                   ft.Text("Clear Form", size=12, color=current_theme["bottom_navigation_colors"]["text"], style=ft.TextStyle(weight=ft.FontWeight.BOLD))],
         spacing=2,
         expand=True,
@@ -340,7 +340,7 @@ def edit_bills_page(current_theme, page:ft.Page, BASE_URL:str, user_id:str):
     )
     
     save_button = ft.Column(
-        controls=[ft.Icon(name=ft.icons.SAVE, color=current_theme["bottom_navigation_colors"]["icon"]),
+        controls=[ft.Icon(name=ft.Icons.SAVE, color=current_theme["bottom_navigation_colors"]["icon"]),
                   ft.Text("Save", size=12, color=current_theme["bottom_navigation_colors"]["text"], style=ft.TextStyle(weight=ft.FontWeight.BOLD))],
         spacing=2,
         expand=True,
@@ -420,7 +420,7 @@ def edit_bills_page(current_theme, page:ft.Page, BASE_URL:str, user_id:str):
             bill_bottom_sheet.visible = True
         
         page.update()
-    appbar = ft.AppBar(leading=ft.Row(controls=[ft.IconButton(icon=ft.icons.ARROW_BACK, icon_color=current_theme["top_appbar_colors"]["icon_color"], on_click=lambda _: go_back(page)),ft.Image(src=current_theme["top_appbar_colors"]["icon"], width=200, fit=ft.ImageFit.FIT_WIDTH)]), leading_width=200, bgcolor=current_theme["top_appbar_colors"]["background"])
+    appbar = ft.AppBar(leading=ft.Row(controls=[ft.IconButton(icon=ft.Icons.ARROW_BACK, icon_color=current_theme["top_appbar_colors"]["icon_color"], on_click=lambda _: go_back(page)),ft.Image(src=current_theme["top_appbar_colors"]["icon"], width=200, fit=ft.ImageFit.FIT_WIDTH)]), leading_width=200, bgcolor=current_theme["top_appbar_colors"]["background"])
             
     bottom_appbar = ft.BottomAppBar(
         bgcolor=current_theme["bottom_navigation_colors"]["background"],

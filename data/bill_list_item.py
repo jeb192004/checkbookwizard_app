@@ -30,9 +30,9 @@ def create_bill_item(page, current_theme, loader, BASE_URL, toggle_calc_bottom_s
                             m_bill["payday"] = c_box.data["payday"].strftime("%Y-%m-%d")'''
                     selected.append({"id":c_box.data["bill_id"], "payday": c_box.data["payday"].strftime("%Y-%m-%d")})
         if e.control.icon == "edit":
-            e.control.icon = ft.icons.SAVE
+            e.control.icon = ft.Icons.SAVE
         elif e.control.icon == "save":
-            e.control.icon = ft.icons.EDIT
+            e.control.icon = ft.Icons.EDIT
         if len(selected)>0:
             show_loader(page, loader)
             remove_unpaid_bills(page, selected, BASE_URL)
@@ -56,9 +56,9 @@ def create_bill_item(page, current_theme, loader, BASE_URL, toggle_calc_bottom_s
                             m_bill["payday"] = c_box.data["payday"].strftime("%Y-%m-%d")
                             selected.append(m_bill)
         if e.control.icon == "edit":
-            e.control.icon = ft.icons.SAVE
+            e.control.icon = ft.Icons.SAVE
         elif e.control.icon == "save":
-            e.control.icon = ft.icons.EDIT
+            e.control.icon = ft.Icons.EDIT
         if len(selected)>0:
             show_loader(page, loader)
             save_unpaid_bills(page, selected, BASE_URL)
@@ -120,7 +120,7 @@ def create_bill_item(page, current_theme, loader, BASE_URL, toggle_calc_bottom_s
                     website_row,
                     phone_row,
                     email_row,
-                    ft.Divider(height=2, color=ft.colors.BLACK),
+                    ft.Divider(height=2, color=ft.Colors.BLACK),
                     ],
                     spacing=2,
                     ),
@@ -235,7 +235,7 @@ def create_bill_item(page, current_theme, loader, BASE_URL, toggle_calc_bottom_s
 
         if bills_total_amount>0:
                 bill_list.append(ft.Container(
-                    content=ft.Row(controls=[ft.Text(f"Total: ", size=18, color=current_theme["list_item_colors"]["total_amount_title_color"],style=ft.TextStyle(weight=ft.FontWeight.BOLD)), ft.Row(expand=True), ft.Row(controls=[ft.IconButton(ft.icons.CALCULATE, icon_color=current_theme["list_item_colors"]["total_amount_icon_color"], on_click=lambda e: toggle_calc_bottom_sheet(bills_total_amount)),ft.Text(f"${bills_total_amount:.2f}", size=18, color=current_theme["list_item_colors"]["total_amount_text_color"])])], expand=True),
+                    content=ft.Row(controls=[ft.Text(f"Total: ", size=18, color=current_theme["list_item_colors"]["total_amount_title_color"],style=ft.TextStyle(weight=ft.FontWeight.BOLD)), ft.Row(expand=True), ft.Row(controls=[ft.IconButton(ft.Icons.CALCULATE, icon_color=current_theme["list_item_colors"]["total_amount_icon_color"], on_click=lambda e: toggle_calc_bottom_sheet(bills_total_amount)),ft.Text(f"${bills_total_amount:.2f}", size=18, color=current_theme["list_item_colors"]["total_amount_text_color"])])], expand=True),
                     margin=ft.margin.all(10),
                     border=ft.border.all(2, color=current_theme["list_item_colors"]["total_amount_border_color"]),
                     bgcolor=current_theme["list_item_colors"]["total_amount_background_color"],
@@ -246,8 +246,8 @@ def create_bill_item(page, current_theme, loader, BASE_URL, toggle_calc_bottom_s
     
     weekly_bill_lists = []
     if len(unpaid_bills) > 0:
-        edit_button = ft.IconButton(ft.icons.EDIT, bgcolor=current_theme['list_item_colors']['icon_color'], on_click=lambda e: remove_unpaid(e))
-        save_button = ft.IconButton(ft.icons.SAVE, bgcolor=current_theme['list_item_colors']['icon_color'], on_click=lambda e: remove_unpaid(e), visible=False)
+        edit_button = ft.IconButton(ft.Icons.EDIT, bgcolor=current_theme['list_item_colors']['icon_color'], on_click=lambda e: remove_unpaid(e))
+        save_button = ft.IconButton(ft.Icons.SAVE, bgcolor=current_theme['list_item_colors']['icon_color'], on_click=lambda e: remove_unpaid(e), visible=False)
             
         weekly_bill_lists.append(
             ft.Card(
@@ -277,8 +277,8 @@ def create_bill_item(page, current_theme, loader, BASE_URL, toggle_calc_bottom_s
         edit_button = ft.Container()
         isEditable = False
         if index == 0:
-            edit_button = ft.IconButton(ft.icons.EDIT, bgcolor=current_theme['list_item_colors']['icon_color'], on_click=lambda e: edit_bill_list(e))
-            save_button = ft.IconButton(ft.icons.SAVE, bgcolor=current_theme['list_item_colors']['icon_color'], on_click=lambda e: edit_bill_list(e), visible=False)
+            edit_button = ft.IconButton(ft.Icons.EDIT, bgcolor=current_theme['list_item_colors']['icon_color'], on_click=lambda e: edit_bill_list(e))
+            save_button = ft.IconButton(ft.Icons.SAVE, bgcolor=current_theme['list_item_colors']['icon_color'], on_click=lambda e: edit_bill_list(e), visible=False)
             isEditable = True
         weekly_bill_lists.append(
             ft.Card(

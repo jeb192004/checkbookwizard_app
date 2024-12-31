@@ -8,7 +8,7 @@ def login_page(current_theme, page:ft.Page, BASE_URL:str):
         return ft.View(
             controls=[
                 ft.Text(spans=[ft.TextSpan("To log in, please login to your account on "),
-                        ft.TextSpan("checkbookwizard.com", ft.TextStyle(decoration=ft.TextDecoration.UNDERLINE, decoration_color=ft.colors.BLUE, color=ft.colors.BLUE), on_click=lambda _: page.launch_url(BASE_URL)),
+                        ft.TextSpan("checkbookwizard.com", ft.TextStyle(decoration=ft.TextDecoration.UNDERLINE, decoration_color=ft.Colors.BLUE, color=ft.Colors.BLUE), on_click=lambda _: page.launch_url(BASE_URL)),
                         ft.TextSpan(", go to \"Settings\" and click the \"Generate Code\" button and the \"Copy Code\" button.  Then return to this app and paste the login code below.")],
                         color=current_theme["list_item_colors"]["text_color"],
                 ),
