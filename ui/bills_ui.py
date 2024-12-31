@@ -1,7 +1,7 @@
 import flet as ft
 from datetime import datetime, date, timedelta
 import json
-from data.bills import get_bills, save_unpaid_bills, remove_unpaid_bills
+from data.data_sync import get_bills, save_unpaid_bills, remove_unpaid_bills
 from ui.alert import create_loader, show_loader, hide_loader
 from data.bill_list_item import create_bill_item
 import asyncio

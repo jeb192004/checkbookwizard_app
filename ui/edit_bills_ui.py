@@ -3,7 +3,7 @@ import flet as ft
 import datetime
 import asyncio
 
-from data.bills import get_bills, add_update_bills, remove_bill_item
+from data.data_sync import get_bills, add_update_bills, remove_bill_item
 from ui.alert import create_loader, show_loader, hide_loader
 
 appbar = []

@@ -79,16 +79,10 @@ def add_update_earnings(page: Page, BASE_URL: str, data):
      else:
           return "error"
      
-
-def get_bills_object(data):
-     try:
-        pay_hours = []
-        
-            
-        
-            #print('Profile:\n', profile,)# '\nMy Bills:\n', my_bills, '\nUnpaid:\n', unpaid_bills)
-            # Build the bills list
-            #build_week_and_bills_list(page, my_bills, unpaid_bills)
-                
-     except Exception as e:
-        print(f"Error fetching bills: {e}")
+def get_earnings(page:Page, BASE_URL:str, user_id:str):
+     data = {"userId": user_id}
+     response = httpx.post(f"{BASE_URL}data/earnings", json=data)
+     if response.status_code == 200:
+          return response
+     else:
+          return "error"

@@ -1,7 +1,7 @@
 import flet as ft
 import asyncio
 
-from data.bills import get_bills
+from data.data_sync import get_bills
 from ui.alert import create_loader, show_loader, hide_loader
 
 

@@ -1,6 +1,7 @@
+import asyncio
 import flet as ft
 from data.utils import format_dollar
-from data.bills import add_update_earnings
+from data.data_sync import add_update_earnings, get_earnings
 from ui.alert import create_loader, show_loader, hide_loader
 
 payday_value = "5"
@@ -131,3 +132,18 @@ def pay_page(current_theme, page:ft.Page, BASE_URL:str, user_id:str):
             #bottom_appbar=bottom_appbar,
         )
     )
+
+    async def build_earnings_list():
+        data = await get_earnings(page, BASE_URL, user_id)
+        if data["error"] is not None or data["error"] != "":
+            profile_pic = data["profile_pic"]
+            
+            if profile_pic:
+                appbar_actions = [ft.Container(content=ft.Image(src=profile_pic, width=40, height=40), border_radius=50, margin=ft.margin.only(right=10))]
+                appbar.actions = appbar_actions
+                page.update()
+        else:
+            print(data["error"])
+    
+    asyncio.run(build_earnings_list())
+    

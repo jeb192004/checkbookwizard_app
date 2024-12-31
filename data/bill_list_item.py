@@ -1,6 +1,6 @@
 import flet as ft
 from datetime import datetime, date, timedelta
-from data.bills import get_bills, save_unpaid_bills, remove_unpaid_bills
+from data.data_sync import get_bills, save_unpaid_bills, remove_unpaid_bills
 from ui.alert import create_loader, show_loader, hide_loader
 
 
