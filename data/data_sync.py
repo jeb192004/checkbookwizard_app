@@ -75,14 +75,15 @@ def add_update_earnings(page: Page, BASE_URL: str, data):
      response = httpx.post(f"{BASE_URL}data/earnings", json=data)
      if response.status_code == 200:
           print(response)
-          return "success"
+          return dict(data=response, error=None)
      else:
-          return "error"
+          return dict(data=None, error=f"HTTP Error: {response.status_code}")
      
-def get_earnings(page:Page, BASE_URL:str, user_id:str):
-     data = {"userId": user_id}
-     response = httpx.post(f"{BASE_URL}data/earnings", json=data)
-     if response.status_code == 200:
-          return response
-     else:
-          return "error"
+async def get_earnings(page:Page, BASE_URL:str, user_id:str):
+     print(user_id)
+     async with httpx.AsyncClient() as client:
+        response = await client.get(f"{BASE_URL}data/earnings/{user_id}")
+        if response.status_code == 200:
+            return dict(data=response.json(), error=None)
+        else:
+            return dict(data=None, error=f"HTTP Error: {response.status_code}")

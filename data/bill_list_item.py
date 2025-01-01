@@ -10,7 +10,7 @@ def create_bill_item(page, current_theme, loader, BASE_URL, toggle_calc_bottom_s
     day_of_week = 5  # Friday(default)
     billListItems = []
     #my_bills = []
-    unpaid_bills = []
+    #unpaid_bills = []
     profile_page = None
 
     #print("bills",my_bills)

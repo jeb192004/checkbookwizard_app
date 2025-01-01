@@ -3,11 +3,13 @@ import flet as ft
 from data.utils import format_dollar
 from data.data_sync import add_update_earnings, get_earnings
 from ui.alert import create_loader, show_loader, hide_loader
+from data.earnings_list_item import create_earnings_item
 
 payday_value = "5"
 
 def pay_page(current_theme, page:ft.Page, BASE_URL:str, user_id:str):
     loader = create_loader(page)
+    pay_list = ft.ListView()
 
     def radiogroup_changed(e):
         payday_value = e.control.value
@@ -23,7 +25,7 @@ def pay_page(current_theme, page:ft.Page, BASE_URL:str, user_id:str):
             ft.Radio(value="5", label="Friday(default)", label_style={"color": current_theme["text_color"]}),
             ft.Radio(value="6", label="Saturday", label_style={"color": current_theme["text_color"]})
         ]), on_change=radiogroup_changed)
-    payday_options.value = "5"
+    payday_options.value = "3"
 
     payday_column = ft.Column(col={"sm": 6}, controls=[
         ft.Text("Please select the day of the week you pay your bills", weight=ft.FontWeight.BOLD, size=28),
@@ -88,9 +90,29 @@ def pay_page(current_theme, page:ft.Page, BASE_URL:str, user_id:str):
             "title": title
             
         }
-        hide_loader(page, loader)
+        
         response = add_update_earnings(page, BASE_URL, json_data)
-        print(response)
+        hide_loader(page, loader)
+        if response["error"] is None:
+            if type == "avg":
+                pass
+            elif type == "fourty":
+                pass
+            else:
+                additional_hours_title.value = ""
+                additional_hours.value = ""
+                additional_hours_amount.value = ""
+                pay_list.controls.append(create_earnings_item(json_data, current_theme))
+                page.update()
+        else:
+            if type == "avg":
+                avg_pay.value = "There was an error, please try again"
+            elif type == "fourty":
+                fourty_hours.value = "There was an error, please try again"
+            else:
+                additional_hours_title.value = "There was an error, please try again"
+                additional_hours.value = ""
+                additional_hours_amount.value = ""
 
     pay_column = ft.Column(controls=[
         ft.Text("Pay(optional)", weight=ft.FontWeight.BOLD, size=28),
@@ -112,8 +134,7 @@ def pay_page(current_theme, page:ft.Page, BASE_URL:str, user_id:str):
         ft.Column(col={"sm": 6}, controls=[pay_container])
     ])
 
-    pay_list = ft.ListView()
-
+    
     
     appbar = ft.AppBar(leading=ft.Row(controls=[ft.IconButton(icon=ft.Icons.ARROW_BACK, icon_color=current_theme["top_appbar_colors"]["icon_color"], on_click=lambda _: page.go("/bills")),ft.Image(src=current_theme["top_appbar_colors"]["icon"], fit=ft.ImageFit.CONTAIN)]), leading_width=200, bgcolor=current_theme["top_appbar_colors"]["background"])
     #floating_action_button = ft.FloatingActionButton(icon=ft.Icons.SAVE, on_click=save_update_data, bgcolor=current_theme["bottom_navigation_colors"]["background"], foreground_color=current_theme["bottom_navigation_colors"]["icon"], tooltip="Save or update data")
@@ -135,13 +156,24 @@ def pay_page(current_theme, page:ft.Page, BASE_URL:str, user_id:str):
 
     async def build_earnings_list():
         data = await get_earnings(page, BASE_URL, user_id)
-        if data["error"] is not None or data["error"] != "":
-            profile_pic = data["profile_pic"]
-            
+        print(data)
+        if data["error"] is None:
+            profile_pic = data["data"][0]["image_url"]
+            day_of_week = data["data"][0]["day_of_week"]
+            payday_options.value = day_of_week
+            page.update()
             if profile_pic:
                 appbar_actions = [ft.Container(content=ft.Image(src=profile_pic, width=40, height=40), border_radius=50, margin=ft.margin.only(right=10))]
                 appbar.actions = appbar_actions
                 page.update()
+            for item in data["data"]:
+                if item["title"] == "Average Pay":
+                    avg_pay.value = item["amount"]
+                elif item["title"] == "40 Hour Pay":
+                    fourty_hours.value = item["amount"]
+                else:
+                    pay_list.controls.append(create_earnings_item(item, current_theme))
+            page.update()
         else:
             print(data["error"])
     

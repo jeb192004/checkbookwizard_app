@@ -1,0 +1,18 @@
+[project]
+name = "Checkbook Wizard"
+version = "0.0.15"
+description = "My first Flet project"
+authors = [
+  {name = "James Burnison", email = "jeb192004@gmail.com"}
+]
+dependencies = ["flet==0.25.2"]
+
+[tool.flet]
+org = "com.burnison.me" # --org
+product = "Checkbook Wizard" # --product
+company = "burnison.me" # --company
+build_number = 15 # --build-number
+
+[tool.flet.splash]
+color = "#ffffff"
+dark_color = "#000000"
