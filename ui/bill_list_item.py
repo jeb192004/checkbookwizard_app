@@ -3,7 +3,7 @@ from datetime import datetime, date, timedelta
 from data.data_sync import get_bills, save_unpaid_bills, remove_unpaid_bills
 from ui.alert import create_loader, show_loader, hide_loader
 
-
+column_size = {"sm": 6, "md": 5, "lg":4, "xl": 3}
 def create_bill_item(page, current_theme, loader, BASE_URL, toggle_calc_bottom_sheet, bill_list_container, bill_stack, my_bills, unpaid_bills):
     start_date = datetime.now()
     end_date = start_date + timedelta(days=365)#365
@@ -251,6 +251,7 @@ def create_bill_item(page, current_theme, loader, BASE_URL, toggle_calc_bottom_s
             
         weekly_bill_lists.append(
             ft.Card(
+                col=column_size,
                 content=ft.Column(
                     controls=[
                         ft.Container(
@@ -270,6 +271,7 @@ def create_bill_item(page, current_theme, loader, BASE_URL, toggle_calc_bottom_s
                     ]
                 ),
                 color=current_theme['list_item_colors']['base'],
+                expand_loose=True
             )
         )
     
@@ -282,6 +284,7 @@ def create_bill_item(page, current_theme, loader, BASE_URL, toggle_calc_bottom_s
             isEditable = True
         weekly_bill_lists.append(
             ft.Card(
+                col=column_size,
                 content=ft.Column(
                     controls=[
                         ft.Container(
@@ -303,10 +306,13 @@ def create_bill_item(page, current_theme, loader, BASE_URL, toggle_calc_bottom_s
                 color=current_theme['list_item_colors']['base'],
             )
         )
-
-    #print(weekly_bill_lists)
-    bill_list = ft.ListView(controls=weekly_bill_lists,expand=1, spacing=10, padding=ft.padding.only(left=5, right=5, top=10, bottom=10))
-    bill_list_container.content = bill_list
-    bill_stack.controls.insert(0, bill_list_container)
+    '''def page_resize(e):
+        pw = f"{page.width} px"
+        print(pw)
+    page.on_resized = page_resize'''
+    bill_list = ft.ResponsiveRow(controls=weekly_bill_lists, spacing=10)
+    #bill_list = ft.ListView(controls=weekly_bill_lists,expand=1, spacing=10, padding=ft.padding.only(left=5, right=5, top=10, bottom=10))
+    bill_list_container.content = ft.Column(controls=[bill_list], expand=True, scroll=True)
+    #bill_stack.controls.insert(0, bill_list_container)
     page.update()
     

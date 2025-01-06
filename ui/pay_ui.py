@@ -1,13 +1,15 @@
 import asyncio
 import flet as ft
-from data.utils import format_dollar
+from data.utils import format_dollar, navigate_to
 from data.data_sync import add_update_earnings, get_earnings
 from ui.alert import create_loader, show_loader, hide_loader
-from data.earnings_list_item import create_earnings_item
+from ui.earnings_list_item import create_earnings_item
+from ui.my_controls import InitMyControls, TextField, ElevatedButton, Radio
 
 payday_value = "5"
 
 def pay_page(current_theme, page:ft.Page, BASE_URL:str, user_id:str):
+    InitMyControls(page)
     loader = create_loader(page)
     pay_list = ft.ListView()
 
@@ -17,28 +19,28 @@ def pay_page(current_theme, page:ft.Page, BASE_URL:str, user_id:str):
         
 
     payday_options = ft.RadioGroup(content=ft.Column([
-            ft.Radio(value="0", label="Sunday", label_style={"color": current_theme["text_color"]}),
-            ft.Radio(value="1", label="Monday", label_style={"color": current_theme["text_color"]}),
-            ft.Radio(value="2", label="Tuesday", label_style={"color": current_theme["text_color"]}),
-            ft.Radio(value="3", label="Wednesday", label_style={"color": current_theme["text_color"]}),
-            ft.Radio(value="4", label="Thursday", label_style={"color": current_theme["text_color"]}),
-            ft.Radio(value="5", label="Friday(default)", label_style={"color": current_theme["text_color"]}),
-            ft.Radio(value="6", label="Saturday", label_style={"color": current_theme["text_color"]})
+            Radio(value="0", label="Sunday"),
+            Radio(value="1", label="Monday"),
+            Radio(value="2", label="Tuesday"),
+            Radio(value="3", label="Wednesday"),
+            Radio(value="4", label="Thursday"),
+            Radio(value="5", label="Friday(default)"),
+            Radio(value="6", label="Saturday")
         ]), on_change=radiogroup_changed)
-    payday_options.value = "3"
+    payday_options.value = payday_value
 
     payday_column = ft.Column(col={"sm": 6}, controls=[
-        ft.Text("Please select the day of the week you pay your bills", weight=ft.FontWeight.BOLD, size=28),
+        ft.Text("Please select the day of the week you pay your bills", weight=ft.FontWeight.BOLD, size=28, color=current_theme["header_text_color"]),
         payday_options])
     payday_container = ft.Container(content=payday_column, padding=ft.padding.all(10))
     
     hour_input_filter=ft.InputFilter(allow=True, regex_string=r"^[0-9]*$", replacement_string="")
 
-    avg_pay = ft.TextField(value="", label="Average Pay", prefix="$", border_color = current_theme["list_item_colors"]["total_amount_border_color"], color=current_theme["list_item_colors"]["total_amount_text_color"], on_change=lambda e: format_dollar(e, page, avg_pay))
-    fourty_hours = ft.TextField(value="", label="40 Hour Pay", border_color = current_theme["list_item_colors"]["total_amount_border_color"], color=current_theme["list_item_colors"]["total_amount_text_color"], on_change=lambda e: format_dollar(e, page, fourty_hours))
-    additional_hours_title = ft.TextField(value="", label="Title", border_color = current_theme["list_item_colors"]["total_amount_border_color"], color=current_theme["list_item_colors"]["total_amount_text_color"])
-    additional_hours = ft.TextField(value="", label="Hours", border_color = current_theme["list_item_colors"]["total_amount_border_color"], color=current_theme["list_item_colors"]["total_amount_text_color"], input_filter=hour_input_filter)
-    additional_hours_amount = ft.TextField(value="", label="Amount", border_color = current_theme["list_item_colors"]["total_amount_border_color"], color=current_theme["list_item_colors"]["total_amount_text_color"], on_change=lambda e: format_dollar(e, page, additional_hours))
+    avg_pay = TextField(value="", label="Average Pay", prefix="$", on_change=lambda e: format_dollar(e, page, avg_pay))
+    fourty_hours = TextField(value="", label="40 Hour Pay", on_change=lambda e: format_dollar(e, page, fourty_hours))
+    additional_hours_title = TextField(value="", label="Title")
+    additional_hours = TextField(value="", label="Hours", input_filter=hour_input_filter)
+    additional_hours_amount = TextField(value="", label="Amount", on_change=lambda e: format_dollar(e, page, additional_hours_amount))
     
     def save_update_data(e, type):
         title = None
@@ -115,16 +117,16 @@ def pay_page(current_theme, page:ft.Page, BASE_URL:str, user_id:str):
                 additional_hours_amount.value = ""
 
     pay_column = ft.Column(controls=[
-        ft.Text("Pay(optional)", weight=ft.FontWeight.BOLD, size=28),
+        ft.Text("Pay(optional)", weight=ft.FontWeight.BOLD, size=28, color=current_theme["header_text_color"]),
         avg_pay,
-        ft.ElevatedButton("Save", icon=ft.Icons.SAVE, on_click=lambda e: save_update_data(e, "avg")),
+        ft.Row(controls=[ft.Container(content=ElevatedButton(text="Save", icon=ft.Icons.SAVE, on_click=lambda e: save_update_data(e, "avg")), padding=ft.padding.only(right=10))],expand=True, alignment=ft.MainAxisAlignment.END),
         fourty_hours,
-        ft.ElevatedButton("Save", icon=ft.Icons.SAVE, on_click=lambda e: save_update_data(e, "fourty")),
-        ft.Text("Additional Hours of Pay(optional)", weight=ft.FontWeight.BOLD, size=28),
+        ft.Row(controls=[ft.Container(content=ElevatedButton(text="Save", icon=ft.Icons.SAVE, on_click=lambda e: save_update_data(e, "fourty")), padding=ft.padding.only(right=10))],expand=True, alignment=ft.MainAxisAlignment.END),
+        ft.Text("Additional Hours of Pay(optional)", weight=ft.FontWeight.BOLD, size=28, color=current_theme["header_text_color"]),
         additional_hours_title,
         additional_hours,
         additional_hours_amount,
-        ft.ElevatedButton("Save", icon=ft.Icons.SAVE, on_click=lambda e: save_update_data(e, None)),
+        ft.Row(controls=[ft.Container(content=ElevatedButton(text="Save", icon=ft.Icons.SAVE, on_click=lambda e: save_update_data(e, None)), padding=ft.padding.only(right=10))],expand=True, alignment=ft.MainAxisAlignment.END),
         
     ])
     pay_container = ft.Container(content=pay_column, padding=ft.padding.all(10))
@@ -136,17 +138,18 @@ def pay_page(current_theme, page:ft.Page, BASE_URL:str, user_id:str):
 
     
     
-    appbar = ft.AppBar(leading=ft.Row(controls=[ft.IconButton(icon=ft.Icons.ARROW_BACK, icon_color=current_theme["top_appbar_colors"]["icon_color"], on_click=lambda _: page.go("/bills")),ft.Image(src=current_theme["top_appbar_colors"]["icon"], fit=ft.ImageFit.CONTAIN)]), leading_width=200, bgcolor=current_theme["top_appbar_colors"]["background"])
+    appbar = ft.AppBar(leading=ft.Row(controls=[ft.IconButton(icon=ft.Icons.ARROW_BACK, icon_color=current_theme["top_appbar_colors"]["icon_color"], on_click=lambda _: navigate_to(page, loader, "/bills")),ft.Image(src=current_theme["top_appbar_colors"]["icon"], fit=ft.ImageFit.CONTAIN)]), leading_width=200, bgcolor=current_theme["top_appbar_colors"]["background"])
     #floating_action_button = ft.FloatingActionButton(icon=ft.Icons.SAVE, on_click=save_update_data, bgcolor=current_theme["bottom_navigation_colors"]["background"], foreground_color=current_theme["bottom_navigation_colors"]["icon"], tooltip="Save or update data")
     
     page.views.append(
         ft.View(
             "/pay",
             padding=ft.padding.all(0),
+            bgcolor=current_theme["background"],
             scroll=True,
             controls=[
                 body,
-                ft.Container(content=pay_list,padding=ft.padding.only(bottom=80)),
+                ft.Container(content=pay_list,padding=ft.padding.only(bottom=80), alignment=ft.alignment.center),
             ],
             appbar=appbar,
             #floating_action_button=floating_action_button,
@@ -169,10 +172,14 @@ def pay_page(current_theme, page:ft.Page, BASE_URL:str, user_id:str):
             for item in data["data"]:
                 if item["title"] == "Average Pay":
                     avg_pay.value = item["amount"]
+                    avg_pay.label_style = {"color": current_theme["text_field"]["label_color_focused"]}
                 elif item["title"] == "40 Hour Pay":
                     fourty_hours.value = item["amount"]
+                    fourty_hours.label_style = {"color": current_theme["text_field"]["label_color_focused"]}
                 else:
                     pay_list.controls.append(create_earnings_item(item, current_theme))
+                    if page.platform is page.platform.WINDOWS or page.platform is page.platform.LINUX or page.platform is page.platform.MACOS:
+                        pay_list.width = 600
             page.update()
         else:
             print(data["error"])

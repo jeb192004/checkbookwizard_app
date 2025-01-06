@@ -21,7 +21,7 @@ def main(page: ft.Page):
     page.title = "Checkbook Wizard"
     if page.platform is page.platform.WINDOWS or page.platform is page.platform.LINUX or page.platform is page.platform.MACOS:
         page.window.width = 400
-        page.window.height = 700
+        page.window.height = 675
 
     # page.platform = ft.PagePlatform.ANDROID
 

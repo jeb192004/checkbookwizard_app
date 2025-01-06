@@ -7,11 +7,38 @@ import flet as ft
 # app icon collar border color - #EADD53
 # app icon text color - #71b681
 # Define custom themes with specific container and text colors
+
+
 def green_theme():
     return {
         "background": "#85bb65",
         "text_color": "#000000",
         "progress_bar_color": "#fed831",
+        "border_color":"#fed831",
+        
+        "text_field":{
+            "label_color_focused": "#fed831",
+            "label_color": "#ffffff",
+            "text_color": "#ffffff",
+            "background_color": "#1b4a00",
+            "border_color": "#fed831"
+        },
+        "elevated_button":{
+            "background": "#1b4a00",
+            "text": "#ffffff"
+        },
+        "label":{
+            "text": "#ffffff"
+        },
+        "radio":{
+            "fill_color": "#fed831",
+            "label_color": "#ffffff",
+            "background_color": "#1b4a00",
+            "border_color": "#fed831"
+        },
+        "title_color": "#000000",
+        "earnings_list_title_color": "#ffffff",
+        "header_text_color": "#000000",
         "list_item_colors": {
             "base": "#1b4a00",
             "inner_container": "#2F6D23",
@@ -59,6 +86,31 @@ def dark_theme():
         "background": ft.Colors.BLACK,
         "text_color": "#ffffff",
         "progress_bar_color": "#fed831",
+        "border_color":"#ffffff",
+        "text_field_label_color": "#fed831",
+        "header_text_color": "#ffffff",
+        "earnings_list_title_color": "#ffffff",
+        "text_field":{
+            "label_color_focused": "#ffffff",
+            "label_color": "#ffffff",
+            "text_color": "#ffffff",
+            "background_color": "#4E4E4E",
+            "border_color": "#ffffff"
+        },
+        "elevated_button":{
+            "background": "#3A3A3A",
+            "text": "#ffffff"
+        },
+        "label":{
+            "text": "#ffffff"
+        },
+        "radio":{
+            "fill_color": "#ffffff",
+            "label_color": "#ffffff",
+            "background_color": "#4E4E4E",
+            "border_color": "#ffffff"
+        },
+
         "list_item_colors": {
             "base": "#262626",
             "inner_container": "#3A3A3A",
@@ -105,6 +157,32 @@ def light_theme():
         "background": ft.Colors.WHITE,
         "text_color": "#000000",
         "progress_bar_color": "#000000",
+        "border_color":"#000000",
+        "text_field_label_color": "#fed831",
+
+        "header_text_color": "#000000",
+        "earnings_list_title_color": "#000000",
+        "text_field":{
+            "label_color_focused": "#000000",
+            "label_color": "#000000",
+            "text_color": "#000000",
+            "background_color": "#E0E0E0E0",
+            "border_color": "#000000"
+        },
+        "elevated_button":{
+            "background": "#000000",
+            "text": "#ffffff"
+        },
+        "label":{
+            "text": "#ffffff"
+        },
+        "radio":{
+            "fill_color": "#000000",
+            "label_color": "#000000",
+            "background_color": "#E0E0E0E0",
+            "border_color": "#000000"
+        },
+
         "list_item_colors": {
             "base": "#BDBDBD",
             "inner_container": "#E0E0E0E0",

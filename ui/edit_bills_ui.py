@@ -5,6 +5,7 @@ import asyncio
 
 from data.data_sync import get_bills, add_update_bills, remove_bill_item
 from ui.alert import create_loader, show_loader, hide_loader
+from data.utils import navigate_to
 
 appbar = []
 def edit_bills_page(current_theme, page:ft.Page, BASE_URL:str, user_id:str):
@@ -276,7 +277,7 @@ def edit_bills_page(current_theme, page:ft.Page, BASE_URL:str, user_id:str):
         print(json_data)
         response = add_update_bills(page, BASE_URL, json_data)
         if response == "success":
-            page.go("/bills")
+            navigate_to(page, loader, "/bills")
         else:
             error_text.value = "Something went wrong, please try again"
             error_text.visible = True
@@ -289,17 +290,12 @@ def edit_bills_page(current_theme, page:ft.Page, BASE_URL:str, user_id:str):
         }
         response = remove_bill_item(page, BASE_URL, json_data)
         if response == "success":
-            page.go("/bills")
+            navigate_to(page, loader, "/bills")
         else:
             error_text.value = "Something went wrong, please try again"
             error_text.visible = True
             page.update()
         
-
-    def go_back(e):
-        show_loader(page, loader)
-        page.go("/bills")
-
 
     floating_action_button = ft.FloatingActionButton(icon=ft.Icons.ADD, on_click=save, bgcolor=ft.Colors.LIME_300)
 
@@ -323,7 +319,7 @@ def edit_bills_page(current_theme, page:ft.Page, BASE_URL:str, user_id:str):
 
     clear_button = ft.Column(
         controls=[ft.Icon(name=ft.Icons.CLEAR, color=current_theme["bottom_navigation_colors"]["icon"]),
-                  ft.Text("Clear Form", size=12, color=current_theme["bottom_navigation_colors"]["text"], style=ft.TextStyle(weight=ft.FontWeight.BOLD))],
+                  ft.Text("Clear\nForm", size=12, color=current_theme["bottom_navigation_colors"]["text"], style=ft.TextStyle(weight=ft.FontWeight.BOLD))],
         spacing=2,
         expand=True,
         horizontal_alignment="center",
@@ -420,7 +416,7 @@ def edit_bills_page(current_theme, page:ft.Page, BASE_URL:str, user_id:str):
             bill_bottom_sheet.visible = True
         
         page.update()
-    appbar = ft.AppBar(leading=ft.Row(controls=[ft.IconButton(icon=ft.Icons.ARROW_BACK, icon_color=current_theme["top_appbar_colors"]["icon_color"], on_click=lambda _: go_back(page)),ft.Image(src=current_theme["top_appbar_colors"]["icon"], width=200, fit=ft.ImageFit.FIT_WIDTH)]), leading_width=200, bgcolor=current_theme["top_appbar_colors"]["background"])
+    appbar = ft.AppBar(leading=ft.Row(controls=[ft.IconButton(icon=ft.Icons.ARROW_BACK, icon_color=current_theme["top_appbar_colors"]["icon_color"], on_click=lambda _: navigate_to(page, loader, "/bills")),ft.Image(src=current_theme["top_appbar_colors"]["icon"], width=200, fit=ft.ImageFit.FIT_WIDTH)]), leading_width=200, bgcolor=current_theme["top_appbar_colors"]["background"])
             
     bottom_appbar = ft.BottomAppBar(
         bgcolor=current_theme["bottom_navigation_colors"]["background"],
@@ -503,7 +499,7 @@ def edit_bills_page(current_theme, page:ft.Page, BASE_URL:str, user_id:str):
                         ),
                     ]
                 ),
-                bgcolor=current_theme["list_item_colors"]["total_amount_background_color"],
+                bgcolor=current_theme["list_item_colors"]["inner_container"],
                 border_radius=ft.border_radius.all(5),
                 padding=ft.padding.all(10),
                 margin=ft.margin.all(0),

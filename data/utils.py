@@ -1,4 +1,5 @@
 import flet as ft
+from ui.alert import show_loader
 
 
 def format_dollar(e, page: ft.Page, text_field: ft.TextField):
@@ -29,3 +30,8 @@ def format_dollar(e, page: ft.Page, text_field: ft.TextField):
     # Update the text field with the formatted value
     text_field.value = formatted_value
     page.update()
+
+
+def navigate_to(page: ft.Page, loader, route: str):
+    show_loader(page, loader)
+    page.go(route)

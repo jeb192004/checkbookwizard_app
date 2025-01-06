@@ -1,7 +1,10 @@
 import flet as ft
 from ui.theme import light_theme, dark_theme, green_theme
+from data.utils import navigate_to
+from ui.alert import create_loader
 def settings_page(current_theme, page:ft.Page, BASE_URL:str):
-    appbar = ft.AppBar(leading=ft.Row(controls=[ft.IconButton(icon=ft.Icons.ARROW_BACK, icon_color=current_theme["top_appbar_colors"]["icon_color"], on_click=lambda _: page.go("/bills")),ft.Image(src=current_theme["top_appbar_colors"]["icon"], fit=ft.ImageFit.CONTAIN)]), leading_width=200, bgcolor=current_theme["top_appbar_colors"]["background"])
+    loader = create_loader(page)
+    appbar = ft.AppBar(leading=ft.Row(controls=[ft.IconButton(icon=ft.Icons.ARROW_BACK, icon_color=current_theme["top_appbar_colors"]["icon_color"], on_click=lambda _: navigate_to(page, loader, "/bills")),ft.Image(src=current_theme["top_appbar_colors"]["icon"], fit=ft.ImageFit.CONTAIN)]), leading_width=200, bgcolor=current_theme["top_appbar_colors"]["background"])
     
     def update_page_theme(page: ft.Page, theme: dict):
         # Update relevant controls in the page with the new theme colors

@@ -3,7 +3,8 @@ from datetime import datetime, date, timedelta
 import json
 from data.data_sync import get_bills, save_unpaid_bills, remove_unpaid_bills
 from ui.alert import create_loader, show_loader, hide_loader
-from data.bill_list_item import create_bill_item
+from ui.bill_list_item import create_bill_item
+from data.utils import navigate_to
 import asyncio
 
 selected_total_bills_amount = 0
@@ -11,6 +12,7 @@ selected_total_bills_amount = 0
 
 def bills_page(current_theme, page: ft.Page, BASE_URL: str, user_id: str):
     loader = create_loader(page)
+    page.bgcolor = current_theme["background"]
     start_date = datetime.now()
     end_date = start_date + timedelta(days=365)  # 365
     day_of_week = 5  # Friday(default)
@@ -19,7 +21,6 @@ def bills_page(current_theme, page: ft.Page, BASE_URL: str, user_id: str):
     unpaid_bills = []
     profile_page = None
     profile_pic = None
-    user_pay_hours = []
 
     chosen_pay = ft.Text()
     total_due = ft.Text()
@@ -37,7 +38,6 @@ def bills_page(current_theme, page: ft.Page, BASE_URL: str, user_id: str):
 
     dd = ft.Dropdown(
         width=100,
-        options=user_pay_hours,
         label="Pay Options",
         on_change=lambda e: update_chosen_pay(e.control.value),
         color=current_theme["calc_theme"]["dropdown_text"],
@@ -235,7 +235,7 @@ def bills_page(current_theme, page: ft.Page, BASE_URL: str, user_id: str):
                     ft.ElevatedButton(
                         content=payments_button,
                         expand=True,
-                        on_click=lambda _: page.go("/pay"),
+                        on_click=lambda _: navigate_to(page, loader, "/pay"),
                         bgcolor=current_theme["bottom_sheet"]["button_color"],
                     ),
                     ft.ElevatedButton(
@@ -244,7 +244,7 @@ def bills_page(current_theme, page: ft.Page, BASE_URL: str, user_id: str):
                         width=400,
                         color=current_theme["bottom_sheet"]["button_text_color"],
                         expand=True,
-                        on_click=lambda _: page.go("/settings"),
+                        on_click=lambda _: navigate_to(page, loader, "/settings"),
                         bgcolor=current_theme["bottom_sheet"]["button_color"],
                     ),
                     ft.ElevatedButton(
@@ -253,7 +253,7 @@ def bills_page(current_theme, page: ft.Page, BASE_URL: str, user_id: str):
                         width=400,
                         color=current_theme["bottom_sheet"]["button_text_color"],
                         expand=True,
-                        on_click=lambda _: page.go("/"),
+                        on_click=lambda _: navigate_to(page, loader, "/"),
                         bgcolor=current_theme["bottom_sheet"]["button_color"],
                     ),
                 ],
@@ -298,13 +298,7 @@ def bills_page(current_theme, page: ft.Page, BASE_URL: str, user_id: str):
             bottom_sheet.visible = True
         page.update()
 
-    def go_to_page(e):
-        show_loader(page, loader)
-        if e == "edit_bills":
-            page.go("/edit_bills")
-        elif e == "charts":
-            page.go("/charts")
-
+    
     bottom_appbar = ft.BottomAppBar(
         bgcolor=current_theme["bottom_navigation_colors"]["background"],
         shape=ft.NotchShape.CIRCULAR,
@@ -320,7 +314,7 @@ def bills_page(current_theme, page: ft.Page, BASE_URL: str, user_id: str):
                 ft.Container(
                     content=charts_button,
                     expand=True,
-                    on_click=lambda _: go_to_page("charts"),
+                    on_click=lambda _: navigate_to(page, loader, "/charts"),
                 ),
                 # ft.Container(expand=True),
                 # ft.Container(content=payments_button,expand=True, on_click=lambda _: page.go("/pay")),
@@ -328,7 +322,7 @@ def bills_page(current_theme, page: ft.Page, BASE_URL: str, user_id: str):
                 ft.Container(
                     content=edit_bills_button,
                     expand=True,
-                    on_click=lambda _: go_to_page("edit_bills"),
+                    on_click=lambda _: navigate_to(page, loader, "/edit_bills"),
                 ),
                 # ft.Container(expand=True),
                 ft.Container(
@@ -350,12 +344,14 @@ def bills_page(current_theme, page: ft.Page, BASE_URL: str, user_id: str):
 
     bill_list_container = ft.Container(
             bgcolor=current_theme["background"],
-            padding=ft.padding.all(0),
+            padding=ft.padding.only(top=0, left=5, right=5, bottom=0),
             margin=ft.margin.all(0),
             expand=True,
+            alignment=ft.alignment.top_center,
         )
     bill_stack = ft.Stack(
                     controls=[
+                        bill_list_container,
                         bottom_sheet,
                         calc_bottom_sheet,
                     ],
@@ -366,6 +362,7 @@ def bills_page(current_theme, page: ft.Page, BASE_URL: str, user_id: str):
         ft.View(
             "/bills",
             padding=ft.padding.all(0),
+            #scroll=True,
             controls=[
                 bill_stack
             ],
@@ -379,6 +376,8 @@ def bills_page(current_theme, page: ft.Page, BASE_URL: str, user_id: str):
         if data["error"] is not None or data["error"] != "":
             profile_pic = data["profile_pic"]
             user_pay_hours = data["user_pay_hours"]
+            if user_pay_hours:
+                dd.options = user_pay_hours
             my_bills = data["my_bills"]
             unpaid_bills = data["unpaid_bills"]
             create_bill_item(page, current_theme, loader, BASE_URL, toggle_calc_bottom_sheet, bill_list_container, bill_stack, my_bills, unpaid_bills)
