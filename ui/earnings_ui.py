@@ -1,6 +1,6 @@
 import asyncio
 import flet as ft
-from data.utils import format_dollar, navigate_to
+from data.utils import format_dollar, navigate_to, sort_earnings
 from data.data_sync import add_update_earnings, get_earnings
 from ui.alert import create_loader, show_loader, hide_loader
 from ui.earnings_list_item import create_earnings_item
@@ -104,7 +104,7 @@ def pay_page(current_theme, page:ft.Page, BASE_URL:str, user_id:str):
                 additional_hours_title.value = ""
                 additional_hours.value = ""
                 additional_hours_amount.value = ""
-                pay_list.controls.append(create_earnings_item(json_data, current_theme))
+                pay_list.controls.append(create_earnings_item(json_data, BASE_URL, current_theme))
                 page.update()
         else:
             if type == "avg":
@@ -159,28 +159,38 @@ def pay_page(current_theme, page:ft.Page, BASE_URL:str, user_id:str):
 
     async def build_earnings_list():
         data = await get_earnings(page, BASE_URL, user_id)
-        print(data)
+        #print(data)
         if data["error"] is None:
-            profile_pic = data["data"][0]["image_url"]
-            day_of_week = data["data"][0]["day_of_week"]
-            payday_options.value = day_of_week
-            page.update()
-            if profile_pic:
-                appbar_actions = [ft.Container(content=ft.Image(src=profile_pic, width=40, height=40), border_radius=50, margin=ft.margin.only(right=10))]
-                appbar.actions = appbar_actions
+            
+            if len(data["data"]) > 0:
+                profile_pic = data["data"][0]["image_url"]
+                day_of_week = data["data"][0]["day_of_week"]
+                payday_options.value = day_of_week
                 page.update()
-            for item in data["data"]:
-                if item["title"] == "Average Pay":
-                    avg_pay.value = item["amount"]
-                    avg_pay.label_style = {"color": current_theme["text_field"]["label_color_focused"]}
-                elif item["title"] == "40 Hour Pay":
-                    fourty_hours.value = item["amount"]
-                    fourty_hours.label_style = {"color": current_theme["text_field"]["label_color_focused"]}
-                else:
-                    pay_list.controls.append(create_earnings_item(item, current_theme))
-                    if page.platform is page.platform.WINDOWS or page.platform is page.platform.LINUX or page.platform is page.platform.MACOS:
-                        pay_list.width = 600
-            page.update()
+                if profile_pic:
+                    appbar_actions = [ft.Container(content=ft.Image(src=profile_pic, width=40, height=40), border_radius=50, margin=ft.margin.only(right=10))]
+                    appbar.actions = appbar_actions
+                    page.update()
+
+            try:
+                sorted_earnings = sort_earnings(data["data"], "amount")
+                #if len(sorted_earnings) > 0:
+
+                for item in sorted_earnings:
+                    item["user_id"] = user_id
+                    if item["title"] == "Average Pay":
+                        avg_pay.value = item["amount"]
+                        avg_pay.label_style = {"color": current_theme["text_field"]["label_color_focused"]}
+                    elif item["title"] == "40 Hour Pay":
+                        fourty_hours.value = item["amount"]
+                        fourty_hours.label_style = {"color": current_theme["text_field"]["label_color_focused"]}
+                    else:
+                        pay_list.controls.append(create_earnings_item(item, BASE_URL, current_theme))
+                        if page.platform is page.platform.WINDOWS or page.platform is page.platform.LINUX or page.platform is page.platform.MACOS:
+                            pay_list.width = 600
+                page.update()
+            except KeyError:
+                print("Error: No earnings data found")
         else:
             print(data["error"])
     

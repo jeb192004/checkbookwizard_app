@@ -1,12 +1,25 @@
 import flet as ft
 from ui.my_controls import TextField, DeleteButton, Title
+from data.data_sync import delete_earning
+from ui.alert import create_loader, show_loader, hide_loader
+import asyncio
+
+async def delete_earnings(e, BASE_URL, id, user_id):
+    page = e.control.page
+    loader = create_loader(page)
+    show_loader(page, loader)
+    response = await delete_earning(BASE_URL, id, user_id)
+    if response["error"] is None:
+        list_item = e.control.parent.parent.parent.parent
+        listview = list_item.parent
+        listview.controls.remove(list_item)
+        listview.update()
+    else:
+        print(response["error"])
+    hide_loader(page, loader)
 
 
-def delete_earning(e, earning_id):
-    print(f"Deleting earning with ID: {earning_id}")
-
-
-def create_earnings_item(data, current_theme):
+def create_earnings_item(data, BASE_URL, current_theme):
     return ft.Container(
                 ft.Column(
                     controls=[
@@ -15,7 +28,7 @@ def create_earnings_item(data, current_theme):
                             controls=[
                                 TextField(label='Hours', value=data["hours"], read_only=True, width=60, text_size=14, height=42),
                                 TextField(label='Amount', value=data["amount"], read_only=True, width=130, text_size=14, height=42),
-                                ft.Row(controls=[DeleteButton(on_click=lambda e: delete_earning(e, data["id"]))],
+                                ft.Row(controls=[DeleteButton(on_click=lambda e: asyncio.run(delete_earnings(e, BASE_URL=BASE_URL, id=data["id"], user_id=data["user_id"])) )],
                                        alignment=ft.MainAxisAlignment.END,
                                        expand=True
                                        )

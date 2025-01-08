@@ -6,14 +6,14 @@ from ui.login_ui import login_page
 from ui.bills_ui import bills_page
 from ui.home_ui import home_page
 from ui.settings_ui import settings_page
-from ui.pay_ui import pay_page
+from ui.earnings_ui import pay_page
 from ui.edit_bills_ui import edit_bills_page
 from ui.theme import light_theme, dark_theme, green_theme
 from ui.charts_ui import charts_page
 from ui.alert import create_loader, show_loader, hide_loader
 
 BASE_URL = "https://checkbookwizard.com/"
-#BASE_URL = 'http://localhost:1337/'  # For development
+#BASE_URL = 'http://localhost:1338/'  # For development
 
 
 def main(page: ft.Page):

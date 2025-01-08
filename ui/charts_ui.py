@@ -5,9 +5,10 @@ from data.data_sync import get_bills
 from ui.alert import create_loader, show_loader, hide_loader
 from data.utils import navigate_to
 
+my_bills = []
 
 def charts_page(current_theme, page:ft.Page, BASE_URL:str, user_id:str):
-    async def build_bill_list():
+    '''async def build_bill_list():
         data = await get_bills(page, user_id, BASE_URL)
         if data["error"] is not None or data["error"] != "":
             profile_pic = data["profile_pic"]
@@ -16,7 +17,7 @@ def charts_page(current_theme, page:ft.Page, BASE_URL:str, user_id:str):
             unpaid_bills = data["unpaid_bills"]
             return {"profile_pic":profile_pic, "user_pay_hours":user_pay_hours, "my_bills":my_bills}
         else:
-            print(data["error"])
+            print(data["error"])'''
     loader = create_loader(page)
     pie_chart_container = ft.Container()
     colors = [
@@ -108,7 +109,29 @@ def charts_page(current_theme, page:ft.Page, BASE_URL:str, user_id:str):
 
     pie_chart.on_chart_event=on_chart_event
 
-    data = asyncio.run(build_bill_list())
+
+    earnings_dropdown = ft.Dropdown()
+    chosen_pay=ft.Text(f"{earnings_dropdown.value if earnings_dropdown.value else 'Monthly Earnings: $0.00'}", size=18, color=current_theme['calc_theme']['text'])
+    def update_chosen_pay(e):
+            monthly_pay = float(e.split('$')[1].replace(',', ''))*4
+            chosen_pay.value = f"Monthly Earnings: ${monthly_pay:,.2f}"
+            pie_chart.sections = []
+            create_pie_chart_from_pay(pie_chart, monthly_pay, my_bills)
+            page.update()
+
+    earnings_dropdown = ft.Dropdown(
+            width=300,
+            #options=user_pay_hours,
+            label="Earnings",
+            on_change=lambda e: update_chosen_pay(e.control.value),
+            color=current_theme["calc_theme"]["dropdown_text"],
+            bgcolor=current_theme["calc_theme"]["dropdown_background"],
+            border_color=current_theme["calc_theme"]["dropdown_border_color"],
+            icon_enabled_color=current_theme["calc_theme"]["dropdown_icon_color"],
+        )
+
+
+    '''data = asyncio.run(build_bill_list())
     if "error" not in data:
         profile_pic = data["profile_pic"]
         user_pay_hours = data["user_pay_hours"]
@@ -142,40 +165,21 @@ def charts_page(current_theme, page:ft.Page, BASE_URL:str, user_id:str):
             )
         
 
-
-        earnings_dropdown = ft.Dropdown()
-        chosen_pay=ft.Text(f"{earnings_dropdown.value if earnings_dropdown.value else 'Monthly Earnings: $0.00'}", size=18, color=current_theme['calc_theme']['text'])
-        def update_chosen_pay(e):
-            monthly_pay = float(e.split('$')[1].replace(',', ''))*4
-            chosen_pay.value = f"Monthly Earnings: ${monthly_pay:,.2f}"
-            pie_chart.sections = []
-            create_pie_chart_from_pay(pie_chart, monthly_pay, my_bills)
-            page.update()
-
-        earnings_dropdown = ft.Dropdown(
-            width=300,
-            options=user_pay_hours,
-            label="Earnings",
-            on_change=lambda e: update_chosen_pay(e.control.value),
-            color=current_theme["calc_theme"]["dropdown_text"],
-            bgcolor=current_theme["calc_theme"]["dropdown_background"],
-            border_color=current_theme["calc_theme"]["dropdown_border_color"],
-            icon_enabled_color=current_theme["calc_theme"]["dropdown_icon_color"],
-        )
-
-        
-
         
     else:
         print(data['error'])
         navigate_to(page, loader, "/bills")
+'''
+    
+    appbar = ft.AppBar(
+            leading=ft.Image(
+                src=current_theme["top_appbar_colors"]["icon"], fit=ft.ImageFit.CONTAIN
+            ),
+            leading_width=200,
+            bgcolor=current_theme["top_appbar_colors"]["background"],
+            shadow_color=current_theme["shadow_color"],
+        )
 
-    
-    if profile_pic:
-        appbar = ft.AppBar(leading=ft.Row(controls=[ft.IconButton(icon=ft.Icons.ARROW_BACK, icon_color=current_theme["top_appbar_colors"]["icon_color"], on_click=lambda _: navigate_to(page, loader, "/bills")),ft.Image(src=current_theme["top_appbar_colors"]["icon"], width=200, fit=ft.ImageFit.FIT_WIDTH)]), leading_width=200, bgcolor=current_theme["top_appbar_colors"]["background"], actions=[ft.Container(content=ft.Image(src=profile_pic, width=40, height=40), border_radius=50, margin=ft.margin.only(right=10))])
-    else:
-        appbar = ft.AppBar(leading=ft.Row(controls=[ft.IconButton(icon=ft.Icons.ARROW_BACK, icon_color=current_theme["top_appbar_colors"]["icon_color"], on_click=lambda _: navigate_to(page, loader, "/bills")),ft.Image(src=current_theme["top_appbar_colors"]["icon"], width=200, fit=ft.ImageFit.FIT_WIDTH)]), leading_width=200, bgcolor=current_theme["top_appbar_colors"]["background"])
-    
     page.views.append(ft.View(
         "/charts",
                     [ft.Stack(
@@ -201,4 +205,22 @@ def charts_page(current_theme, page:ft.Page, BASE_URL:str, user_id:str):
                 )
     )
 
+    async def build_bill_list():
+        data = await get_bills(page, user_id, BASE_URL)
+        if data["error"] is not None or data["error"] != "":
+            profile_pic = data["profile_pic"]
+            user_pay_hours = data["user_pay_hours"]
+            if user_pay_hours:
+                earnings_dropdown.options = user_pay_hours
+            #my_bills = data["my_bills"]
+            #unpaid_bills = data["unpaid_bills"]
+            if profile_pic:
+                appbar_actions = [ft.Container(content=ft.Image(src=profile_pic, width=40, height=40), border_radius=50, margin=ft.margin.only(right=10))]
+                appbar.actions = appbar_actions
+                page.update()
+            return data["my_bills"]
+        else:
+            print(data["error"])
+    
+    my_bills = asyncio.run(build_bill_list())
     

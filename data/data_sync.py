@@ -80,9 +80,16 @@ def add_update_earnings(page: Page, BASE_URL: str, data):
           return dict(data=None, error=f"HTTP Error: {response.status_code}")
      
 async def get_earnings(page:Page, BASE_URL:str, user_id:str):
-     print(user_id)
      async with httpx.AsyncClient() as client:
         response = await client.get(f"{BASE_URL}data/earnings/{user_id}")
+        if response.status_code == 200:
+            return dict(data=response.json(), error=None)
+        else:
+            return dict(data=None, error=f"HTTP Error: {response.status_code}")
+
+async def delete_earning(BASE_URL: str, id, user_id):
+     async with httpx.AsyncClient() as client:
+        response = await client.delete(f"{BASE_URL}data/earnings/{id}/{user_id}")
         if response.status_code == 200:
             return dict(data=response.json(), error=None)
         else:

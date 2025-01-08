@@ -35,3 +35,11 @@ def format_dollar(e, page: ft.Page, text_field: ft.TextField):
 def navigate_to(page: ft.Page, loader, route: str):
     show_loader(page, loader)
     page.go(route)
+
+def sort_earnings(earnings, sort_by: str):
+    if sort_by == "amount":
+        return sorted(earnings, key=lambda x: float(x.get('amount', '0').replace(',', '')) if 'amount' in x and x['amount'] else 0)
+    elif sort_by == "hours":
+        return sorted(earnings, key=lambda x: x['amount'])
+    else:
+        return earnings       

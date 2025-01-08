@@ -285,6 +285,7 @@ def create_bill_item(page, current_theme, loader, BASE_URL, toggle_calc_bottom_s
         weekly_bill_lists.append(
             ft.Card(
                 col=column_size,
+                shadow_color=ft.Colors.BLACK,
                 content=ft.Column(
                     controls=[
                         ft.Container(

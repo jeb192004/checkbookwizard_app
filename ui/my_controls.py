@@ -50,13 +50,14 @@ class TextField(ft.TextField):
         self.prefix = prefix
         
 class ElevatedButton(ft.ElevatedButton):
-    def __init__(self, text, icon=None, on_click=None):
+    def __init__(self, text=None, icon=None, on_click=None, expand=False, bgcolor=None, color=None):
         super().__init__()
         self.text = text
         self.icon = icon
-        self.bgcolor = current_theme["elevated_button"]['background']
-        self.color = current_theme["elevated_button"]['text']
+        self.bgcolor = bgcolor if bgcolor else current_theme["elevated_button"]['background']
+        self.color = color if color else current_theme["elevated_button"]['text']
         self.on_click = on_click
+        self.expand = expand
 
 class DeleteButton(ft.ElevatedButton):
     def __init__(self, on_click=None):

@@ -15,7 +15,7 @@ def green_theme():
         "text_color": "#000000",
         "progress_bar_color": "#fed831",
         "border_color":"#fed831",
-        
+        "shadow_color": "#000000",
         "text_field":{
             "label_color_focused": "#fed831",
             "label_color": "#ffffff",
@@ -87,6 +87,7 @@ def dark_theme():
         "text_color": "#ffffff",
         "progress_bar_color": "#fed831",
         "border_color":"#ffffff",
+        "shadow_color": "#ffffff",
         "text_field_label_color": "#fed831",
         "header_text_color": "#ffffff",
         "earnings_list_title_color": "#ffffff",
@@ -159,7 +160,7 @@ def light_theme():
         "progress_bar_color": "#000000",
         "border_color":"#000000",
         "text_field_label_color": "#fed831",
-
+        "shadow_color": "#000000",
         "header_text_color": "#000000",
         "earnings_list_title_color": "#000000",
         "text_field":{
@@ -209,12 +210,12 @@ def light_theme():
             "icon": ft.Colors.BLACK
         },
         "bottom_sheet":{
-            "background_color": "#ffffff",
+            "background_color": "#BDBDBD",
             "button_text_color": ft.Colors.BLACK,
-            "button_color": ft.Colors.GREY
+            "button_color": ft.Colors.WHITE
         },
         "calc_theme": {
-            "background": "#E0E0E0",
+            "background": "#BDBDBD",
             "text_title": ft.Colors.BLACK,
             "text": ft.Colors.BLACK,
             "dropdown_text": ft.Colors.BLACK,

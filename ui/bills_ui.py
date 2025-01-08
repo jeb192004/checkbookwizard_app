@@ -6,11 +6,13 @@ from ui.alert import create_loader, show_loader, hide_loader
 from ui.bill_list_item import create_bill_item
 from data.utils import navigate_to
 import asyncio
+from ui.my_controls import TextField, ElevatedButton, InitMyControls
 
 selected_total_bills_amount = 0
 
 
 def bills_page(current_theme, page: ft.Page, BASE_URL: str, user_id: str):
+    InitMyControls(page)
     loader = create_loader(page)
     page.bgcolor = current_theme["background"]
     start_date = datetime.now()
@@ -238,23 +240,21 @@ def bills_page(current_theme, page: ft.Page, BASE_URL: str, user_id: str):
                         on_click=lambda _: navigate_to(page, loader, "/pay"),
                         bgcolor=current_theme["bottom_sheet"]["button_color"],
                     ),
-                    ft.ElevatedButton(
-                        "Setings",
+                    ElevatedButton(
+                        text="Setings",
                         icon=ft.Icons.SETTINGS,
-                        width=400,
-                        color=current_theme["bottom_sheet"]["button_text_color"],
                         expand=True,
                         on_click=lambda _: navigate_to(page, loader, "/settings"),
                         bgcolor=current_theme["bottom_sheet"]["button_color"],
+                        color=current_theme["bottom_sheet"]["button_text_color"],
                     ),
-                    ft.ElevatedButton(
+                    ElevatedButton(
                         "Log Out",
                         icon=ft.Icons.LOGOUT,
-                        width=400,
-                        color=current_theme["bottom_sheet"]["button_text_color"],
                         expand=True,
                         on_click=lambda _: navigate_to(page, loader, "/"),
                         bgcolor=current_theme["bottom_sheet"]["button_color"],
+                        color=current_theme["bottom_sheet"]["button_text_color"],
                     ),
                 ],
                 expand=False,
@@ -273,6 +273,12 @@ def bills_page(current_theme, page: ft.Page, BASE_URL: str, user_id: str):
         bottom=0,
         left=10,
         right=10,
+        shadow=ft.BoxShadow(
+            blur_radius=10,
+            spread_radius=2,
+            color=current_theme["shadow_color"],
+            offset=ft.Offset(0, -4),  # Negative offset for top shadow
+        ),
     )
 
     def toggle_calc_bottom_sheet(e):
@@ -301,8 +307,7 @@ def bills_page(current_theme, page: ft.Page, BASE_URL: str, user_id: str):
     
     bottom_appbar = ft.BottomAppBar(
         bgcolor=current_theme["bottom_navigation_colors"]["background"],
-        shape=ft.NotchShape.CIRCULAR,
-        elevation=10,
+        shadow_color=current_theme["shadow_color"],
         content=ft.Row(
             controls=[
                 ft.Container(
@@ -340,6 +345,7 @@ def bills_page(current_theme, page: ft.Page, BASE_URL: str, user_id: str):
             ),
             leading_width=200,
             bgcolor=current_theme["top_appbar_colors"]["background"],
+            shadow_color=current_theme["shadow_color"],
         )
 
     bill_list_container = ft.Container(
