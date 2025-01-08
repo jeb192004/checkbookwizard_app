@@ -1,6 +1,6 @@
 [project]
 name = "Checkbook Wizard"
-version = "0.0.15"
+version = "0.0.16"
 description = "My first Flet project"
 authors = [
   {name = "James Burnison", email = "jeb192004@gmail.com"}
@@ -11,7 +11,7 @@ dependencies = ["flet==0.25.2"]
 org = "com.burnison.me" # --org
 product = "Checkbook Wizard" # --product
 company = "burnison.me" # --company
-build_number = 15 # --build-number
+build_number = 16 # --build-number
 
 [tool.flet.splash]
 color = "#ffffff"

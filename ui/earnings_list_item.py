@@ -26,7 +26,7 @@ def create_earnings_item(data, BASE_URL, current_theme):
                         Title(value=data["title"], size=18, color=current_theme["earnings_list_title_color"]),
                         ft.Row(
                             controls=[
-                                TextField(label='Hours', value=data["hours"], read_only=True, width=60, text_size=14, height=42),
+                                TextField(label='Hours', value=data["hours"], read_only=True, width=70, text_size=14, height=42),
                                 TextField(label='Amount', value=data["amount"], read_only=True, width=130, text_size=14, height=42),
                                 ft.Row(controls=[DeleteButton(on_click=lambda e: asyncio.run(delete_earnings(e, BASE_URL=BASE_URL, id=data["id"], user_id=data["user_id"])) )],
                                        alignment=ft.MainAxisAlignment.END,

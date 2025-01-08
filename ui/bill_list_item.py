@@ -3,7 +3,7 @@ from datetime import datetime, date, timedelta
 from data.data_sync import get_bills, save_unpaid_bills, remove_unpaid_bills
 from ui.alert import create_loader, show_loader, hide_loader
 
-column_size = {"sm": 6, "md": 5, "lg":4, "xl": 3}
+column_size = {"sm": 6, "md": 6, "lg":4, "xl": 3}
 def create_bill_item(page, current_theme, loader, BASE_URL, toggle_calc_bottom_sheet, bill_list_container, bill_stack, my_bills, unpaid_bills):
     start_date = datetime.now()
     end_date = start_date + timedelta(days=365)#365
