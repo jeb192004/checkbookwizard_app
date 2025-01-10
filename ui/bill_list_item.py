@@ -2,20 +2,47 @@ import flet as ft
 from datetime import datetime, date, timedelta
 from data.data_sync import get_bills, save_unpaid_bills, remove_unpaid_bills
 from ui.alert import create_loader, show_loader, hide_loader
+from ui.my_controls import BillItem, BillTotalDue
 
 column_size = {"sm": 6, "md": 6, "lg":4, "xl": 3}
+unpaid_total=0
 def create_bill_item(page, current_theme, loader, BASE_URL, toggle_calc_bottom_sheet, bill_list_container, bill_stack, my_bills, unpaid_bills):
     start_date = datetime.now()
     end_date = start_date + timedelta(days=365)#365
     day_of_week = 5  # Friday(default)
-    billListItems = []
-    #my_bills = []
-    #unpaid_bills = []
-    profile_page = None
+    weekly_bill_lists = []
+    edit_button = ft.IconButton(ft.Icons.EDIT, bgcolor=current_theme['list_item_colors']['icon_color'], on_click=lambda e: remove_unpaid(e))
+    save_button = ft.IconButton(ft.Icons.SAVE, bgcolor=current_theme['list_item_colors']['icon_color'], on_click=lambda e: remove_unpaid(e), visible=False)
+    unpaid_bills_container = ft.Container()
+    unpaid_card = ft.Card(
+        col=column_size,
+        content=ft.Column(
+            controls=[
+                ft.Container(
+                    content=ft.Row(controls=[
+                        ft.Text("Past Due", size=22, color=current_theme['list_item_colors']['title_color'], style=ft.TextStyle(weight=ft.FontWeight.BOLD)),
+                        ft.Container(expand=True,),
+                        edit_button,save_button],
+                        expand=True),
+                    margin=ft.margin.only(left=10, top=10, right=10),
+                ),
+                ft.Card(
+                    content=unpaid_bills_container,
+                    color=current_theme['list_item_colors']['inner_container'],
+                ),
+                        
+                ]
+        ),
+        color=current_theme['list_item_colors']['base'],
+        expand_loose=True,
+        visible=False
+    )
+    weekly_bill_lists.append(unpaid_card)
 
     #print("bills",my_bills)
     def remove_unpaid(e):
         selected = []
+        controls_to_remove = []
         bill_list = e.control.parent.parent.parent.controls[1].content.content.controls
         for bill in bill_list:
             if "row" not in str(bill.content):
@@ -25,6 +52,7 @@ def create_bill_item(page, current_theme, loader, BASE_URL, toggle_calc_bottom_s
                 else:
                     c_box.visible = True
                 if c_box.value == True:
+                    controls_to_remove.append(bill)
                     '''for m_bill in my_bills:
                         if m_bill["id"] == c_box.data["bill_id"]:
                             m_bill["payday"] = c_box.data["payday"].strftime("%Y-%m-%d")'''
@@ -36,8 +64,11 @@ def create_bill_item(page, current_theme, loader, BASE_URL, toggle_calc_bottom_s
         if len(selected)>0:
             show_loader(page, loader)
             remove_unpaid_bills(page, selected, BASE_URL)
+            for control in controls_to_remove:
+                bill_list.remove(control)
             selected = []
-            page.go("/bills")
+            hide_loader(page, loader)
+        
         page.update()
 
     def edit_bill_list(e):
@@ -61,9 +92,18 @@ def create_bill_item(page, current_theme, loader, BASE_URL, toggle_calc_bottom_s
             e.control.icon = ft.Icons.EDIT
         if len(selected)>0:
             show_loader(page, loader)
-            save_unpaid_bills(page, selected, BASE_URL)
+            response = save_unpaid_bills(page, selected, BASE_URL)
+            if response.status_code == 200:
+                if response.json()["error"] == "":
+                    for bill in response.json()["data"]:
+                        if unpaid_card.visible==True:
+                            unpaid_bills_list = unpaid_bills_container.content.controls
+                            unpaid_bills_list.insert(-1, BillItem(bill, bill["payday"], isEditable=True, week_date=datetime.today(), past_due=True))
+                        else:
+                            unpaid_card.visible=True
+                            unpaid_bills_container.content = ft.Column(controls=[BillItem(bill, bill["payday"], isEditable=True, week_date=datetime.today(), past_due=True)], expand=True)
             selected = []
-            page.go("/bills")
+            hide_loader(page, loader)
         page.update()
 
     
@@ -88,44 +128,7 @@ def create_bill_item(page, current_theme, loader, BASE_URL, toggle_calc_bottom_s
         return result
     weekly_dates = get_weekly_dates(start_date, day_of_week, end_date)
 
-    def create_bill_item(bill, due_date, isEditable, week_date, past_due):
-
-            checkbox = ft.Container()
-            checkbox_value = True
-            if past_due:
-                checkbox_value = False
-            if isEditable:
-                checkbox = ft.Checkbox(label="Paid", value=checkbox_value, label_position=ft.LabelPosition.LEFT, data={"bill_id": bill["id"], "payday": week_date}, visible=False)
-            bill_item_text_size = 15
-            bill_item_text_color = current_theme["list_item_colors"]["text_color"]
-            website_row = ft.Row()
-            phone_row = ft.Row()
-            email_row = ft.Row()
-            website = bill["website"]
-            phone = bill["phone"]
-            email = bill["email"]
-            if website:
-                website_row = ft.Text(size=15, spans=[ft.TextSpan("Website: ",ft.TextStyle(weight=ft.FontWeight.BOLD ,decoration_color=current_theme["list_item_colors"]["text_color"],color=current_theme["list_item_colors"]["text_color"])),
-                        ft.TextSpan(website, ft.TextStyle(decoration=ft.TextDecoration.UNDERLINE, decoration_color=current_theme["list_item_colors"]["link_color"], color=current_theme["list_item_colors"]["link_color"]), on_click=lambda _: page.launch_url(website)),])
-            if phone:
-                phone_row = ft.Text(size=15, spans=[ft.TextSpan("Phone: ",ft.TextStyle(weight=ft.FontWeight.BOLD ,decoration_color=current_theme["list_item_colors"]["text_color"],color=current_theme["list_item_colors"]["text_color"])),
-                        ft.TextSpan(phone, ft.TextStyle(decoration=ft.TextDecoration.UNDERLINE, decoration_color=current_theme["list_item_colors"]["link_color"], color=current_theme["list_item_colors"]["link_color"]), on_click=lambda _: page.launch_url(f"tel:{phone}")),])
-            if email:
-                email_row = ft.Text(size=15, spans=[ft.TextSpan("Email: ",ft.TextStyle(weight=ft.FontWeight.BOLD ,decoration_color=current_theme["list_item_colors"]["text_color"],color=current_theme["list_item_colors"]["text_color"])),
-                        ft.TextSpan(email, ft.TextStyle(decoration=ft.TextDecoration.UNDERLINE, decoration_color=current_theme["list_item_colors"]["link_color"], color=current_theme["list_item_colors"]["link_color"]), on_click=lambda _: page.launch_url(f"mailto:{email}")),])
-            return ft.Container(
-                content=ft.Column([
-                    ft.Row(controls=[ft.Text(bill["name"], size=20, color=current_theme["list_item_colors"]["bill_name_color"], style=ft.TextStyle(weight=ft.FontWeight.BOLD)), ft.Container(expand=True), checkbox],),
-                    ft.Row(controls=[ft.Row(controls=[ft.Text(f"DUE: ", size=bill_item_text_size, color=current_theme["list_item_colors"]["title_color"],style=ft.TextStyle(weight=ft.FontWeight.BOLD)), ft.Text(f"{due_date}", size=bill_item_text_size, color=bill_item_text_color)]), ft.Row(expand=True),ft.Row(controls=[ft.Text(f"Amount: ", size=bill_item_text_size,color=current_theme["list_item_colors"]["title_color"],style=ft.TextStyle(weight=ft.FontWeight.BOLD)), ft.Text(f"{bill['amount']}", size=bill_item_text_size, color=bill_item_text_color)])], expand=True),
-                    website_row,
-                    phone_row,
-                    email_row,
-                    ft.Divider(height=2, color=ft.Colors.BLACK),
-                    ],
-                    spacing=2,
-                    ),
-                margin=ft.margin.all(10),
-                )
+    
     def getWeekdayOfMonth(year, month, week_date, weekdayIndex, occurrence):
         #print(weekdayIndex, occurrence)
         firstDay = datetime(year=year, month=month, day=1)
@@ -228,53 +231,21 @@ def create_bill_item(page, current_theme, loader, BASE_URL, toggle_calc_bottom_s
                 due_date_text = dueDate.strftime('%a %b %d')
                 if bill["frequency"] == "weekly":
                     due_date_text = 'Weekly'
-                bill_list.append(create_bill_item(bill, due_date_text, isEditable, week_date, past_due))
+                bill_list.append(BillItem(bill, due_date_text, isEditable, week_date, past_due))
                 bills_total_amount+=float(bill['amount'].replace('$', '').replace(',', ''))
             
             
 
         if bills_total_amount>0:
-                bill_list.append(ft.Container(
-                    content=ft.Row(controls=[ft.Text(f"Total: ", size=18, color=current_theme["list_item_colors"]["total_amount_title_color"],style=ft.TextStyle(weight=ft.FontWeight.BOLD)), ft.Row(expand=True), ft.Row(controls=[ft.IconButton(ft.Icons.CALCULATE, icon_color=current_theme["list_item_colors"]["total_amount_icon_color"], on_click=lambda e: toggle_calc_bottom_sheet(bills_total_amount)),ft.Text(f"${bills_total_amount:.2f}", size=18, color=current_theme["list_item_colors"]["total_amount_text_color"])])], expand=True),
-                    margin=ft.margin.all(10),
-                    border=ft.border.all(2, color=current_theme["list_item_colors"]["total_amount_border_color"]),
-                    bgcolor=current_theme["list_item_colors"]["total_amount_background_color"],
-                    border_radius=ft.border_radius.all(5),
-                    padding=ft.padding.all(10),
-                ))
+                unpaid_total = bills_total_amount
+                bill_list.append(BillTotalDue(unpaid_total, toggle_click=lambda e: toggle_calc_bottom_sheet(bills_total_amount)))
         return ft.Column(controls=bill_list, spacing=2)
     
-    weekly_bill_lists = []
-    if len(unpaid_bills) > 0:
-        edit_button = ft.IconButton(ft.Icons.EDIT, bgcolor=current_theme['list_item_colors']['icon_color'], on_click=lambda e: remove_unpaid(e))
-        save_button = ft.IconButton(ft.Icons.SAVE, bgcolor=current_theme['list_item_colors']['icon_color'], on_click=lambda e: remove_unpaid(e), visible=False)
-            
-        weekly_bill_lists.append(
-            ft.Card(
-                col=column_size,
-                content=ft.Column(
-                    controls=[
-                        ft.Container(
-                            content=ft.Row(controls=[
-                                ft.Text("Past Due", size=22, color=current_theme['list_item_colors']['title_color'], style=ft.TextStyle(weight=ft.FontWeight.BOLD)),
-                                        ft.Container(
-                                            expand=True,),
-                                        edit_button,save_button],
-                                        expand=True),
-                            margin=ft.margin.only(left=10, top=10, right=10),
-                        ),
-                        ft.Card(
-                            content=ft.Container(content=build_bill_list(unpaid_bills.copy(), datetime.today(), past_due=True, isEditable=True)),
-                            color=current_theme['list_item_colors']['inner_container'],
-                            ),
-                        
-                    ]
-                ),
-                color=current_theme['list_item_colors']['base'],
-                expand_loose=True
-            )
-        )
     
+    if len(unpaid_bills) > 0:
+        unpaid_bills_container.content = build_bill_list(unpaid_bills.copy(), datetime.today(), past_due=True, isEditable=True)
+        unpaid_card.visible = True
+
     for index, week_date in enumerate(weekly_dates):
         edit_button = ft.Container()
         isEditable = False

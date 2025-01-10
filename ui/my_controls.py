@@ -92,3 +92,51 @@ class Radio(ft.Container):
         self.border_radius=5
         self.border=ft.border.all(1,current_theme["radio"]["border_color"])
         self.padding=ft.padding.all(10)    
+
+class BillItem(ft.Container):
+    def __init__(self, bill, due_date, isEditable, week_date, past_due):
+        super().__init__()
+        checkbox = ft.Container()
+        checkbox_value = True
+        if past_due:
+            checkbox_value = False
+        if isEditable:
+            checkbox = ft.Checkbox(label="Paid", value=checkbox_value, label_position=ft.LabelPosition.LEFT, data={"bill_id": bill["id"], "payday": week_date}, visible=False)
+        bill_item_text_size = 15
+        bill_item_text_color = current_theme["list_item_colors"]["text_color"]
+        website_row = ft.Row()
+        phone_row = ft.Row()
+        email_row = ft.Row()
+        website = bill["website"]
+        phone = bill["phone"]
+        email = bill["email"]
+        if website:
+            website_row = ft.Text(size=15, spans=[ft.TextSpan("Website: ",ft.TextStyle(weight=ft.FontWeight.BOLD ,decoration_color=current_theme["list_item_colors"]["text_color"],color=current_theme["list_item_colors"]["text_color"])),
+                    ft.TextSpan(website, ft.TextStyle(decoration=ft.TextDecoration.UNDERLINE, decoration_color=current_theme["list_item_colors"]["link_color"], color=current_theme["list_item_colors"]["link_color"]), on_click=lambda _: page.launch_url(website)),])
+        if phone:
+            phone_row = ft.Text(size=15, spans=[ft.TextSpan("Phone: ",ft.TextStyle(weight=ft.FontWeight.BOLD ,decoration_color=current_theme["list_item_colors"]["text_color"],color=current_theme["list_item_colors"]["text_color"])),
+                    ft.TextSpan(phone, ft.TextStyle(decoration=ft.TextDecoration.UNDERLINE, decoration_color=current_theme["list_item_colors"]["link_color"], color=current_theme["list_item_colors"]["link_color"]), on_click=lambda _: page.launch_url(f"tel:{phone}")),])
+        if email:
+            email_row = ft.Text(size=15, spans=[ft.TextSpan("Email: ",ft.TextStyle(weight=ft.FontWeight.BOLD ,decoration_color=current_theme["list_item_colors"]["text_color"],color=current_theme["list_item_colors"]["text_color"])),
+                    ft.TextSpan(email, ft.TextStyle(decoration=ft.TextDecoration.UNDERLINE, decoration_color=current_theme["list_item_colors"]["link_color"], color=current_theme["list_item_colors"]["link_color"]), on_click=lambda _: page.launch_url(f"mailto:{email}")),])
+        self.content=ft.Column([
+            ft.Row(controls=[ft.Text(bill["name"], size=20, color=current_theme["list_item_colors"]["bill_name_color"], style=ft.TextStyle(weight=ft.FontWeight.BOLD)), ft.Container(expand=True), checkbox],),
+            ft.Row(controls=[ft.Row(controls=[ft.Text(f"DUE: ", size=bill_item_text_size, color=current_theme["list_item_colors"]["title_color"],style=ft.TextStyle(weight=ft.FontWeight.BOLD)), ft.Text(f"{due_date}", size=bill_item_text_size, color=bill_item_text_color)]), ft.Row(expand=True),ft.Row(controls=[ft.Text(f"Amount: ", size=bill_item_text_size,color=current_theme["list_item_colors"]["title_color"],style=ft.TextStyle(weight=ft.FontWeight.BOLD)), ft.Text(f"{bill['amount']}", size=bill_item_text_size, color=bill_item_text_color)])], expand=True),
+            website_row,
+            phone_row,
+            email_row,
+            ft.Divider(height=2, color=ft.Colors.BLACK),
+            ],
+            spacing=2,
+        )
+        self.margin=ft.margin.all(10)
+
+class BillTotalDue(ft.Container):
+    def __init__(self, bills_total_amount, toggle_click):
+        super().__init__()
+        self.content=ft.Row(controls=[ft.Text(f"Total: ", size=18, color=current_theme["list_item_colors"]["total_amount_title_color"],style=ft.TextStyle(weight=ft.FontWeight.BOLD)), ft.Row(expand=True), ft.Row(controls=[ft.IconButton(ft.Icons.CALCULATE, icon_color=current_theme["list_item_colors"]["total_amount_icon_color"], on_click=toggle_click),ft.Text(f"${bills_total_amount:.2f}", size=18, color=current_theme["list_item_colors"]["total_amount_text_color"])])], expand=True)
+        self.margin=ft.margin.all(10)
+        self.border=ft.border.all(2, color=current_theme["list_item_colors"]["total_amount_border_color"])
+        self.bgcolor=current_theme["list_item_colors"]["total_amount_background_color"]
+        self.border_radius=ft.border_radius.all(5)
+        self.padding=ft.padding.all(10)

@@ -46,7 +46,7 @@ async def get_bills(page: Page, user_id: str, BASE_URL: str):
 
 def save_unpaid_bills(page: Page, unpaid_bills, BASE_URL: str):
      response = httpx.post(f"{BASE_URL}add_unpaid", json={"unpaid": unpaid_bills})
-     print(response.status_code)
+     return response
 
 def remove_unpaid_bills(page: Page, unpaid_bills, BASE_URL: str):         
      response = httpx.post(f"{BASE_URL}remove_past_due", json={"past_due": unpaid_bills})

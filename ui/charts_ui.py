@@ -8,16 +8,7 @@ from data.utils import navigate_to
 my_bills = []
 
 def charts_page(current_theme, page:ft.Page, BASE_URL:str, user_id:str):
-    '''async def build_bill_list():
-        data = await get_bills(page, user_id, BASE_URL)
-        if data["error"] is not None or data["error"] != "":
-            profile_pic = data["profile_pic"]
-            user_pay_hours = data["user_pay_hours"]
-            my_bills = data["my_bills"]
-            unpaid_bills = data["unpaid_bills"]
-            return {"profile_pic":profile_pic, "user_pay_hours":user_pay_hours, "my_bills":my_bills}
-        else:
-            print(data["error"])'''
+    
     loader = create_loader(page)
     pie_chart_container = ft.Container()
     colors = [
