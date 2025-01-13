@@ -4,19 +4,22 @@ import asyncio
 from data.data_sync import get_bills
 from ui.alert import create_loader, show_loader, hide_loader
 from data.utils import navigate_to
+from ui.charts_check_list import create_check_list
 
 my_bills = []
+column_size = {"sm": 6, "md": 6, "lg":6, "xl": 6}
 
 def charts_page(current_theme, page:ft.Page, BASE_URL:str, user_id:str):
-    
-    loader = create_loader(page)
+    loader=create_loader(page)
     pie_chart_container = ft.Container()
     colors = [
     ft.Colors.RED, ft.Colors.BLUE, ft.Colors.GREEN, ft.Colors.YELLOW,
-    ft.Colors.ORANGE, ft.Colors.PINK, ft.Colors.PURPLE, ft.Colors.TEAL,
+    ft.Colors.PINK, ft.Colors.PURPLE, ft.Colors.TEAL,
     ft.Colors.CYAN, ft.Colors.INDIGO, ft.Colors.LIME, ft.Colors.AMBER,
     ft.Colors.BROWN, ft.Colors.GREY, ft.Colors.AMBER, ft.Colors.LIGHT_BLUE,
-    ft.Colors.LIGHT_GREEN, ft.Colors.GREEN_300, ft.Colors.TEAL_700, ft.Colors.YELLOW_300
+    ft.Colors.LIGHT_GREEN, ft.Colors.ORANGE, ft.Colors.GREEN_300, ft.Colors.TEAL_700, 
+    ft.Colors.YELLOW_300,
+    ft.Colors.BLACK45, ft.Colors.GREY_500, ft.Colors.BLUE_GREY
 
     ]
     
@@ -31,40 +34,36 @@ def charts_page(current_theme, page:ft.Page, BASE_URL:str, user_id:str):
         weight=ft.FontWeight.BOLD,
         shadow=ft.BoxShadow(blur_radius=2, color=ft.Colors.BLACK54),
     )
+    
+    bills_column = ft.Column(controls=[], expand=True)
 
     def create_chart_items(chart_type, chart, monthly_pay, my_bills):
         total_bills = 0
         total_bill_percentage = 0
-        for index, bill in enumerate(my_bills):
-            total_bills += float(bill['amount'].replace('$', ''))
-            '''chart.bar_groups.append(
-                ft.BarChartGroup(
-                    x=0,
-                    bar_rods=[
-                        ft.BarChartRod(
-                            from_y=0,
-                            to_y=float(bill['amount'].replace('$', '').replace(',', '')),
-                            width=10,
+        index=0
+        all_bills = bills_column.controls
+        for bill in all_bills:
+            if "row" in str(bill):
+                b_item = bill.controls
+                bill_name=b_item[0].controls[0].value
+                bill_amount=b_item[0].controls[1].value
+                isChecked = b_item[-1].value
+                if isChecked:
+                    total_bills += float(bill_amount.replace('$', ''))
+                    bill_percentage = round((float(bill_amount.replace('$', '').replace(',', '')) / (monthly_pay)) * 100, 2)
+                    total_bill_percentage += bill_percentage
+                    #print(total_bill_percentage)
+                    if chart_type == "pie_chart":
+                        chart.sections.append(
+                            ft.PieChartSection(
+                            bill_percentage,
+                            title=f"{bill_name}\n${float(bill_amount.replace('$', '').replace(',', '')):,.2f}",
+                            title_style=normal_title_style,
                             color=colors[index],
-                            tooltip=bill['name'],
-                            border_radius=0,
-                        ),
-                    ],
-                ),
-            )'''
-            bill_percentage = round((float(bill['amount'].replace('$', '').replace(',', '')) / (monthly_pay)) * 100, 2)
-            total_bill_percentage += bill_percentage
-            #print(total_bill_percentage)
-            if chart_type == "pie_chart":
-                chart.sections.append(
-                    ft.PieChartSection(
-                    bill_percentage,
-                    title=f"{bill['name']}\n${float(bill['amount'].replace('$', '').replace(',', '')):,.2f}",
-                    title_style=normal_title_style,
-                    color=colors[index],
-                    radius=normal_radius,
-                    ),
-                )
+                            radius=normal_radius,
+                            ),
+                        )
+                    index+=1
         return total_bills, total_bill_percentage, chart
 
     total_bills_text=ft.Text("Total Bills: $0.00", size=18, color=current_theme['calc_theme']['text'])
@@ -76,7 +75,7 @@ def charts_page(current_theme, page:ft.Page, BASE_URL:str, user_id:str):
                 100 - total_bill_percentage,
                 title=f"Left over\n${monthly_pay - total_bills:,.2f}",
                 title_style=normal_title_style,
-                color=ft.Colors.ORANGE,
+                color=ft.Colors.GREEN,
                 radius=normal_radius,
             ),
         )
@@ -112,7 +111,6 @@ def charts_page(current_theme, page:ft.Page, BASE_URL:str, user_id:str):
 
     earnings_dropdown = ft.Dropdown(
             width=300,
-            #options=user_pay_hours,
             label="Earnings",
             on_change=lambda e: update_chosen_pay(e.control.value),
             color=current_theme["calc_theme"]["dropdown_text"],
@@ -121,78 +119,31 @@ def charts_page(current_theme, page:ft.Page, BASE_URL:str, user_id:str):
             icon_enabled_color=current_theme["calc_theme"]["dropdown_icon_color"],
         )
 
-
-    '''data = asyncio.run(build_bill_list())
-    if "error" not in data:
-        profile_pic = data["profile_pic"]
-        user_pay_hours = data["user_pay_hours"]
-        my_bills = data["my_bills"]
-        #unpaid_bills = data["unpaid_bills"]
-
-        
-        max_y_graph = 0
-        fourty_hours_month = 0
-        avg_hours_month = 0
-        for p in user_pay_hours:
-            if "40 Hours:" in p.key:
-                fourty_hours_month = float(p.key.split('$')[1].replace(',', ''))*4
-                print(fourty_hours_month)
-            if "Average Pay:" in p.key:
-                avg_hours_month = float(p.key.split('$')[1].replace(',', ''))*4
-            print(p.key)
-            pay = float(p.key.split('$')[1].replace(',', ''))
-            if pay > max_y_graph:
-                max_y_graph = pay
-
-        chart = ft.BarChart(
-            border=ft.border.all(1, ft.Colors.GREY_400),
-            left_axis=ft.ChartAxis(labels_size=40, title=ft.Text("Earnings"), title_size=40),
-            bottom_axis=ft.ChartAxis(labels_size=0, title=ft.Text("Bills"), title_size=40),
-            horizontal_grid_lines=ft.ChartGridLines(color=ft.Colors.GREY_300, width=1, dash_pattern=[3, 3]),
-            tooltip_bgcolor=ft.Colors.with_opacity(0.5, ft.Colors.GREY_300),
-            max_y=max_y_graph,
-            interactive=True,
-            expand=True,
-            )
-        
-
-        
-    else:
-        print(data['error'])
-        navigate_to(page, loader, "/bills")
-'''
     
-    appbar = ft.AppBar(
-            leading=ft.Image(
-                src=current_theme["top_appbar_colors"]["icon"], fit=ft.ImageFit.CONTAIN
-            ),
-            leading_width=200,
-            bgcolor=current_theme["top_appbar_colors"]["background"],
-            shadow_color=current_theme["shadow_color"],
-        )
+    appbar = ft.AppBar(leading=ft.Row(controls=[ft.IconButton(icon=ft.Icons.ARROW_BACK, icon_color=current_theme["top_appbar_colors"]["icon_color"], on_click=lambda _: navigate_to(page, loader, "/bills")),ft.Image(src=current_theme["top_appbar_colors"]["icon"], fit=ft.ImageFit.CONTAIN)]), leading_width=200, bgcolor=current_theme["top_appbar_colors"]["background"])
+    
+    earnings_pie_column = ft.Row(controls=[ft.Column(controls=[earnings_dropdown,chosen_pay,total_bills_text,pie_chart_container],
+                                    expand=True,
+                                    horizontal_alignment=ft.CrossAxisAlignment.CENTER)], col=column_size, expand=True, alignment=ft.MainAxisAlignment.CENTER)
+    
 
     page.views.append(ft.View(
         "/charts",
                     [ft.Stack(
                         
                         controls=[ft.Column(controls=[
-                            earnings_dropdown,
-                            chosen_pay,
-                            total_bills_text,
-                            #chart,
-                            pie_chart_container
-
+                            ft.ResponsiveRow(controls=[earnings_pie_column, ft.Container(content=bills_column, padding=ft.padding.only(left=10, right=10), col=column_size)], expand=True, alignment=ft.MainAxisAlignment.CENTER),
                             ],
                             expand=True,
-                            horizontal_alignment="center",
-                            scroll=ft.ScrollMode.ADAPTIVE),
+                            horizontal_alignment="center"),
                             
                             ]
                     )
                         
                     ],
                 appbar=appbar,
-                bgcolor=current_theme["background"]
+                bgcolor=current_theme["background"],
+                scroll=ft.ScrollMode.ADAPTIVE,
                 )
     )
 
@@ -209,6 +160,7 @@ def charts_page(current_theme, page:ft.Page, BASE_URL:str, user_id:str):
                 appbar_actions = [ft.Container(content=ft.Image(src=profile_pic, width=40, height=40), border_radius=50, margin=ft.margin.only(right=10))]
                 appbar.actions = appbar_actions
                 page.update()
+            create_check_list(page, data["my_bills"], bills_column, current_theme=current_theme)
             return data["my_bills"]
         else:
             print(data["error"])

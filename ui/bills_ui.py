@@ -12,6 +12,8 @@ selected_total_bills_amount = 0
 
 
 def bills_page(current_theme, page: ft.Page, BASE_URL: str, user_id: str):
+    if user_id is None or user_id == "":
+        user_id = page.client_storage.get("burnison.me.user.id")
     InitMyControls(page)
     loader = create_loader(page)
     page.bgcolor = current_theme["background"]

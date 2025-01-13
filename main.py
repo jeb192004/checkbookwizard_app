@@ -1,3 +1,4 @@
+#sudo ln -s /usr/lib64/libmpv.so /usr/lib64/libmpv.so.1
 import flet as ft
 from urllib.parse import urlencode
 import os
@@ -27,7 +28,7 @@ def main(page: ft.Page):
 
     user_info = {}
     user_id = page.client_storage.get("burnison.me.user.id")
-
+    print(user_id)
     loader = create_loader(page)
     show_loader(page, loader)
     # page.close(loader)
@@ -70,6 +71,7 @@ def main(page: ft.Page):
     page.on_route_change = route_change
     page.on_view_pop = view_pop
     if user_id is None:
+        hide_loader(page, loader)
         page.go("/login")
     else:
         print(f"Welcome, user {user_id}")

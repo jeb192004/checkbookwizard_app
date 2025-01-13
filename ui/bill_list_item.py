@@ -39,7 +39,7 @@ def create_bill_item(page, current_theme, loader, BASE_URL, toggle_calc_bottom_s
     )
     weekly_bill_lists.append(unpaid_card)
 
-    #print("bills",my_bills)
+    
     def remove_unpaid(e):
         selected = []
         controls_to_remove = []
@@ -65,6 +65,12 @@ def create_bill_item(page, current_theme, loader, BASE_URL, toggle_calc_bottom_s
             show_loader(page, loader)
             remove_unpaid_bills(page, selected, BASE_URL)
             for control in controls_to_remove:
+                unpaid_bills_list = unpaid_bills_container.content.controls
+                total_text = unpaid_bills_list[-1].content.controls[2].controls[-1]
+                total_unpaid_value = float(total_text.value.replace("$","").replace(",",""))
+                unpaid_amount_remove = float(control.content.controls[1].controls[-1].controls[-1].value.replace("$","").replace(",",""))
+                new_total = total_unpaid_value-unpaid_amount_remove
+                total_text.value=f"${new_total:.2f}"
                 bill_list.remove(control)
             selected = []
             hide_loader(page, loader)
@@ -98,10 +104,18 @@ def create_bill_item(page, current_theme, loader, BASE_URL, toggle_calc_bottom_s
                     for bill in response.json()["data"]:
                         if unpaid_card.visible==True:
                             unpaid_bills_list = unpaid_bills_container.content.controls
-                            unpaid_bills_list.insert(-1, BillItem(bill, bill["payday"], isEditable=True, week_date=datetime.today(), past_due=True))
+                            unpaid_bills_list.insert(-1, BillItem(bill, bill["payday"], isEditable=True, week_date=datetime.today(), past_due=True, website_onclick=lambda _: page.launch_url(bill["website"]), phone_onclick=lambda _: page.launch_url(f"tel:{bill["phone"]}"), email_onclick=lambda _: page.launch_url(f"mailto:{bill["email"]}")))
+                            if len(unpaid_bills_list)>0:
+                                total_text = unpaid_bills_list[-1].content.controls[2].controls[-1]
+                                total_value = float(total_text.value.replace("$", "").replace(",",""))
+                                new_total = total_value+float(bill["amount"].replace("$","").replace(",",""))
+                                print(total_value, bill["amount"], new_total)
+                                total_text.value=f"${new_total:.2f}"
                         else:
                             unpaid_card.visible=True
-                            unpaid_bills_container.content = ft.Column(controls=[BillItem(bill, bill["payday"], isEditable=True, week_date=datetime.today(), past_due=True)], expand=True)
+                            unpaid_total_info = BillTotalDue(bills_total_amount=bill["amount"], toggle_click=lambda e: toggle_calc_bottom_sheet(bill["amount"]))
+                            unpaid_bills_container.content = ft.Column(controls=[BillItem(bill, bill["payday"], isEditable=True, week_date=datetime.today(), past_due=True, website_onclick=lambda _: page.launch_url(bill["website"]), phone_onclick=lambda _: page.launch_url(f"tel:{bill["phone"]}"), email_onclick=lambda _: page.launch_url(f"mailto:{bill["email"]}")), unpaid_total_info], expand=True)
+                    
             selected = []
             hide_loader(page, loader)
         page.update()
@@ -231,7 +245,7 @@ def create_bill_item(page, current_theme, loader, BASE_URL, toggle_calc_bottom_s
                 due_date_text = dueDate.strftime('%a %b %d')
                 if bill["frequency"] == "weekly":
                     due_date_text = 'Weekly'
-                bill_list.append(BillItem(bill, due_date_text, isEditable, week_date, past_due))
+                bill_list.append(BillItem(bill, due_date_text, isEditable, week_date, past_due, website_onclick=lambda _: page.launch_url(bill["website"]), phone_onclick=lambda _: page.launch_url(f"tel:{bill["phone"]}"), email_onclick=lambda _: page.launch_url(f"mailto:{bill["email"]}")))
                 bills_total_amount+=float(bill['amount'].replace('$', '').replace(',', ''))
             
             
