@@ -26,7 +26,7 @@ def updateData(page: Page):
      else:
           print("else statement")
           isUpdate = True
-     return isUpdate
+     return True#isUpdate
 
 class DataSync():
      def __init__(self, page:Page):
@@ -85,15 +85,15 @@ class DataSync():
                return dict(profile_pic=self.profile_pic, my_bills=self.my_bills, unpaid_bills=self.unpaid_bills, error="")
                  
 
-     def save_unpaid_bills(unpaid_bills, BASE_URL: str):
+     def save_unpaid_bills(self, unpaid_bills, BASE_URL: str):
           response = httpx.post(f"{BASE_URL}add_unpaid", json={"unpaid": unpaid_bills})
-          return response
+          return response, self.unpaid_bills
 
-     def remove_unpaid_bills(unpaid_bills, BASE_URL: str):         
+     def remove_unpaid_bills(self, unpaid_bills, BASE_URL: str):         
           response = httpx.post(f"{BASE_URL}remove_past_due", json={"past_due": unpaid_bills})
           print(response)
 
-     def add_update_bills(BASE_URL: str, data):
+     def add_update_bills(self, BASE_URL: str, data):
           response = httpx.post(f"{BASE_URL}data/add_bill", json=data)
           if response.status_code == 200:
                print(response)
@@ -101,7 +101,7 @@ class DataSync():
           else:
                return "error"
      
-     def remove_bill_item(BASE_URL: str, data):
+     def remove_bill_item(self, BASE_URL: str, data):
      
           response = httpx.post(f"{BASE_URL}data/remove_bill", json=data)
           if response.status_code == 200:
@@ -110,7 +110,7 @@ class DataSync():
           else:
                return "error"
      
-     def add_update_earnings(BASE_URL: str, data):
+     def add_update_earnings(self, BASE_URL: str, data):
      
           response = httpx.post(f"{BASE_URL}data/earnings", json=data)
           if response.status_code == 200:
@@ -119,7 +119,7 @@ class DataSync():
           else:
                return dict(data=None, error=f"HTTP Error: {response.status_code}")
      
-     async def get_earnings(BASE_URL:str, user_id:str):
+     async def get_earnings(self, BASE_URL:str, user_id:str):
           async with httpx.AsyncClient() as client:
                response = await client.get(f"{BASE_URL}data/earnings/{user_id}")
                if response.status_code == 200:
@@ -127,7 +127,7 @@ class DataSync():
                else:
                     return dict(data=None, error=f"HTTP Error: {response.status_code}")
 
-     async def delete_earning(BASE_URL: str, id, user_id):
+     async def delete_earning(self, BASE_URL: str, id, user_id):
           async with httpx.AsyncClient() as client:
                response = await client.delete(f"{BASE_URL}data/earnings/{id}/{user_id}")
                if response.status_code == 200:

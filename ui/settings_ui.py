@@ -76,8 +76,9 @@ def settings_page(current_theme, page:ft.Page, BASE_URL:str):
             ft.Column(controls=[theme_dropdown,
                                  theme_info,
                                  ft.Divider(color=current_theme["border_color"]),
-                                 update_frequency_dropdown,
-                                 update_frequency_info], width=400, expand=True, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
+                                 #update_frequency_dropdown,
+                                 #update_frequency_info
+                                 ], width=400, expand=True, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
             ],
             appbar=appbar
         )
