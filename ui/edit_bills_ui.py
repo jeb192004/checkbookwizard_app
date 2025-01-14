@@ -3,13 +3,13 @@ import flet as ft
 import datetime
 import asyncio
 
-from data.data_sync import get_bills, add_update_bills, remove_bill_item
+from data.data_sync import DataSync
 from ui.alert import create_loader, show_loader, hide_loader
 from data.utils import navigate_to
 
 appbar = []
 def edit_bills_page(current_theme, page:ft.Page, BASE_URL:str, user_id:str):
-    #bills = Bills(page, BASE_URL)
+    ds = DataSync(page)
     loader = create_loader(page)
 
     bill_id_to_update = None
@@ -275,7 +275,7 @@ def edit_bills_page(current_theme, page:ft.Page, BASE_URL:str, user_id:str):
         error_text.visible = True
         page.update()
         print(json_data)
-        response = add_update_bills(page, BASE_URL, json_data)
+        response = ds.add_update_bills(BASE_URL, json_data)
         if response == "success":
             navigate_to(page, loader, "/bills")
         else:
@@ -288,7 +288,7 @@ def edit_bills_page(current_theme, page:ft.Page, BASE_URL:str, user_id:str):
             "user_id": user_id,
             "id": bill_id
         }
-        response = remove_bill_item(page, BASE_URL, json_data)
+        response = ds.remove_bill_item(BASE_URL, json_data)
         if response == "success":
             navigate_to(page, loader, "/bills")
         else:
@@ -509,7 +509,7 @@ def edit_bills_page(current_theme, page:ft.Page, BASE_URL:str, user_id:str):
 
 
     async def build_bill_list():
-        data = await get_bills(page, user_id, BASE_URL)
+        data = await ds.get_bills(user_id, BASE_URL)
         if data["error"] is not None or data["error"] != "":
             profile_pic = data["profile_pic"]
             #user_pay_hours = data["user_pay_hours"]

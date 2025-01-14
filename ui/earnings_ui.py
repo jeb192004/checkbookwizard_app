@@ -1,7 +1,7 @@
 import asyncio
 import flet as ft
 from data.utils import format_dollar, navigate_to, sort_earnings
-from data.data_sync import add_update_earnings, get_earnings
+from data.data_sync import DataSync
 from ui.alert import create_loader, show_loader, hide_loader
 from ui.earnings_list_item import create_earnings_item
 from ui.my_controls import InitMyControls, TextField, ElevatedButton, Radio
@@ -10,6 +10,7 @@ payday_value = "5"
 
 def pay_page(current_theme, page:ft.Page, BASE_URL:str, user_id:str):
     InitMyControls(page)
+    ds = DataSync(page)
     loader = create_loader(page)
     pay_list = ft.ListView()
 
@@ -93,7 +94,7 @@ def pay_page(current_theme, page:ft.Page, BASE_URL:str, user_id:str):
             
         }
         
-        response = add_update_earnings(page, BASE_URL, json_data)
+        response = ds.add_update_earnings(BASE_URL, json_data)
         hide_loader(page, loader)
         if response["error"] is None:
             if type == "avg":
@@ -158,7 +159,7 @@ def pay_page(current_theme, page:ft.Page, BASE_URL:str, user_id:str):
     )
 
     async def build_earnings_list():
-        data = await get_earnings(page, BASE_URL, user_id)
+        data = await ds.get_earnings(BASE_URL, user_id)
         #print(data)
         if data["error"] is None:
             

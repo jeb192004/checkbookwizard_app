@@ -1,7 +1,7 @@
 import flet as ft
 import asyncio
 
-from data.data_sync import get_bills
+from data.data_sync import DataSync
 from ui.alert import create_loader, show_loader, hide_loader
 from data.utils import navigate_to
 from ui.charts_check_list import create_check_list
@@ -10,6 +10,7 @@ my_bills = []
 column_size = {"sm": 6, "md": 6, "lg":6, "xl": 6}
 
 def charts_page(current_theme, page:ft.Page, BASE_URL:str, user_id:str):
+    ds = DataSync(page)
     loader=create_loader(page)
     pie_chart_container = ft.Container()
     colors = [
@@ -148,7 +149,7 @@ def charts_page(current_theme, page:ft.Page, BASE_URL:str, user_id:str):
     )
 
     async def build_bill_list():
-        data = await get_bills(page, user_id, BASE_URL)
+        data = await ds.get_bills(user_id, BASE_URL)
         if data["error"] is not None or data["error"] != "":
             profile_pic = data["profile_pic"]
             user_pay_hours = data["user_pay_hours"]

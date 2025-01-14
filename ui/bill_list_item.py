@@ -1,12 +1,13 @@
 import flet as ft
 from datetime import datetime, date, timedelta
-from data.data_sync import get_bills, save_unpaid_bills, remove_unpaid_bills
+from data.data_sync import DataSync
 from ui.alert import create_loader, show_loader, hide_loader
 from ui.my_controls import BillItem, BillTotalDue
 
 column_size = {"sm": 6, "md": 6, "lg":4, "xl": 3}
 unpaid_total=0
 def create_bill_item(page, current_theme, loader, BASE_URL, toggle_calc_bottom_sheet, bill_list_container, bill_stack, my_bills, unpaid_bills):
+    ds = DataSync(page)
     start_date = datetime.now()
     end_date = start_date + timedelta(days=365)#365
     day_of_week = 5  # Friday(default)
@@ -63,7 +64,7 @@ def create_bill_item(page, current_theme, loader, BASE_URL, toggle_calc_bottom_s
             e.control.icon = ft.Icons.EDIT
         if len(selected)>0:
             show_loader(page, loader)
-            remove_unpaid_bills(page, selected, BASE_URL)
+            ds.remove_unpaid_bills(selected, BASE_URL)
             for control in controls_to_remove:
                 unpaid_bills_list = unpaid_bills_container.content.controls
                 total_text = unpaid_bills_list[-1].content.controls[2].controls[-1]
@@ -98,7 +99,7 @@ def create_bill_item(page, current_theme, loader, BASE_URL, toggle_calc_bottom_s
             e.control.icon = ft.Icons.EDIT
         if len(selected)>0:
             show_loader(page, loader)
-            response = save_unpaid_bills(page, selected, BASE_URL)
+            response = ds.save_unpaid_bills(selected, BASE_URL)
             if response.status_code == 200:
                 if response.json()["error"] == "":
                     for bill in response.json()["data"]:

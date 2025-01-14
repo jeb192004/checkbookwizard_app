@@ -1,7 +1,7 @@
 import flet as ft
 from datetime import datetime, date, timedelta
 import json
-from data.data_sync import get_bills, save_unpaid_bills, remove_unpaid_bills
+from data.data_sync import DataSync
 from ui.alert import create_loader, show_loader, hide_loader
 from ui.bill_list_item import create_bill_item
 from data.utils import navigate_to
@@ -10,8 +10,8 @@ from ui.my_controls import TextField, ElevatedButton, InitMyControls
 
 selected_total_bills_amount = 0
 
-
 def bills_page(current_theme, page: ft.Page, BASE_URL: str, user_id: str):
+    ds = DataSync(page=page)
     if user_id is None or user_id == "":
         user_id = page.client_storage.get("burnison.me.user.id")
     InitMyControls(page)
@@ -380,7 +380,7 @@ def bills_page(current_theme, page: ft.Page, BASE_URL: str, user_id: str):
     )
 
     async def build_bill_list():
-        data = await get_bills(page, user_id, BASE_URL)
+        data = await ds.get_bills(page, user_id, BASE_URL)
         if data["error"] is not None or data["error"] != "":
             profile_pic = data["profile_pic"]
             #user_pay_hours = data["user_pay_hours"]

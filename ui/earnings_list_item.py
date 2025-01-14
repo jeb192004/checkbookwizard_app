@@ -1,14 +1,15 @@
 import flet as ft
 from ui.my_controls import TextField, DeleteButton, Title
-from data.data_sync import delete_earning
+from data.data_sync import DataSync
 from ui.alert import create_loader, show_loader, hide_loader
 import asyncio
 
 async def delete_earnings(e, BASE_URL, id, user_id):
     page = e.control.page
+    ds = DataSync(page)
     loader = create_loader(page)
     show_loader(page, loader)
-    response = await delete_earning(BASE_URL, id, user_id)
+    response = await ds.delete_earning(BASE_URL, id, user_id)
     if response["error"] is None:
         list_item = e.control.parent.parent.parent.parent
         listview = list_item.parent
