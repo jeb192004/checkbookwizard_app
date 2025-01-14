@@ -116,7 +116,7 @@ def charts_page(current_theme, page:ft.Page, BASE_URL:str, user_id:str):
             color=current_theme["calc_theme"]["dropdown_text"],
             bgcolor=current_theme["calc_theme"]["dropdown_background"],
             border_color=current_theme["calc_theme"]["dropdown_border_color"],
-            icon_enabled_color=current_theme["calc_theme"]["dropdown_icon_color"],
+            select_icon_enabled_color=current_theme["calc_theme"]["dropdown_icon_color"],
         )
 
     

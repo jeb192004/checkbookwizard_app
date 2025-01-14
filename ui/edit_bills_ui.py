@@ -512,7 +512,7 @@ def edit_bills_page(current_theme, page:ft.Page, BASE_URL:str, user_id:str):
         data = await get_bills(page, user_id, BASE_URL)
         if data["error"] is not None or data["error"] != "":
             profile_pic = data["profile_pic"]
-            user_pay_hours = data["user_pay_hours"]
+            #user_pay_hours = data["user_pay_hours"]
             my_bills = data["my_bills"]
             unpaid_bills = data["unpaid_bills"]
             bill_list = create_bill_list(page, current_theme, my_bills)

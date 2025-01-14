@@ -47,7 +47,7 @@ def bills_page(current_theme, page: ft.Page, BASE_URL: str, user_id: str):
         color=current_theme["calc_theme"]["dropdown_text"],
         bgcolor=current_theme["calc_theme"]["dropdown_background"],
         border_color=current_theme["calc_theme"]["dropdown_border_color"],
-        icon_enabled_color=current_theme["calc_theme"]["dropdown_icon_color"],
+        select_icon_enabled_color=current_theme["calc_theme"]["dropdown_icon_color"],
     )
     chosen_pay = ft.Text(
         f"{dd.value if dd.value else '0.00'}",
@@ -383,9 +383,9 @@ def bills_page(current_theme, page: ft.Page, BASE_URL: str, user_id: str):
         data = await get_bills(page, user_id, BASE_URL)
         if data["error"] is not None or data["error"] != "":
             profile_pic = data["profile_pic"]
-            user_pay_hours = data["user_pay_hours"]
-            if user_pay_hours:
-                dd.options = user_pay_hours
+            #user_pay_hours = data["user_pay_hours"]
+            #if user_pay_hours:
+                #dd.options = user_pay_hours
             my_bills = data["my_bills"]
             unpaid_bills = data["unpaid_bills"]
             create_bill_item(page, current_theme, loader, BASE_URL, toggle_calc_bottom_sheet, bill_list_container, bill_stack, my_bills, unpaid_bills)

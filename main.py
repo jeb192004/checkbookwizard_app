@@ -16,7 +16,6 @@ from ui.alert import create_loader, show_loader, hide_loader
 BASE_URL = "https://checkbookwizard.com/"
 #BASE_URL = 'http://localhost:1338/'  # For development
 
-
 def main(page: ft.Page):
 
     page.title = "Checkbook Wizard"
@@ -27,10 +26,11 @@ def main(page: ft.Page):
     # page.platform = ft.PagePlatform.ANDROID
 
     user_info = {}
+    #page.client_storage.clear()
     user_id = page.client_storage.get("burnison.me.user.id")
     print(user_id)
     loader = create_loader(page)
-    show_loader(page, loader)
+    #show_loader(page, loader)
     # page.close(loader)
 
     def route_change(route):

@@ -15,7 +15,7 @@ def settings_page(current_theme, page:ft.Page, BASE_URL:str):
         theme_dropdown.color = theme["calc_theme"]["dropdown_text"]
         theme_dropdown.bgcolor = theme["calc_theme"]["dropdown_background"]
         theme_dropdown.border_color = theme["calc_theme"]["dropdown_border_color"]
-        theme_dropdown.icon_enabled_color = theme["calc_theme"]["dropdown_icon_color"]
+        theme_dropdown.select_icon_enabled_color = theme["calc_theme"]["dropdown_icon_color"]
         theme_info.color = theme["text_color"]
 
         # Potentially update other controls in the page based on the new theme
@@ -49,14 +49,35 @@ def settings_page(current_theme, page:ft.Page, BASE_URL:str):
         color=current_theme["calc_theme"]["dropdown_text"],
         bgcolor=current_theme["calc_theme"]["dropdown_background"],
         border_color=current_theme["calc_theme"]["dropdown_border_color"],
-        icon_enabled_color=current_theme["calc_theme"]["dropdown_icon_color"],
+        select_icon_enabled_color=current_theme["calc_theme"]["dropdown_icon_color"],
     )
     theme_info = ft.Text("Theme will update upon navigating from this page", size=12, color=current_theme["text_color"])
+
+    update_frequency_dropdown = ft.Dropdown(
+        width=300,
+        options=[
+            ft.dropdown.Option("Once a day(default)"),
+            ft.dropdown.Option("Once a week"), 
+            ft.dropdown.Option("Once a month")
+            ],
+        label="Update Frequency",
+        on_change=lambda e: page.client_storage.set("update_frequency", e.control.value),
+        color=current_theme["calc_theme"]["dropdown_text"],
+        bgcolor=current_theme["calc_theme"]["dropdown_background"],
+        border_color=current_theme["calc_theme"]["dropdown_border_color"],
+        select_icon_enabled_color=current_theme["calc_theme"]["dropdown_icon_color"],
+    )
+    update_frequency_info = ft.Text("How often do you want to check the server for your updated data", size=12, color=current_theme["text_color"])
+
     return ft.View(
         "/settings",
         bgcolor=current_theme["background"],
         controls=[
-            ft.Column(controls=[theme_dropdown, theme_info], width=400, expand=True, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
+            ft.Column(controls=[theme_dropdown,
+                                 theme_info,
+                                 ft.Divider(color=current_theme["border_color"]),
+                                 update_frequency_dropdown,
+                                 update_frequency_info], width=400, expand=True, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
             ],
             appbar=appbar
         )
