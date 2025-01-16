@@ -6,8 +6,7 @@ from ui.my_controls import BillItem, BillTotalDue
 
 column_size = {"sm": 6, "md": 6, "lg":4, "xl": 3}
 unpaid_total=0
-def create_bill_item(page, current_theme, loader, BASE_URL, toggle_calc_bottom_sheet, bill_list_container, bill_stack, my_bills, unpaid_bills):
-    ds = DataSync(page)
+def create_bill_item(page, current_theme, loader, BASE_URL, toggle_calc_bottom_sheet, bill_list_container, ds:DataSync, my_bills, unpaid_bills):
     start_date = datetime.now()
     end_date = start_date + timedelta(days=365)#365
     day_of_week = 5  # Friday(default)

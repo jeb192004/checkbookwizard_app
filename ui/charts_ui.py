@@ -5,12 +5,13 @@ from data.data_sync import DataSync
 from ui.alert import create_loader, show_loader, hide_loader
 from data.utils import navigate_to
 from ui.charts_check_list import create_check_list
+from ui.my_controls import EarningsDropdown, Label
 
 my_bills = []
 column_size = {"sm": 6, "md": 6, "lg":6, "xl": 6}
 
 def charts_page(current_theme, page:ft.Page, BASE_URL:str, user_id:str):
-    ds = DataSync(page)
+    ds = DataSync(page, BASE_URL,  user_id)
     loader=create_loader(page)
     pie_chart_container = ft.Container()
     colors = [
@@ -104,7 +105,13 @@ def charts_page(current_theme, page:ft.Page, BASE_URL:str, user_id:str):
     earnings_dropdown = ft.Dropdown()
     chosen_pay=ft.Text(f"{earnings_dropdown.value if earnings_dropdown.value else 'Monthly Earnings: $0.00'}", size=18, color=current_theme['calc_theme']['text'])
     def update_chosen_pay(e):
-            monthly_pay = float(e.split('$')[1].replace(',', ''))*4
+            selected_item_column=page.get_control(e.value).content.content.controls
+            selected_item_title=selected_item_column[0].controls[0].value
+            selected_item_amount=selected_item_column[1].controls[1].value
+            #print(selected_total_bills_amount, selected_item_amount)
+            earnings_dropdown.value=selected_item_title
+        
+            monthly_pay = float(selected_item_amount.replace('$', "").replace(',', ''))*4
             chosen_pay.value = f"Monthly Earnings: ${monthly_pay:,.2f}"
             pie_chart.sections = []
             create_pie_chart_from_pay(pie_chart, monthly_pay, my_bills)
@@ -113,7 +120,7 @@ def charts_page(current_theme, page:ft.Page, BASE_URL:str, user_id:str):
     earnings_dropdown = ft.Dropdown(
             width=300,
             label="Earnings",
-            on_change=lambda e: update_chosen_pay(e.control.value),
+            on_change=lambda e: update_chosen_pay(e.control),
             color=current_theme["calc_theme"]["dropdown_text"],
             bgcolor=current_theme["calc_theme"]["dropdown_background"],
             border_color=current_theme["calc_theme"]["dropdown_border_color"],
@@ -123,7 +130,9 @@ def charts_page(current_theme, page:ft.Page, BASE_URL:str, user_id:str):
     
     appbar = ft.AppBar(leading=ft.Row(controls=[ft.IconButton(icon=ft.Icons.ARROW_BACK, icon_color=current_theme["top_appbar_colors"]["icon_color"], on_click=lambda _: navigate_to(page, loader, "/bills")),ft.Image(src=current_theme["top_appbar_colors"]["icon"], fit=ft.ImageFit.CONTAIN)]), leading_width=200, bgcolor=current_theme["top_appbar_colors"]["background"])
     
-    earnings_pie_column = ft.Row(controls=[ft.Column(controls=[earnings_dropdown,chosen_pay,total_bills_text,pie_chart_container],
+    weekly_explanation=ft.Text("Items that are marked for weekly pay are multiplied by 4", size=12, color=current_theme['calc_theme']['text'])
+    
+    earnings_pie_column = ft.Row(controls=[ft.Column(controls=[earnings_dropdown,chosen_pay,total_bills_text,pie_chart_container, weekly_explanation],
                                     expand=True,
                                     horizontal_alignment=ft.CrossAxisAlignment.CENTER)], col=column_size, expand=True, alignment=ft.MainAxisAlignment.CENTER)
     
@@ -149,14 +158,14 @@ def charts_page(current_theme, page:ft.Page, BASE_URL:str, user_id:str):
     )
 
     async def build_bill_list():
-        data = await ds.get_bills(user_id, BASE_URL)
+        data = await ds.get_bills()
         if data["error"] is not None or data["error"] != "":
             profile_pic = data["profile_pic"]
-            user_pay_hours = data["user_pay_hours"]
-            if user_pay_hours:
-                earnings_dropdown.options = user_pay_hours
-            #my_bills = data["my_bills"]
-            #unpaid_bills = data["unpaid_bills"]
+            earnings_data = await ds.get_earnings()
+            if earnings_data["error"] is None:
+                for earnings in earnings_data["data"]:
+                    earnings_dropdown.options.append(EarningsDropdown(title=earnings["title"], hours=earnings["hours"], amount=earnings["amount"]))
+            
             if profile_pic:
                 appbar_actions = [ft.Container(content=ft.Image(src=profile_pic, width=40, height=40), border_radius=50, margin=ft.margin.only(right=10))]
                 appbar.actions = appbar_actions

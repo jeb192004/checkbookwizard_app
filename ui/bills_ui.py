@@ -6,12 +6,12 @@ from ui.alert import create_loader, show_loader, hide_loader
 from ui.bill_list_item import create_bill_item
 from data.utils import navigate_to
 import asyncio
-from ui.my_controls import TextField, ElevatedButton, InitMyControls
+from ui.my_controls import TextField, ElevatedButton, InitMyControls, EarningsDropdown
 
 selected_total_bills_amount = 0
 
 def bills_page(current_theme, page: ft.Page, BASE_URL: str, user_id: str):
-    ds = DataSync(page=page)
+    ds = DataSync(page, BASE_URL,  user_id)
     if user_id is None or user_id == "":
         user_id = page.client_storage.get("burnison.me.user.id")
     InitMyControls(page)
@@ -30,25 +30,31 @@ def bills_page(current_theme, page: ft.Page, BASE_URL: str, user_id: str):
     total_due = ft.Text()
     total_after_bills_paid = ft.Text()
 
+    dd = ft.Dropdown(
+        width=100,
+        label="Pay Options",
+        label_style = {"color": current_theme["text_field"]["label_color"]},
+        color=current_theme["calc_theme"]["dropdown_text"],
+        bgcolor=current_theme["calc_theme"]["dropdown_background"],
+        border_color=current_theme["calc_theme"]["dropdown_background"],
+        select_icon_enabled_color=current_theme["calc_theme"]["dropdown_icon_color"],
+    )
     def update_chosen_pay(e):
-        print(selected_total_bills_amount)
-        pay = float(e.split("$")[1].replace(",", ""))
+        selected_item_column=page.get_control(e.value).content.content.controls
+        selected_item_title=selected_item_column[0].controls[0].value
+        selected_item_amount=selected_item_column[1].controls[1].value
+        #print(selected_total_bills_amount, selected_item_amount)
+        dd.value=selected_item_title
+        pay = float(selected_item_amount.replace("$", "").replace(",", ""))
         chosen_pay.value = pay
         total_bills_due = float(total_due.value)
         total_after_bills_paid.value = f"{pay - total_bills_due:.2f}"
         page.update()
+        
     
-    
+    dd.on_change=lambda e: update_chosen_pay(e.control)
 
-    dd = ft.Dropdown(
-        width=100,
-        label="Pay Options",
-        on_change=lambda e: update_chosen_pay(e.control.value),
-        color=current_theme["calc_theme"]["dropdown_text"],
-        bgcolor=current_theme["calc_theme"]["dropdown_background"],
-        border_color=current_theme["calc_theme"]["dropdown_border_color"],
-        select_icon_enabled_color=current_theme["calc_theme"]["dropdown_icon_color"],
-    )
+    
     chosen_pay = ft.Text(
         f"{dd.value if dd.value else '0.00'}",
         size=18,
@@ -380,12 +386,13 @@ def bills_page(current_theme, page: ft.Page, BASE_URL: str, user_id: str):
     )
 
     async def build_bill_list():
-        data = await ds.get_bills(page, user_id, BASE_URL)
+        data = await ds.get_bills()
         if data["error"] is not None or data["error"] != "":
             profile_pic = data["profile_pic"]
-            #user_pay_hours = data["user_pay_hours"]
-            #if user_pay_hours:
-                #dd.options = user_pay_hours
+            earnings_data = await ds.get_earnings()
+            if earnings_data["error"] is None:
+                for earnings in earnings_data["data"]:
+                    dd.options.append(EarningsDropdown(title=earnings["title"], hours=earnings["hours"], amount=earnings["amount"]))
             my_bills = data["my_bills"]
             unpaid_bills = data["unpaid_bills"]
             create_bill_item(page, current_theme, loader, BASE_URL, toggle_calc_bottom_sheet, bill_list_container, bill_stack, my_bills, unpaid_bills)

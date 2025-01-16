@@ -73,7 +73,7 @@ class Label(ft.Text):
         super().__init__()
         self.text = text
         self.size = size
-        self.color = current_theme["label"]["color"]
+        self.color = current_theme["label"]["text"]
         self.style = ft.TextStyle(weight=ft.FontWeight.BOLD)
 
 class Title(ft.Text):
@@ -81,7 +81,7 @@ class Title(ft.Text):
         super().__init__()
         self.value = value
         self.size = size
-        self.color = color if color else current_theme["title_color"]
+        self.color = color if color else current_theme["earnings_list_title_color"]
         self.style = ft.TextStyle(weight=ft.FontWeight.BOLD)
 
 class Radio(ft.Container):
@@ -140,3 +140,16 @@ class BillTotalDue(ft.Container):
         self.bgcolor=current_theme["list_item_colors"]["total_amount_background_color"]
         self.border_radius=ft.border_radius.all(5)
         self.padding=ft.padding.all(10)
+
+class EarningsDropdown(ft.Container):
+    def __init__(self, title, hours, amount):
+        super().__init__()
+        self.content=ft.Container(content=ft.Column(controls=[
+            ft.Row(controls=[Title(title),]),
+            ft.Row(controls=[TextField(label="Hours", value=hours, width=75), TextField(label="Amount", value=amount, width=125)])
+        ]),
+        padding=ft.padding.all(10),
+        margin=ft.margin.only(bottom=10),
+        border_radius=10,
+        bgcolor=current_theme["list_item_colors"]["inner_container"]
+        )

@@ -36,7 +36,6 @@ def green_theme():
             "background_color": "#1b4a00",
             "border_color": "#fed831"
         },
-        "title_color": "#000000",
         "earnings_list_title_color": "#ffffff",
         "header_text_color": "#000000",
         "list_item_colors": {
@@ -75,7 +74,7 @@ def green_theme():
             "text": ft.Colors.BLACK,
             "dropdown_text": ft.Colors.WHITE,
             "dropdown_background": "#4caf50",
-            "dropdown_border_color": "#1b4a00",
+            "dropdown_border_color": "#4caf50",
             "dropdown_icon_color": ft.Colors.WHITE
         }
     }

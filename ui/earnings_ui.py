@@ -10,7 +10,7 @@ payday_value = "5"
 
 def pay_page(current_theme, page:ft.Page, BASE_URL:str, user_id:str):
     InitMyControls(page)
-    ds = DataSync(page)
+    ds = DataSync(page, BASE_URL,  user_id)
     loader = create_loader(page)
     pay_list = ft.ListView()
 
@@ -94,7 +94,7 @@ def pay_page(current_theme, page:ft.Page, BASE_URL:str, user_id:str):
             
         }
         
-        response = ds.add_update_earnings(BASE_URL, json_data)
+        response = ds.add_update_earnings(json_data)
         hide_loader(page, loader)
         if response["error"] is None:
             if type == "avg":
@@ -159,7 +159,7 @@ def pay_page(current_theme, page:ft.Page, BASE_URL:str, user_id:str):
     )
 
     async def build_earnings_list():
-        data = await ds.get_earnings(BASE_URL, user_id)
+        data = await ds.get_earnings()
         #print(data)
         if data["error"] is None:
             

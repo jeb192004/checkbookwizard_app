@@ -6,7 +6,7 @@ import asyncio
 
 async def delete_earnings(e, BASE_URL, id, user_id):
     page = e.control.page
-    ds = DataSync(page)
+    ds = DataSync(page, BASE_URL,  user_id)
     loader = create_loader(page)
     show_loader(page, loader)
     response = await ds.delete_earning(BASE_URL, id, user_id)

@@ -9,7 +9,7 @@ from data.utils import navigate_to
 
 appbar = []
 def edit_bills_page(current_theme, page:ft.Page, BASE_URL:str, user_id:str):
-    ds = DataSync(page)
+    ds = DataSync(page, BASE_URL,  user_id)
     loader = create_loader(page)
 
     bill_id_to_update = None
@@ -112,7 +112,7 @@ def edit_bills_page(current_theme, page:ft.Page, BASE_URL:str, user_id:str):
             due_date_column.visible = True
             if montly_row.visible == True:
                 montly_row.visible = False
-
+        e.control.value="hi"
         page.update()
 
     def day_of_week_or_month_dropdown_change(e):
@@ -509,7 +509,7 @@ def edit_bills_page(current_theme, page:ft.Page, BASE_URL:str, user_id:str):
 
 
     async def build_bill_list():
-        data = await ds.get_bills(user_id, BASE_URL)
+        data = await ds.get_bills()
         if data["error"] is not None or data["error"] != "":
             profile_pic = data["profile_pic"]
             #user_pay_hours = data["user_pay_hours"]
