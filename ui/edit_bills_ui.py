@@ -407,6 +407,12 @@ def edit_bills_page(current_theme, page:ft.Page, BASE_URL:str, user_id:str):
     bottom=0,
     left=10,
     right=10,
+    shadow=ft.BoxShadow(
+            blur_radius=10,
+            spread_radius=2,
+            color=current_theme["shadow_color"],
+            offset=ft.Offset(0, -1),  # Negative offset for top shadow
+        ),
     )
 
     def toggle_bill_list(e):
