@@ -112,7 +112,6 @@ def edit_bills_page(current_theme, page:ft.Page, BASE_URL:str, user_id:str):
             due_date_column.visible = True
             if montly_row.visible == True:
                 montly_row.visible = False
-        e.control.value="hi"
         page.update()
 
     def day_of_week_or_month_dropdown_change(e):
@@ -275,7 +274,7 @@ def edit_bills_page(current_theme, page:ft.Page, BASE_URL:str, user_id:str):
         error_text.visible = True
         page.update()
         print(json_data)
-        response = ds.add_update_bills(BASE_URL, json_data)
+        response = ds.add_update_bills(json_data)
         if response == "success":
             navigate_to(page, loader, "/bills")
         else:
@@ -411,7 +410,7 @@ def edit_bills_page(current_theme, page:ft.Page, BASE_URL:str, user_id:str):
             blur_radius=10,
             spread_radius=2,
             color=current_theme["shadow_color"],
-            offset=ft.Offset(0, -1),  # Negative offset for top shadow
+            offset=ft.Offset(0, -4),  # Negative offset for top shadow
         ),
     )
 

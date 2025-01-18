@@ -159,11 +159,11 @@ class NoDataInfo(ft.Column):
         super().__init__()
         if type == "bills":
             self.controls=[
-                    ft.Row(controls=[ft.Text(value="You don't have any bills yet.\nPlease go to Edit Bills and add some bills.")]),
+                    ft.Row(controls=[ft.Text(value="You don't have any bills yet.\nPlease go to Edit Bills and add some bills.", color=current_theme["label"]["color"])]),
                     ft.Row(controls=[ElevatedButton(text="Go to Edit Bills page", on_click=lambda e: self.page.go("/edit_bills"))])
                 ]
         if type == "earnings":
             self.controls=[
-                    ft.Row(controls=[ft.Text(value="You don't have any Earnings yet.\nPlease go to the Earnings page and add some.")]),
+                    ft.Row(controls=[ft.Text(value="You don't have any Earnings yet.\nPlease go to the Earnings page and add some.", color=current_theme["label"]["color"])]),
                     ft.Row(controls=[ElevatedButton(text="Go to Earnings page", on_click=lambda e: self.page.go("/pay"))])
                 ]

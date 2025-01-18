@@ -28,7 +28,7 @@ def green_theme():
             "text": "#ffffff"
         },
         "label":{
-            "text": "#ffffff"
+            "color": "#ffffff"
         },
         "radio":{
             "fill_color": "#fed831",
@@ -102,7 +102,7 @@ def dark_theme():
             "text": "#ffffff"
         },
         "label":{
-            "text": "#ffffff"
+            "color": "#ffffff"
         },
         "radio":{
             "fill_color": "#ffffff",
@@ -174,7 +174,7 @@ def light_theme():
             "text": "#ffffff"
         },
         "label":{
-            "text": "#ffffff"
+            "color": "#000000"
         },
         "radio":{
             "fill_color": "#000000",
