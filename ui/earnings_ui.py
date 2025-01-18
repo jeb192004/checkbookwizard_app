@@ -196,17 +196,18 @@ def pay_page(current_theme, page:ft.Page, BASE_URL:str, user_id:str):
                 #if len(sorted_earnings) > 0:
 
                 for item in sorted_earnings:
-                    item["user_id"] = user_id
-                    if item["title"] == "Average Pay":
-                        avg_pay.value = item["amount"]
-                        avg_pay.label_style = {"color": current_theme["text_field"]["label_color_focused"]}
-                    elif item["title"] == "40 Hour Pay":
-                        fourty_hours.value = item["amount"]
-                        fourty_hours.label_style = {"color": current_theme["text_field"]["label_color_focused"]}
-                    else:
-                        pay_list.controls.append(create_earnings_item(item, BASE_URL, current_theme))
-                        if page.platform is page.platform.WINDOWS or page.platform is page.platform.LINUX or page.platform is page.platform.MACOS:
-                            pay_list.width = 600
+                    if item["amount"] is not None:
+                        item["user_id"] = user_id
+                        if item["title"] == "Average Pay":
+                            avg_pay.value = item["amount"]
+                            avg_pay.label_style = {"color": current_theme["text_field"]["label_color_focused"]}
+                        elif item["title"] == "40 Hour Pay":
+                            fourty_hours.value = item["amount"]
+                            fourty_hours.label_style = {"color": current_theme["text_field"]["label_color_focused"]}
+                        else:
+                            pay_list.controls.append(create_earnings_item(item, BASE_URL, current_theme))
+                            if page.platform is page.platform.WINDOWS or page.platform is page.platform.LINUX or page.platform is page.platform.MACOS:
+                                pay_list.width = 600
                 page.update()
             except KeyError:
                 print("Error: No earnings data found")
