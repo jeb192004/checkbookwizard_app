@@ -6,7 +6,6 @@ from ui.alert import create_loader, show_loader, hide_loader
 from ui.earnings_list_item import create_earnings_item
 from ui.my_controls import InitMyControls, TextField, ElevatedButton, Radio
 
-payday_value = "5"
 
 def pay_page(current_theme, page:ft.Page, BASE_URL:str, user_id:str):
     InitMyControls(page)
@@ -16,7 +15,8 @@ def pay_page(current_theme, page:ft.Page, BASE_URL:str, user_id:str):
 
     def radiogroup_changed(e):
         payday_value = e.control.value
-        print(f"Your favorite color is:  {payday_value}")
+        print(f"payday value is:  {payday_value}")
+        page.update()
         
 
     payday_options = ft.RadioGroup(content=ft.Column([
@@ -28,11 +28,28 @@ def pay_page(current_theme, page:ft.Page, BASE_URL:str, user_id:str):
             Radio(value="5", label="Friday(default)"),
             Radio(value="6", label="Saturday")
         ]), on_change=radiogroup_changed)
-    payday_options.value = payday_value
+    payday_options.value = "5"
 
+    def update_payday():
+        print(payday_options.value)
+        show_loader(page, loader)
+        json_data = {
+            "user_id": user_id,
+            "day_of_week": int(payday_options.value)
+        }
+        response = ds.update_payday(json_data)
+        hide_loader(page, loader)
+        if response["error"] is None:
+            print(response)
+        else:
+            print(response["error"])
+        
     payday_column = ft.Column(col={"sm": 6}, controls=[
         ft.Text("Please select the day of the week you pay your bills", weight=ft.FontWeight.BOLD, size=28, color=current_theme["header_text_color"]),
-        payday_options])
+        payday_options,
+        ft.Row(controls=[ft.Container(content=ElevatedButton(text="Save", icon=ft.Icons.SAVE, on_click=lambda e: update_payday()), padding=ft.padding.only(right=10))],expand=True, alignment=ft.MainAxisAlignment.END),
+        ])
+    
     payday_container = ft.Container(content=payday_column, padding=ft.padding.all(10))
     
     hour_input_filter=ft.InputFilter(allow=True, regex_string=r"^[0-9]*$", replacement_string="")
@@ -43,6 +60,7 @@ def pay_page(current_theme, page:ft.Page, BASE_URL:str, user_id:str):
     additional_hours = TextField(value="", label="Hours", input_filter=hour_input_filter)
     additional_hours_amount = TextField(value="", label="Amount", on_change=lambda e: format_dollar(e, page, additional_hours_amount))
     
+                
     def save_update_data(e, type):
         title = None
         hours = 0

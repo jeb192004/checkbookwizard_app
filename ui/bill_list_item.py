@@ -6,10 +6,10 @@ from ui.my_controls import BillItem, BillTotalDue
 
 column_size = {"sm": 6, "md": 6, "lg":4, "xl": 3}
 unpaid_total=0
-def create_bill_item(page, current_theme, loader, BASE_URL, toggle_calc_bottom_sheet, bill_list_container, ds:DataSync, my_bills, unpaid_bills):
+def create_bill_item(page, current_theme, loader, BASE_URL, toggle_calc_bottom_sheet, bill_list_container, ds:DataSync, day_of_week, my_bills, unpaid_bills):
     start_date = datetime.now()
     end_date = start_date + timedelta(days=365)#365
-    day_of_week = 5  # Friday(default)
+    
     weekly_bill_lists = []
     edit_button = ft.IconButton(ft.Icons.EDIT, bgcolor=current_theme['list_item_colors']['icon_color'], on_click=lambda e: remove_unpaid(e))
     save_button = ft.IconButton(ft.Icons.SAVE, bgcolor=current_theme['list_item_colors']['icon_color'], on_click=lambda e: remove_unpaid(e), visible=False)

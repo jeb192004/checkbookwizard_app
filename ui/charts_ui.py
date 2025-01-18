@@ -5,7 +5,7 @@ from data.data_sync import DataSync
 from ui.alert import create_loader, show_loader, hide_loader
 from data.utils import navigate_to
 from ui.charts_check_list import create_check_list
-from ui.my_controls import EarningsDropdown, Label
+from ui.my_controls import EarningsDropdown, NoDataInfo
 
 my_bills = []
 column_size = {"sm": 6, "md": 6, "lg":6, "xl": 6}
@@ -160,18 +160,27 @@ def charts_page(current_theme, page:ft.Page, BASE_URL:str, user_id:str):
     async def build_bill_list():
         data = await ds.get_bills()
         if data["error"] is not None or data["error"] != "":
-            profile_pic = data["profile_pic"]
+            profile_pic=None
+            if "profile_pic" in data:
+                profile_pic = data["profile_pic"]
             earnings_data = await ds.get_earnings()
+            print(earnings_data)
             if earnings_data["error"] is None:
                 for earnings in earnings_data["data"]:
-                    earnings_dropdown.options.append(EarningsDropdown(title=earnings["title"], hours=earnings["hours"], amount=earnings["amount"]))
+                    if earnings["amount"] is None:
+                        bills_column.controls.append(NoDataInfo("earnings"))
+                    else:
+                        earnings_dropdown.options.append(EarningsDropdown(title=earnings["title"], hours=earnings["hours"], amount=earnings["amount"]))
             
             if profile_pic:
                 appbar_actions = [ft.Container(content=ft.Image(src=profile_pic, width=40, height=40), border_radius=50, margin=ft.margin.only(right=10))]
                 appbar.actions = appbar_actions
                 page.update()
-            create_check_list(page, data["my_bills"], bills_column, current_theme=current_theme)
-            return data["my_bills"]
+            if "my_bills" in data:
+                create_check_list(page, data["my_bills"], bills_column, current_theme=current_theme)
+                return data["my_bills"]
+            else:
+                bills_column.controls.append(NoDataInfo("bills"))
         else:
             print(data["error"])
     

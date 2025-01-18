@@ -153,3 +153,17 @@ class EarningsDropdown(ft.Container):
         border_radius=10,
         bgcolor=current_theme["list_item_colors"]["inner_container"]
         )
+
+class NoDataInfo(ft.Column):
+    def __init__(self, type):
+        super().__init__()
+        if type == "bills":
+            self.controls=[
+                    ft.Row(controls=[ft.Text(value="You don't have any bills yet.\nPlease go to Edit Bills and add some bills.")]),
+                    ft.Row(controls=[ElevatedButton(text="Go to Edit Bills page", on_click=lambda e: self.page.go("/edit_bills"))])
+                ]
+        if type == "earnings":
+            self.controls=[
+                    ft.Row(controls=[ft.Text(value="You don't have any Earnings yet.\nPlease go to the Earnings page and add some.")]),
+                    ft.Row(controls=[ElevatedButton(text="Go to Earnings page", on_click=lambda e: self.page.go("/pay"))])
+                ]

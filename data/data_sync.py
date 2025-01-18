@@ -36,6 +36,7 @@ class DataSync():
           self.my_bills=page.client_storage.get("my_bills")
           self.unpaid_bills=page.client_storage.get("unpaid_bills")
           self.profile_pic=page.client_storage.get("profile_pic")
+          self.day_of_week=5
           
      async def get_bills(self):
      
@@ -54,30 +55,16 @@ class DataSync():
                               user_pay_hours = []
                               profile = user_data[0]
                               self.profile_pic = profile['image_url']
-                              avg_pay = profile['avg_pay']
-                              forty_hours = profile['forty_hour']
-                              other_hours = profile['other_hours']
-                              other_hours = json.loads(other_hours)
-                              if forty_hours != None:
-                                   forty_hours = forty_hours.replace('$', '')
-                                   user_pay_hours.append(dropdown.Option(f"40 Hours: ${forty_hours}"),)
-                              if avg_pay != None:
-                                   avg_pay = avg_pay.replace('$', '')
-                                   user_pay_hours.append(dropdown.Option(f"Average Pay: ${avg_pay}"),)
-                              if other_hours != None:
-                                   if len(other_hours) > 0:
-                                        for pay_detail in other_hours:
-                                             user_pay_hours.append(dropdown.Option(f"{pay_detail['hours']} Hours: {pay_detail['amount']}"),)
-                        
+                              self.day_of_week = profile["day_of_week"]
                               self.my_bills = user_data[1]
                               self.unpaid_bills = user_data[2] if len(user_data) > 2 else []
                               
                               #print("from server")
                               self.page.client_storage.set("my_bills", self.my_bills)
                               self.page.client_storage.set("unpaid_bills", self.unpaid_bills)
-                              self.page.client_storage.set("profile_pic", self.profile_pic)
+                              self.page.client_storage.set("profile_pic", self.profile_pic if self.profile_pic is not None else "")
                               self.page.client_storage.set("last_updated", str(datetime.now()))
-                              return dict(profile_pic=self.profile_pic, my_bills=self.my_bills, unpaid_bills=self.unpaid_bills, error="")
+                              return dict(profile_pic=self.profile_pic, day_of_week=self.day_of_week, my_bills=self.my_bills, unpaid_bills=self.unpaid_bills, error="")
                     except (KeyError, json.JSONDecodeError):
                          print("Error: Invalid response from server")
                else:
@@ -85,7 +72,7 @@ class DataSync():
           else:
                #user_pay_hours=user_pay_hours, my_bills=my_bills, unpaid_bills=unpaid_bills
                #print("from storage")
-               return dict(profile_pic=self.profile_pic, my_bills=self.my_bills, unpaid_bills=self.unpaid_bills, error="")
+               return dict(profile_pic=self.profile_pic, day_of_week=self.day_of_week, my_bills=self.my_bills, unpaid_bills=self.unpaid_bills, error="")
                  
 
      def save_unpaid_bills(self, unpaid_bills):
@@ -137,3 +124,24 @@ class DataSync():
                     return dict(data=response.json(), error=None)
                else:
                     return dict(data=None, error=f"HTTP Error: {response.status_code}")
+               
+     def update_payday(self, data):
+     
+          response = httpx.post(f"{self.BASE_URL}data/day_of_week", json=data)
+          if response.status_code == 200:
+               print(response)
+               return dict(data=response, error=None)
+          else:
+               return dict(data=None, error=f"HTTP Error: {response.status_code}")
+     
+     def logout(self):
+          self.user_id = None
+          self.my_bills=None
+          self.unpaid_bills=None
+          self.profile_pic=None
+          self.day_of_week=5
+          self.page.client_storage.remove("burnison.me.user.id")
+          self.page.client_storage.remove("my_bills")
+          self.page.client_storage.remove("unpaid_bills")
+          self.page.client_storage.remove("profile_pic")
+          self.page.go("/login")

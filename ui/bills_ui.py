@@ -6,7 +6,7 @@ from ui.alert import create_loader, show_loader, hide_loader
 from ui.bill_list_item import create_bill_item
 from data.utils import navigate_to
 import asyncio
-from ui.my_controls import TextField, ElevatedButton, InitMyControls, EarningsDropdown
+from ui.my_controls import ElevatedButton, InitMyControls, EarningsDropdown, NoDataInfo
 
 selected_total_bills_amount = 0
 
@@ -19,7 +19,7 @@ def bills_page(current_theme, page: ft.Page, BASE_URL: str, user_id: str):
     page.bgcolor = current_theme["background"]
     start_date = datetime.now()
     end_date = start_date + timedelta(days=365)  # 365
-    day_of_week = 5  # Friday(default)
+    
     billListItems = []
     my_bills = []
     unpaid_bills = []
@@ -260,7 +260,7 @@ def bills_page(current_theme, page: ft.Page, BASE_URL: str, user_id: str):
                         "Log Out",
                         icon=ft.Icons.LOGOUT,
                         expand=True,
-                        on_click=lambda _: navigate_to(page, loader, "/"),
+                        on_click=lambda _: ds.logout(),
                         bgcolor=current_theme["bottom_sheet"]["button_color"],
                         color=current_theme["bottom_sheet"]["button_text_color"],
                     ),
@@ -388,14 +388,22 @@ def bills_page(current_theme, page: ft.Page, BASE_URL: str, user_id: str):
     async def build_bill_list():
         data = await ds.get_bills()
         if data["error"] is not None or data["error"] != "":
-            profile_pic = data["profile_pic"]
+            profile_pic=None
+            day_of_week=5
+            if "profile_pic" in data:
+                profile_pic = data["profile_pic"]
+            if "day_of_week" in data:
+                day_of_week=data["day_of_week"]
             earnings_data = await ds.get_earnings()
             if earnings_data["error"] is None:
                 for earnings in earnings_data["data"]:
                     dd.options.append(EarningsDropdown(title=earnings["title"], hours=earnings["hours"], amount=earnings["amount"]))
-            my_bills = data["my_bills"]
-            unpaid_bills = data["unpaid_bills"]
-            create_bill_item(page, current_theme, loader, BASE_URL, toggle_calc_bottom_sheet, bill_list_container, bill_stack, my_bills, unpaid_bills)
+            if "my_bills" in data:
+                my_bills = data["my_bills"]
+                unpaid_bills = data["unpaid_bills"]
+                create_bill_item(page, current_theme, loader, BASE_URL, toggle_calc_bottom_sheet, bill_list_container, bill_stack, day_of_week, my_bills, unpaid_bills)
+            else:
+                bill_list_container.content=NoDataInfo("bills")
             if profile_pic:
                 appbar_actions = [ft.Container(content=ft.Image(src=profile_pic, width=40, height=40), border_radius=50, margin=ft.margin.only(right=10))]
                 appbar.actions = appbar_actions

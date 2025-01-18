@@ -1,6 +1,6 @@
 [project]
 name = "Checkbook Wizard"
-version = "0.0.16"
+version = "0.0.17"
 description = "My first Flet project"
 authors = [
   {name = "James Burnison", email = "jeb192004@gmail.com"}
@@ -11,8 +11,19 @@ dependencies = ["flet==0.25.2"]
 org = "com.burnison.me" # --org
 product = "Checkbook Wizard" # --product
 company = "burnison.me" # --company
-build_number = 16 # --build-number
+build_number = 17 # --build-number
 
 [tool.flet.splash]
 color = "#ffffff"
 dark_color = "#000000"
+
+[tool.flet.ios]
+team = "team_id"
+
+[tool.flet.android.signing]
+# store and key passwords can be passed with `--android-signing-key-store-password`
+# and `--android-signing-key-password` options or
+# FLET_ANDROID_SIGNING_KEY_STORE_PASSWORD
+# and FLET_ANDROID_SIGNING_KEY_PASSWORD environment variables.
+#key_store = "path/to/store.jks" # --android-signing-key-store
+#key_alias = "upload"
