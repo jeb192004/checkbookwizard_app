@@ -17,13 +17,13 @@ build_number = 17 # --build-number
 color = "#ffffff"
 dark_color = "#000000"
 
-[tool.flet.ios]
-team = "team_id"
 
 [tool.flet.android.signing]
-# store and key passwords can be passed with `--android-signing-key-store-password`
-# and `--android-signing-key-password` options or
-# FLET_ANDROID_SIGNING_KEY_STORE_PASSWORD
-# and FLET_ANDROID_SIGNING_KEY_PASSWORD environment variables.
-#key_store = "path/to/store.jks" # --android-signing-key-store
-#key_alias = "upload"
+#key_store = "/Users/jamesburnison/checkbookwizard.jks"
+#key_alias = "wizard"
+
+#flet build aab \                                                   
+#    --android-signing-key-store /Users/jamesburnison/checkbookwizard.jks \
+#    --android-signing-key-alias wizard \
+#    --android-signing-key-store-password "$ANDROID_SIGNING_KEY_STORE_PASSWORD" \
+#    --android-signing-key-password "$ANDROID_SIGNING_KEY_STORE_PASSWORD"

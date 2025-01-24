@@ -1,5 +1,6 @@
 import flet as ft
 from ui.alert import show_loader
+from datetime import date, timedelta
 
 
 def format_dollar(e, page: ft.Page, text_field: ft.TextField):
@@ -43,3 +44,24 @@ def sort_earnings(earnings, sort_by: str):
         return sorted(earnings, key=lambda x: x['amount'])
     else:
         return earnings       
+    
+def day_of_week_to_day_of_month(day_of_week, week_of_month, current_date):
+    month=current_date.month
+    year=current_date.year
+    before_date = current_date + timedelta(days=6)
+    #print(before_date.day)
+    if week_of_month==0 and before_date.day<7:
+        month = month+1 if month < 12 else 1
+    firstDay = date(year=year, month=month, day=1)
+    # Adjust weekday_index if Sunday is 0
+    adjusted_weekday_index = (day_of_week + 1) % 7 
+    # Calculate the offset to the first occurrence of the specified weekday
+    offset = (day_of_week - firstDay.isoweekday() + 7) % 7
+    # Calculate the date of the specified occurrence
+    result_date = firstDay + timedelta(days=offset + week_of_month * 7)
+    # Calculate the date of the specified occurrence
+    target_date = result_date - timedelta(weeks=(week_of_month - 1))
+    '''if occurrence == 0:
+        target_date = result_date'''
+    
+    return f'{year}-{int(result_date.day):02d}-{month}'

@@ -9,22 +9,22 @@ def updateData(page: Page):
      update_frequency = page.client_storage.get("update_frequency") if page.client_storage.get("update_frequency") is not None else  "Once a day(default)"
      last_updated = page.client_storage.get("last_updated").split(".")[0] if page.client_storage.get("last_updated") is not None else None
      if last_updated is None:
-          print("last updated is None")
+          #print("last updated is None")
           isUpdate = True
      elif update_frequency == "Once a day(default)":
-          print("once a day", datetime.now().day, datetime.strptime(last_updated, "%Y-%m-%d %H:%M:%S").day)
+          #print("once a day", datetime.now().day, datetime.strptime(last_updated, "%Y-%m-%d %H:%M:%S").day)
           if datetime.now().day != datetime.strptime(last_updated, "%Y-%m-%d %H:%M:%S").day:
                isUpdate = True
      elif update_frequency == "Once a week":
-          print("once a week", datetime.now().isocalendar()[1], datetime.strptime(last_updated, "%Y-%m-%d %H:%M:%S").isocalendar()[1])
+          #print("once a week", datetime.now().isocalendar()[1], datetime.strptime(last_updated, "%Y-%m-%d %H:%M:%S").isocalendar()[1])
           if datetime.now().isocalendar()[1] != datetime.strptime(last_updated, "%Y-%m-%d %H:%M:%S").isocalendar()[1]:
                isUpdate = True
      elif update_frequency == "Once a month":
-          print("once a month", datetime.now().month, datetime.strptime(last_updated, "%Y-%m-%d %H:%M:%S").month)
+          #print("once a month", datetime.now().month, datetime.strptime(last_updated, "%Y-%m-%d %H:%M:%S").month)
           if datetime.now().month != datetime.strptime(last_updated, "%Y-%m-%d %H:%M:%S").month:
                isUpdate = True
      else:
-          print("else statement")
+          #print("else statement")
           isUpdate = True
      return True#isUpdate
 
