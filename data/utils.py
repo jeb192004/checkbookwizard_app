@@ -34,7 +34,8 @@ def format_dollar(e, page: ft.Page, text_field: ft.TextField):
 
 
 def navigate_to(page: ft.Page, loader, route: str):
-    show_loader(page, loader)
+    if route != "/settings":
+        show_loader(page, loader)
     page.go(route)
 
 def sort_earnings(earnings, sort_by: str):

@@ -4,13 +4,13 @@ from urllib.parse import urlencode
 import os
 
 from ui.login_ui import login_page
-from ui.bills_ui import bills_page
+from ui.bill_list_page.bills_ui import bills_page
 from ui.home_ui import home_page
 from ui.settings_ui import settings_page
-from ui.earnings_ui import pay_page
+from ui.earnings_page.earnings_ui import pay_page
 from ui.edit_bills_ui import edit_bills_page
 from ui.theme import light_theme, dark_theme, green_theme
-from ui.charts_ui import charts_page
+from ui.charts_page.charts_ui import charts_page
 from ui.alert import create_loader, show_loader, hide_loader
 
 BASE_URL = "https://checkbookwizard.com/"
@@ -58,7 +58,7 @@ def main(page: ft.Page):
         elif page.route == "/pay":
             pay_page(current_theme, page, BASE_URL)
         elif page.route == "/settings":
-            page.views.append(settings_page(current_theme, page, BASE_URL))
+            page.views.append(settings_page(current_theme, page))
 
         page.update()
 

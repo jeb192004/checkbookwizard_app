@@ -4,13 +4,13 @@ import asyncio
 from data.data_sync import DataSync
 from ui.alert import create_loader, show_loader, hide_loader
 from data.utils import navigate_to
-from ui.charts_check_list import create_check_list
+from ui.charts_page.charts_check_list import create_check_list
 from ui.my_controls import EarningsDropdown, NoDataInfo
 
 my_bills = []
 column_size = {"sm": 6, "md": 6, "lg":6, "xl": 6}
 
-def charts_page(current_theme, page:ft.Page, BASE_URL:str, user_id:str):
+def charts_page(current_theme, page:ft.Page, BASE_URL:str):
     ds = DataSync(page, BASE_URL)
     loader=create_loader(page)
     pie_chart_container = ft.Container()

@@ -3,11 +3,11 @@ import flet as ft
 from data.utils import format_dollar, navigate_to, sort_earnings
 from data.data_sync import DataSync
 from ui.alert import create_loader, show_loader, hide_loader
-from ui.earnings_list_item import create_earnings_item
+from ui.earnings_page.earnings_list_item import create_earnings_item
 from ui.my_controls import InitMyControls, TextField, ElevatedButton, Radio
 
 
-def pay_page(current_theme, page:ft.Page, BASE_URL:str, user_id:str):
+def pay_page(current_theme, page:ft.Page, BASE_URL:str):
     InitMyControls(page)
     ds = DataSync(page, BASE_URL)
     loader = create_loader(page)

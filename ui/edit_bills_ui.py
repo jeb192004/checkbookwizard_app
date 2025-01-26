@@ -8,7 +8,7 @@ from ui.alert import create_loader, show_loader, hide_loader
 from data.utils import navigate_to
 
 appbar = []
-def edit_bills_page(current_theme, page:ft.Page, BASE_URL:str, user_id:str):
+def edit_bills_page(current_theme, page:ft.Page, BASE_URL:str):
     ds = DataSync(page, BASE_URL)
     loader = create_loader(page)
 

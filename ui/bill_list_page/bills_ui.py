@@ -3,7 +3,7 @@ from datetime import datetime, date, timedelta
 import json
 from data.data_sync import DataSync
 from ui.alert import create_loader, show_loader, hide_loader
-from ui.bill_list_item import create_bill_item
+from ui.bill_list_page.bill_list_item import create_bill_item
 from data.utils import navigate_to
 import asyncio
 from ui.my_controls import ElevatedButton, InitMyControls, EarningsDropdown, NoDataInfo
