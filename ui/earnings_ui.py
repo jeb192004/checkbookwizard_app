@@ -9,7 +9,7 @@ from ui.my_controls import InitMyControls, TextField, ElevatedButton, Radio
 
 def pay_page(current_theme, page:ft.Page, BASE_URL:str, user_id:str):
     InitMyControls(page)
-    ds = DataSync(page, BASE_URL,  user_id)
+    ds = DataSync(page, BASE_URL)
     loader = create_loader(page)
     pay_list = ft.ListView()
 

@@ -29,10 +29,10 @@ def updateData(page: Page):
      return True#isUpdate
 
 class DataSync():
-     def __init__(self, page:Page, BASE_URL, user_id):
+     def __init__(self, page:Page, BASE_URL):
           self.page = page
           self.BASE_URL = BASE_URL
-          self.user_id = user_id
+          self.user_id = page.client_storage.get("burnison.me.user.id")
           self.my_bills=page.client_storage.get("my_bills")
           self.unpaid_bills=page.client_storage.get("unpaid_bills")
           self.profile_pic=page.client_storage.get("profile_pic")

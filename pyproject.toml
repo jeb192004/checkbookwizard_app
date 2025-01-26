@@ -1,6 +1,6 @@
 [project]
 name = "Checkbook Wizard"
-version = "0.0.17"
+version = "0.0.18"
 description = "My first Flet project"
 authors = [
   {name = "James Burnison", email = "jeb192004@gmail.com"}
@@ -11,19 +11,15 @@ dependencies = ["flet==0.25.2"]
 org = "com.burnison.me" # --org
 product = "Checkbook Wizard" # --product
 company = "burnison.me" # --company
-build_number = 17 # --build-number
+build_number = 18 # --build-number
 
 [tool.flet.splash]
 color = "#ffffff"
 dark_color = "#000000"
 
 
+
 [tool.flet.android.signing]
 #key_store = "/Users/jamesburnison/checkbookwizard.jks"
 #key_alias = "wizard"
 
-#flet build aab \                                                   
-#    --android-signing-key-store /Users/jamesburnison/checkbookwizard.jks \
-#    --android-signing-key-alias wizard \
-#    --android-signing-key-store-password "$ANDROID_SIGNING_KEY_STORE_PASSWORD" \
-#    --android-signing-key-password "$ANDROID_SIGNING_KEY_STORE_PASSWORD"

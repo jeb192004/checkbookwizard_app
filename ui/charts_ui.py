@@ -11,7 +11,7 @@ my_bills = []
 column_size = {"sm": 6, "md": 6, "lg":6, "xl": 6}
 
 def charts_page(current_theme, page:ft.Page, BASE_URL:str, user_id:str):
-    ds = DataSync(page, BASE_URL,  user_id)
+    ds = DataSync(page, BASE_URL)
     loader=create_loader(page)
     pie_chart_container = ft.Container()
     colors = [

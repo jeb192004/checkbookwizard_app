@@ -125,7 +125,7 @@ def create_bill_item(page, current_theme, loader, BASE_URL, toggle_calc_bottom_s
     def get_weekly_dates(start_date, day_of_week, end_date):
         day_of_week=day_of_week if day_of_week!=0 else 7
         current = start_date.replace()
-        print(day_of_week)
+        #print(day_of_week)
         result = []
         while current.date() != end_date.date():
             if current.isoweekday() == day_of_week:

@@ -50,13 +50,13 @@ def main(page: ft.Page):
             page.views.clear()
             page.views.append(login_page(current_theme, page, BASE_URL))
         elif page.route == "/bills":
-            bills_page(current_theme, page, BASE_URL, user_id)
+            bills_page(current_theme, page, BASE_URL)
         elif page.route == "/edit_bills":
-            edit_bills_page(current_theme, page, BASE_URL, user_id)
+            edit_bills_page(current_theme, page, BASE_URL)
         elif page.route == "/charts":
-            charts_page(current_theme, page, BASE_URL, user_id)
+            charts_page(current_theme, page, BASE_URL)
         elif page.route == "/pay":
-            pay_page(current_theme, page, BASE_URL, user_id)
+            pay_page(current_theme, page, BASE_URL)
         elif page.route == "/settings":
             page.views.append(settings_page(current_theme, page, BASE_URL))
 

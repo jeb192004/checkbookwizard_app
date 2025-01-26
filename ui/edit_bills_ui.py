@@ -9,7 +9,7 @@ from data.utils import navigate_to
 
 appbar = []
 def edit_bills_page(current_theme, page:ft.Page, BASE_URL:str, user_id:str):
-    ds = DataSync(page, BASE_URL,  user_id)
+    ds = DataSync(page, BASE_URL)
     loader = create_loader(page)
 
     bill_id_to_update = None

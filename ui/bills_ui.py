@@ -10,21 +10,13 @@ from ui.my_controls import ElevatedButton, InitMyControls, EarningsDropdown, NoD
 
 selected_total_bills_amount = 0
 
-def bills_page(current_theme, page: ft.Page, BASE_URL: str, user_id: str):
-    ds = DataSync(page, BASE_URL,  user_id)
-    if user_id is None or user_id == "":
-        user_id = page.client_storage.get("burnison.me.user.id")
+def bills_page(current_theme, page: ft.Page, BASE_URL: str):
+    ds = DataSync(page, BASE_URL)
     InitMyControls(page)
     loader = create_loader(page)
     page.bgcolor = current_theme["background"]
     start_date = datetime.now()
     end_date = start_date + timedelta(days=365)  # 365
-    
-    billListItems = []
-    my_bills = []
-    unpaid_bills = []
-    profile_page = None
-    profile_pic = None
 
     chosen_pay = ft.Text()
     total_due = ft.Text()
@@ -386,6 +378,7 @@ def bills_page(current_theme, page: ft.Page, BASE_URL: str, user_id: str):
     )
 
     async def build_bill_list():
+        show_loader(page, loader)
         data = await ds.get_bills()
         if data["error"] is not None or data["error"] != "":
             profile_pic=None
@@ -410,6 +403,6 @@ def bills_page(current_theme, page: ft.Page, BASE_URL: str, user_id: str):
                 page.update()
         else:
             print(data["error"])
-    
+        hide_loader(page, loader)
     asyncio.run(build_bill_list())
     
