@@ -58,6 +58,7 @@ class ElevatedButton(ft.ElevatedButton):
         self.color = color if color else current_theme["elevated_button"]['text']
         self.on_click = on_click
         self.expand = expand
+        self.icon_color = color if color else current_theme["elevated_button"]['icon_color']
 
 class DeleteButton(ft.ElevatedButton):
     def __init__(self, on_click=None):
@@ -121,7 +122,11 @@ class BillItem(ft.Container):
                     ft.TextSpan(email, ft.TextStyle(decoration=ft.TextDecoration.UNDERLINE, decoration_color=current_theme["list_item_colors"]["link_color"], color=current_theme["list_item_colors"]["link_color"]), on_click=email_onclick),])
         self.content=ft.Column([
             ft.Row(controls=[ft.Text(bill["name"], size=20, color=current_theme["list_item_colors"]["bill_name_color"], style=ft.TextStyle(weight=ft.FontWeight.BOLD)), ft.Container(expand=True), checkbox],),
-            ft.Row(controls=[ft.Row(controls=[ft.Text(f"DUE: ", size=bill_item_text_size, color=current_theme["list_item_colors"]["title_color"],style=ft.TextStyle(weight=ft.FontWeight.BOLD)), ft.Text(f"{due_date}", size=bill_item_text_size, color=bill_item_text_color)]), ft.Row(expand=True),ft.Row(controls=[ft.Text(f"Amount: ", size=bill_item_text_size,color=current_theme["list_item_colors"]["title_color"],style=ft.TextStyle(weight=ft.FontWeight.BOLD)), ft.Text(f"{bill['amount']}", size=bill_item_text_size, color=bill_item_text_color)])], expand=True),
+            ft.Row(controls=[ft.Row(spacing=1, controls=[ft.Text(f"DUE: ", size=bill_item_text_size, color=current_theme["list_item_colors"]["title_color"],style=ft.TextStyle(weight=ft.FontWeight.BOLD)), ft.Text(f"{due_date}", size=bill_item_text_size, color=bill_item_text_color)]),
+                             ft.Row(expand=True),
+                             ft.Row(spacing=1, controls=[ft.Text(f"Amount: ", size=bill_item_text_size,color=current_theme["list_item_colors"]["title_color"],style=ft.TextStyle(weight=ft.FontWeight.BOLD)), ft.Text(f"{bill['amount']}", size=bill_item_text_size, color=bill_item_text_color)])],
+                expand=True,
+                spacing=2),
             website_row,
             phone_row,
             email_row,

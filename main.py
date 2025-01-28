@@ -1,17 +1,14 @@
 #sudo ln -s /usr/lib64/libmpv.so /usr/lib64/libmpv.so.1
 import flet as ft
-from urllib.parse import urlencode
-import os
 
 from ui.login_ui import login_page
 from ui.bill_list_page.bills_ui import bills_page
-from ui.home_ui import home_page
 from ui.settings_ui import settings_page
 from ui.earnings_page.earnings_ui import pay_page
 from ui.edit_bills_ui import edit_bills_page
 from ui.theme import light_theme, dark_theme, green_theme
 from ui.charts_page.charts_ui import charts_page
-from ui.alert import create_loader, show_loader, hide_loader
+from ui.alert import create_loader, hide_loader
 
 BASE_URL = "https://checkbookwizard.com/"
 #BASE_URL = 'http://localhost:1338/'  # For development
@@ -20,10 +17,10 @@ def main(page: ft.Page):
 
     page.title = "Checkbook Wizard"
     if page.platform is page.platform.WINDOWS or page.platform is page.platform.LINUX or page.platform is page.platform.MACOS:
-        page.window.width = 400
+        page.window.width = 360
         page.window.height = 675
 
-    # page.platform = ft.PagePlatform.ANDROID
+    #page.platform = ft.PagePlatform.ANDROID
 
     user_info = {}
     #page.client_storage.clear()

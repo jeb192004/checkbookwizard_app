@@ -278,7 +278,7 @@ def create_bill_item(page, current_theme, loader, BASE_URL, toggle_calc_bottom_s
         weekly_bill_lists.append(
             ft.Card(
                 col=column_size,
-                shadow_color=ft.Colors.BLACK,
+                shadow_color=ft.Colors.WHITE,
                 content=ft.Column(
                     controls=[
                         ft.Container(
@@ -306,7 +306,7 @@ def create_bill_item(page, current_theme, loader, BASE_URL, toggle_calc_bottom_s
     page.on_resized = page_resize'''
     bill_list = ft.ResponsiveRow(controls=weekly_bill_lists, spacing=10)
     #bill_list = ft.ListView(controls=weekly_bill_lists,expand=1, spacing=10, padding=ft.padding.only(left=5, right=5, top=10, bottom=10))
-    bill_list_container.content = ft.Column(controls=[bill_list], expand=True, scroll=True)
+    bill_list_container.controls = [ft.Column(controls=[bill_list], expand=True, scroll=True)]
     #bill_stack.controls.insert(0, bill_list_container)
     page.update()
     

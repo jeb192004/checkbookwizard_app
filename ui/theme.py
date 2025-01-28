@@ -25,7 +25,8 @@ def green_theme():
         },
         "elevated_button":{
             "background": "#1b4a00",
-            "text": "#ffffff"
+            "text": "#ffffff",
+            "icon_color": "#ffffff", 
         },
         "label":{
             "color": "#ffffff"
@@ -99,7 +100,8 @@ def dark_theme():
         },
         "elevated_button":{
             "background": "#3A3A3A",
-            "text": "#ffffff"
+            "text": "#ffffff",
+            "icon_color": "#ffffff", 
         },
         "label":{
             "color": "#ffffff"
@@ -171,7 +173,8 @@ def light_theme():
         },
         "elevated_button":{
             "background": "#000000",
-            "text": "#ffffff"
+            "text": "#ffffff",
+            "icon_color": "#ffffff", 
         },
         "label":{
             "color": "#000000"

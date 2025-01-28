@@ -1,5 +1,6 @@
 import flet as ft
-from datetime import datetime, date, timedelta
+import flet.ads as ads
+from datetime import datetime, timedelta
 import json
 from data.data_sync import DataSync
 from ui.alert import create_loader, show_loader, hide_loader
@@ -7,10 +8,12 @@ from ui.bill_list_page.bill_list_item import create_bill_item
 from data.utils import navigate_to
 import asyncio
 from ui.my_controls import ElevatedButton, InitMyControls, EarningsDropdown, NoDataInfo
+from ui.ads import Ads
 
 selected_total_bills_amount = 0
 
 def bills_page(current_theme, page: ft.Page, BASE_URL: str):
+    ad = Ads(page)
     ds = DataSync(page, BASE_URL)
     InitMyControls(page)
     loader = create_loader(page)
@@ -124,6 +127,12 @@ def bills_page(current_theme, page: ft.Page, BASE_URL: str):
         bottom=0,
         left=10,
         right=10,
+        shadow=ft.BoxShadow(
+            blur_radius=10,
+            spread_radius=2,
+            color=current_theme["shadow_color"],
+            offset=ft.Offset(0, -4),  # Negative offset for top shadow
+        ),
     )
 
     
@@ -348,16 +357,21 @@ def bills_page(current_theme, page: ft.Page, BASE_URL: str):
             shadow_color=current_theme["shadow_color"],
         )
 
-    bill_list_container = ft.Container(
-            bgcolor=current_theme["background"],
-            padding=ft.padding.only(top=0, left=5, right=5, bottom=0),
-            margin=ft.margin.all(0),
+    bill_list_container_padding=ft.padding.only(top=55, left=5, right=5, bottom=0) if page.platform==ft.PagePlatform.ANDROID or page.platform==ft.PagePlatform.IOS else ft.padding.only(top=5, left=5, right=5, bottom=0)
+    bill_list_container = ft.ListView(
+            #bgcolor=current_theme["background"],
+            padding=bill_list_container_padding,
+            #margin=ft.margin.all(0),
             expand=True,
-            alignment=ft.alignment.top_center,
+            #alignment=ft.alignment.top_center,
         )
+    
+    banner_ad = ad.banner_ad()
+    #print(banner_ad.content)
     bill_stack = ft.Stack(
                     controls=[
                         bill_list_container,
+                        banner_ad,
                         bottom_sheet,
                         calc_bottom_sheet,
                     ],
@@ -388,13 +402,14 @@ def bills_page(current_theme, page: ft.Page, BASE_URL: str):
             if "day_of_week" in data:
                 day_of_week=data["day_of_week"]
             earnings_data = await ds.get_earnings()
-            if earnings_data["error"] is None:
+            #print(earnings_data)
+            if earnings_data["error"] is None and earnings_data["data"][0]["amount"] is not None:
                 for earnings in earnings_data["data"]:
                     dd.options.append(EarningsDropdown(title=earnings["title"], hours=earnings["hours"], amount=earnings["amount"]))
             if "my_bills" in data:
                 my_bills = data["my_bills"]
                 unpaid_bills = data["unpaid_bills"]
-                create_bill_item(page, current_theme, loader, BASE_URL, toggle_calc_bottom_sheet, bill_list_container, bill_stack, day_of_week, my_bills, unpaid_bills)
+                create_bill_item(page, current_theme, loader, BASE_URL, toggle_calc_bottom_sheet, bill_list_container, ds, day_of_week, my_bills, unpaid_bills)
             else:
                 bill_list_container.content=NoDataInfo("bills")
             if profile_pic:
