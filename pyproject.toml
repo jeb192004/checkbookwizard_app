@@ -34,6 +34,9 @@ dark_color = "#000000"
 [tool.flet.ios.info]
 GADApplicationIdentifier = "ca-app-pub-1830788262544752~1986225467"
 
+[tool.flet.ios]
+team = "team_id"
+
 [tool.flet.android.signing]
 #key_store = "/Users/jamesburnison/checkbookwizard.jks"
 #key_alias = "wizard"

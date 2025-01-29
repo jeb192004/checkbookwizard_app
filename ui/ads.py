@@ -32,5 +32,7 @@ class Ads():
                 expand=True,
                 margin=ft.margin.only(top=5)
             )
+        elif (self.page.platform is ft.PagePlatform.ANDROID and isAds==False) or (self.page.platform is ft.PagePlatform.IOS and isAds==False):
+            return ft.Container(content=ft.Text("Unable to display ads"))
         else:
             return ft.Container(height=0, visible=False)
