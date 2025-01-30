@@ -193,7 +193,7 @@ def create_bill_item(page, current_theme, loader, BASE_URL, toggle_calc_bottom_s
                     #print(y, m, d, dueDate)
             except ValueError as e:
                 if e.args[0] == 'day is out of range for month':
-                    print(e, due, bill['name'])
+                    #print(e, due, bill['name'])
                     due = int(due)-6
                     dueDate = datetime.strptime(str(f'{week_date.year}-{due:02d}-{week_date.month}'), "%Y-%d-%m").date()
                 else:
@@ -224,6 +224,9 @@ def create_bill_item(page, current_theme, loader, BASE_URL, toggle_calc_bottom_s
             #if bill['name'] == 'Credit Card':# and str(week_date) == '2025-02-07':
                 #print(f"displayed date - {week_date} >= due date: {dueDate} <= {week_date2}(next week), {bill['name']}, {due_date_text}")
             if (dueDate >= week_date and dueDate <= week_date2) or past_due:
+                if bill['name'] == 'Truck Insurance':# and str(week_date) == '2025-02-07':
+                    print(f"displayed date - {week_date} >= due date: {dueDate} <= {week_date2}(next week), {bill['name']}, {due_date_text}")
+            
                 if due_date_text is None:
                     due_date_text = dueDate.strftime('%a %b %d')
                 if bill["frequency"] == "weekly":
