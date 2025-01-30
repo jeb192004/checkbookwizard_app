@@ -77,7 +77,8 @@ class DataSync():
 
      def save_unpaid_bills(self, unpaid_bills):
           response = httpx.post(f"{self.BASE_URL}add_unpaid", json={"unpaid": unpaid_bills})
-          return response, self.unpaid_bills
+          
+          return response
 
      def remove_unpaid_bills(self, unpaid_bills):         
           response = httpx.post(f"{self.BASE_URL}remove_past_due", json={"past_due": unpaid_bills})

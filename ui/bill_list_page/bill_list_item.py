@@ -21,7 +21,7 @@ def create_bill_item(page, current_theme, loader, BASE_URL, toggle_calc_bottom_s
             controls=[
                 ft.Container(
                     content=ft.Row(controls=[
-                        ft.Text("Past Due", size=22, color=current_theme['list_item_colors']['title_color'], style=ft.TextStyle(weight=ft.FontWeight.BOLD)),
+                        ft.Text("Unpaid", size=22, color=current_theme['list_item_colors']['title_color'], style=ft.TextStyle(weight=ft.FontWeight.BOLD)),
                         ft.Container(expand=True,),
                         edit_button,save_button],
                         expand=True),
@@ -64,15 +64,16 @@ def create_bill_item(page, current_theme, loader, BASE_URL, toggle_calc_bottom_s
             e.control.icon = ft.Icons.EDIT
         if len(selected)>0:
             show_loader(page, loader)
-            ds.remove_unpaid_bills(selected, BASE_URL)
-            for control in controls_to_remove:
+            ds.remove_unpaid_bills(selected)
+            page.go("/refresh_bills")
+            '''for control in controls_to_remove:
                 unpaid_bills_list = unpaid_bills_container.content.controls
                 total_text = unpaid_bills_list[-1].content.controls[2].controls[-1]
                 total_unpaid_value = float(total_text.value.replace("$","").replace(",",""))
                 unpaid_amount_remove = float(control.content.controls[1].controls[-1].controls[-1].value.replace("$","").replace(",",""))
                 new_total = total_unpaid_value-unpaid_amount_remove
                 total_text.value=f"${new_total:.2f}"
-                bill_list.remove(control)
+                bill_list.remove(control)'''
             selected = []
             hide_loader(page, loader)
         
@@ -92,6 +93,9 @@ def create_bill_item(page, current_theme, loader, BASE_URL, toggle_calc_bottom_s
                     for m_bill in my_bills:
                         if m_bill["id"] == c_box.data["bill_id"]:
                             m_bill["payday"] = c_box.data["payday"].strftime("%Y-%m-%d")
+                            if len(m_bill["due"]) > 3:
+                                dueDate, due_date_text, due = day_of_week_to_day_of_month(due=m_bill["due"], current_date=week_date)
+                                m_bill["due"] = due
                             selected.append(m_bill)
         if e.control.icon == "edit":
             e.control.icon = ft.Icons.SAVE
@@ -99,8 +103,9 @@ def create_bill_item(page, current_theme, loader, BASE_URL, toggle_calc_bottom_s
             e.control.icon = ft.Icons.EDIT
         if len(selected)>0:
             show_loader(page, loader)
-            response = ds.save_unpaid_bills(selected, BASE_URL)
-            if response.status_code == 200:
+            response = ds.save_unpaid_bills(selected)
+            page.go("/refresh_bills")
+            '''if response.status_code == 200:
                 if response.json()["error"] == "":
                     for bill in response.json()["data"]:
                         if unpaid_card.visible==True:
@@ -116,7 +121,7 @@ def create_bill_item(page, current_theme, loader, BASE_URL, toggle_calc_bottom_s
                             unpaid_card.visible=True
                             unpaid_total_info = BillTotalDue(bills_total_amount=bill["amount"], toggle_click=lambda e: toggle_calc_bottom_sheet(bill["amount"]))
                             unpaid_bills_container.content = ft.Column(controls=[BillItem(bill, bill["payday"], isEditable=True, week_date=datetime.today(), past_due=True, website_onclick=lambda _: page.launch_url(bill["website"]), phone_onclick=lambda _: page.launch_url(f"tel:{bill['phone']}"), email_onclick=lambda _: page.launch_url(f"mailto:{bill['email']}")), unpaid_total_info], expand=True)
-                    
+            '''        
             selected = []
             hide_loader(page, loader)
         page.update()
@@ -166,40 +171,10 @@ def create_bill_item(page, current_theme, loader, BASE_URL, toggle_calc_bottom_s
             elif bill["frequency"] == "monthly" and past_due == False:
                 if  len(due) > 2:
                     #print(due)
-                    weekdayIndex = 0
-                    occurrence = 0
-                    if due.split('-')[1] == 'Sunday': 
-                        weekdayIndex = 7
-                    if due.split('-')[1] == 'Monday': 
-                        weekdayIndex = 1 
-                    if due.split('-')[1] == 'Tuesday': 
-                        weekdayIndex = 2 
-                    if due.split('-')[1] == 'Wednesday': 
-                        weekdayIndex = 3 
-                    if due.split('-')[1] == 'Thursday': 
-                        weekdayIndex = 4 
-                    if due.split('-')[1] == 'Friday': 
-                        weekdayIndex = 5 
-                    if due.split('-')[1] == 'Saturday': 
-                        weekdayIndex = 6 
-
-                    if due.split('-')[0] == 'First': 
-                        occurrence = 0
-                        due_date_text = '1st ' + due.split('-')[1] 
-                    if due.split('-')[0] == 'Second': 
-                        occurrence = 1
-                        due_date_text = '2nd ' + due.split('-')[1] 
-                    if due.split('-')[0] == 'Third': 
-                        occurrence = 2
-                        due_date_text = '3rd ' + due.split('-')[1] 
-                    if due.split('-')[0] == 'Fourth':
-                        occurrence = 3
-                        due_date_text = '4th ' + due.split('-')[1] 
-
+                    
                     #print(occurrence, due_date_text)
                     #dueDate = getWeekdayOfMonth(year, month, week_date, weekdayIndex, occurrence)
-                    dueDate = day_of_week_to_day_of_month(day_of_week=weekdayIndex, week_of_month=occurrence, current_date=week_date)
-                    
+                    dueDate, due_date_text, unused_due = day_of_week_to_day_of_month(due=due, current_date=week_date)
                     #print(dayOfMonth, due)
             if bill["frequency"] == "single":
                 dueDate = due
@@ -218,13 +193,13 @@ def create_bill_item(page, current_theme, loader, BASE_URL, toggle_calc_bottom_s
                     #print(y, m, d, dueDate)
             except ValueError as e:
                 if e.args[0] == 'day is out of range for month':
-                    #print(e, due, bill['name'])
+                    print(e, due, bill['name'])
                     due = int(due)-6
                     dueDate = datetime.strptime(str(f'{week_date.year}-{due:02d}-{week_date.month}'), "%Y-%d-%m").date()
                 else:
                     print(e)
                 
-            if month != month2 and dueDate.day < 6 and dueDate<week_date2:
+            if month != month2 and dueDate.day <= 6 and dueDate<week_date2:
                 #print(dueDate, 'duedate', week_date2)
                 
                 dueDateMonth = week_date.month+1

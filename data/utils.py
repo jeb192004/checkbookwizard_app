@@ -46,7 +46,37 @@ def sort_earnings(earnings, sort_by: str):
     else:
         return earnings       
     
-def day_of_week_to_day_of_month(day_of_week, week_of_month, current_date):
+def day_of_week_to_day_of_month(due, current_date):
+    day_of_week = 0
+    week_of_month = 0
+    if due.split('-')[1] == 'Sunday': 
+        day_of_week = 7
+    if due.split('-')[1] == 'Monday': 
+        day_of_week = 1 
+    if due.split('-')[1] == 'Tuesday': 
+        day_of_week = 2 
+    if due.split('-')[1] == 'Wednesday': 
+        day_of_week = 3 
+    if due.split('-')[1] == 'Thursday': 
+        day_of_week = 4 
+    if due.split('-')[1] == 'Friday': 
+        day_of_week = 5 
+    if due.split('-')[1] == 'Saturday': 
+        day_of_week = 6 
+
+    if due.split('-')[0] == 'First': 
+        week_of_month = 0
+        due_date_text = '1st ' + due.split('-')[1] 
+    if due.split('-')[0] == 'Second': 
+        week_of_month = 1
+        due_date_text = '2nd ' + due.split('-')[1] 
+    if due.split('-')[0] == 'Third': 
+        week_of_month = 2
+        due_date_text = '3rd ' + due.split('-')[1] 
+    if due.split('-')[0] == 'Fourth':
+        week_of_month = 3
+        due_date_text = '4th ' + due.split('-')[1] 
+
     month=current_date.month
     year=current_date.year
     before_date = current_date + timedelta(days=6)
@@ -65,4 +95,4 @@ def day_of_week_to_day_of_month(day_of_week, week_of_month, current_date):
     '''if occurrence == 0:
         target_date = result_date'''
     
-    return f'{year}-{int(result_date.day):02d}-{month}'
+    return f'{year}-{int(result_date.day):02d}-{month}', due_date_text, result_date.day

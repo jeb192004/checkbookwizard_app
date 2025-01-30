@@ -56,6 +56,8 @@ def main(page: ft.Page):
             pay_page(current_theme, page, BASE_URL)
         elif page.route == "/settings":
             page.views.append(settings_page(current_theme, page))
+        elif page.route == "/refresh_bills":
+            page.go("/bills")
 
         page.update()
 
