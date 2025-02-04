@@ -105,7 +105,6 @@ def pay_page(current_theme, page:ft.Page, BASE_URL:str):
         avg_pay_value = avg_pay.value
         fourty_hours_value = fourty_hours.value
         json_data = {
-            "user_id": user_id,
             "hours": hours,
             "amount": amount,
             "title": title

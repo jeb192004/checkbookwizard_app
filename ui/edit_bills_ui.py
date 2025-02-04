@@ -260,7 +260,6 @@ def edit_bills_page(current_theme, page:ft.Page, BASE_URL:str):
             new_update = "update"
         print(bill_id_text.value, new_update)
         json_data = {
-            "user_id": user_id,
             "new_update": new_update,
             "id": bill_id_text.value,
             "due": date_to_save,

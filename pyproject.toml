@@ -1,6 +1,6 @@
 [project]
 name = "Checkbook Wizard"
-version = "0.0.20"
+version = "0.0.22"
 description = "Easily keep track of your bills"
 authors = [
   {name = "James Burnison", email = "jeb192004@gmail.com"}
@@ -14,7 +14,7 @@ dependencies = [
 org = "com.burnison.me" # --org
 product = "Checkbook Wizard" # --product
 company = "burnison.me" # --company
-build_number = 20 # --build-number
+build_number = 22 # --build-number
 
 [tool.uv]
 dev-dependencies = [
@@ -30,12 +30,15 @@ dark_color = "#000000"
 [tool.flet.android.meta_data]
 "com.google.android.gms.ads.APPLICATION_ID" = "ca-app-pub-1830788262544752~9544887950"
 
+[tool.flet.android.permission]
+"com.google.android.gms.permission.AD_ID" = true
+
 # for iOS
 [tool.flet.ios.info]
 GADApplicationIdentifier = "ca-app-pub-1830788262544752~1986225467"
 
 [tool.flet.ios]
-team = "team_id"
+team = "YS6MHH4WM9"
 
 [tool.flet.android.signing]
 #key_store = "/Users/jamesburnison/checkbookwizard.jks"

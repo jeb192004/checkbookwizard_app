@@ -85,6 +85,7 @@ class DataSync():
           print(response)
 
      def add_update_bills(self, data):
+          data["user_id"]=self.user_id
           response = httpx.post(f"{self.BASE_URL}data/add_bill", json=data)
           if response.status_code == 200:
                print(response)
@@ -102,7 +103,7 @@ class DataSync():
                return "error"
      
      def add_update_earnings(self, data):
-     
+          data["user_id"]=self.user_id
           response = httpx.post(f"{self.BASE_URL}data/earnings", json=data)
           if response.status_code == 200:
                print(response)
