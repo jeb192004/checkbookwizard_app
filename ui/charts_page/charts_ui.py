@@ -124,7 +124,7 @@ def charts_page(current_theme, page:ft.Page, BASE_URL:str):
             color=current_theme["calc_theme"]["dropdown_text"],
             bgcolor=current_theme["calc_theme"]["dropdown_background"],
             border_color=current_theme["calc_theme"]["dropdown_border_color"],
-            select_icon_enabled_color=current_theme["calc_theme"]["dropdown_icon_color"],
+            #select_icon_enabled_color=current_theme["calc_theme"]["dropdown_icon_color"],
         )
 
     
@@ -142,10 +142,15 @@ def charts_page(current_theme, page:ft.Page, BASE_URL:str):
                     [ft.Stack(
                         
                         controls=[ft.Column(controls=[
-                            ft.ResponsiveRow(controls=[earnings_pie_column, ft.Container(content=bills_column, padding=ft.padding.only(left=10, right=10), col=column_size)], expand=True, alignment=ft.MainAxisAlignment.CENTER),
+                            ft.ResponsiveRow(controls=[earnings_pie_column, ft.Container(content=bills_column, padding=ft.padding.only(left=10, right=10), col=column_size)],
+                                              #expand=True, 
+                                              alignment=ft.MainAxisAlignment.CENTER,
+                                              
+                                              ),
                             ],
-                            expand=True,
-                            horizontal_alignment="center"),
+                            #expand=True,
+                            horizontal_alignment="center"
+                            ),
                             
                             ]
                     )

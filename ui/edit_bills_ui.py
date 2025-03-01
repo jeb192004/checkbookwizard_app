@@ -23,7 +23,7 @@ def edit_bills_page(current_theme, page:ft.Page, BASE_URL:str):
         print(f"DatePicker dismissed")
 
     def open_date_picker(e, date_picker: ft.DatePicker):
-        date_picker.pick_date()
+        page.open(date_picker)
 
     def on_amount_due_change(e):
         # Get the current input value, strip $, and reformat
@@ -168,7 +168,7 @@ def edit_bills_page(current_theme, page:ft.Page, BASE_URL:str):
             controls=[due_date_column,
                       montly_row,
             ],
-            expand=True,
+            #expand=True,
         ),
         expand=True,
     )
@@ -456,9 +456,9 @@ def edit_bills_page(current_theme, page:ft.Page, BASE_URL:str):
                                         email,
                                         
                                       ],
-                                      expand=True,
-                                      horizontal_alignment="center",
-                                      scroll=ft.ScrollMode.AUTO
+                                      #expand=True,
+                                      #horizontal_alignment="center",
+                                      #scroll=ft.ScrollMode.AUTO
                                       ),
                                       bill_bottom_sheet
                                       ],

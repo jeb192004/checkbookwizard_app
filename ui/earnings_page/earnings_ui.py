@@ -46,7 +46,7 @@ def pay_page(current_theme, page:ft.Page, BASE_URL:str):
     payday_column = ft.Column(col={"sm": 6}, controls=[
         ft.Text("Please select the day of the week you pay your bills", weight=ft.FontWeight.BOLD, size=28, color=current_theme["header_text_color"]),
         payday_options,
-        ft.Row(controls=[ft.Container(content=ElevatedButton(text="Save", icon=ft.Icons.SAVE, on_click=lambda e: update_payday()), padding=ft.padding.only(right=10))],expand=True, alignment=ft.MainAxisAlignment.END),
+        ft.Row(controls=[ft.Container(content=ElevatedButton(text="Save", icon=ft.Icons.SAVE, on_click=lambda e: update_payday()), padding=ft.padding.only(right=10))], alignment=ft.MainAxisAlignment.END),
         ])
     
     payday_container = ft.Container(content=payday_column, padding=ft.padding.all(10))
@@ -136,14 +136,14 @@ def pay_page(current_theme, page:ft.Page, BASE_URL:str):
     pay_column = ft.Column(controls=[
         ft.Text("Pay(optional)", weight=ft.FontWeight.BOLD, size=28, color=current_theme["header_text_color"]),
         avg_pay,
-        ft.Row(controls=[ft.Container(content=ElevatedButton(text="Save", icon=ft.Icons.SAVE, on_click=lambda e: save_update_data(e, "avg")), padding=ft.padding.only(right=10))],expand=True, alignment=ft.MainAxisAlignment.END),
+        ft.Row(controls=[ft.Container(content=ElevatedButton(text="Save", icon=ft.Icons.SAVE, on_click=lambda e: save_update_data(e, "avg")), padding=ft.padding.only(right=10))], alignment=ft.MainAxisAlignment.END),
         fourty_hours,
-        ft.Row(controls=[ft.Container(content=ElevatedButton(text="Save", icon=ft.Icons.SAVE, on_click=lambda e: save_update_data(e, "fourty")), padding=ft.padding.only(right=10))],expand=True, alignment=ft.MainAxisAlignment.END),
+        ft.Row(controls=[ft.Container(content=ElevatedButton(text="Save", icon=ft.Icons.SAVE, on_click=lambda e: save_update_data(e, "fourty")), padding=ft.padding.only(right=10))], alignment=ft.MainAxisAlignment.END),
         ft.Text("Additional Hours of Pay(optional)", weight=ft.FontWeight.BOLD, size=28, color=current_theme["header_text_color"]),
         additional_hours_title,
         additional_hours,
         additional_hours_amount,
-        ft.Row(controls=[ft.Container(content=ElevatedButton(text="Save", icon=ft.Icons.SAVE, on_click=lambda e: save_update_data(e, None)), padding=ft.padding.only(right=10))],expand=True, alignment=ft.MainAxisAlignment.END),
+        ft.Row(controls=[ft.Container(content=ElevatedButton(text="Save", icon=ft.Icons.SAVE, on_click=lambda e: save_update_data(e, None)), padding=ft.padding.only(right=10))], alignment=ft.MainAxisAlignment.END),
         
     ])
     pay_container = ft.Container(content=pay_column, padding=ft.padding.all(10))

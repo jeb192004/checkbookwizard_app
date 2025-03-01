@@ -7,7 +7,7 @@ from ui.alert import create_loader, show_loader, hide_loader
 from ui.bill_list_page.bill_list_item import create_bill_item
 from data.utils import navigate_to
 import asyncio
-from ui.my_controls import ElevatedButton, InitMyControls, EarningsDropdown, NoDataInfo, BillItem
+from ui.my_controls import ElevatedButton, InitMyControls, EarningsDropdown, NoDataInfo, BillItem, BillTotalDue
 from ui.ads import Ads
 
 selected_total_bills_amount = 0
@@ -34,7 +34,7 @@ def bills_page(current_theme, page: ft.Page, BASE_URL: str):
         color=current_theme["calc_theme"]["dropdown_text"],
         bgcolor=current_theme["calc_theme"]["dropdown_background"],
         border_color=current_theme["calc_theme"]["dropdown_background"],
-        select_icon_enabled_color=current_theme["calc_theme"]["dropdown_icon_color"],
+        #select_icon_enabled_color=current_theme["calc_theme"]["dropdown_icon_color"],
     )
     def update_chosen_pay(e):
         selected_item_column=page.get_control(e.value).content.content.controls
@@ -293,7 +293,9 @@ def bills_page(current_theme, page: ft.Page, BASE_URL: str):
     )
 
     def toggle_calc_bottom_sheet(e):
-        total_due.value = f"{e:.2f}"
+        #print(e.control.parent.controls[1].value)
+        total_amount=float(e.control.parent.controls[1].value.replace("$", "").replace(",", ""))
+        total_due.value = f"{total_amount:.2f}"
         chosen_pay.value = "0.00"
         total_after_bills_paid.value = "0.00"
         dd.value = None
@@ -475,7 +477,9 @@ def bills_page(current_theme, page: ft.Page, BASE_URL: str):
                     if isPastDue:
                         edit_button = ft.IconButton(ft.Icons.EDIT, bgcolor=current_theme['list_item_colors']['icon_color'], on_click=lambda e: remove_unpaid(e))
                         save_button = ft.IconButton(ft.Icons.SAVE, bgcolor=current_theme['list_item_colors']['icon_color'], on_click=lambda e: remove_unpaid(e), visible=False)
-    
+                    #print(f"{bill['bills_total_amount']:.2f}")
+                    bills_total_amount = bill['bills_total_amount']
+                    bill_controls.append(BillTotalDue(bills_total_amount, toggle_click=lambda e: toggle_calc_bottom_sheet(e)))
                     weekly_bill_lists.append(
                         ft.Card(
                             col=column_size,
@@ -504,6 +508,13 @@ def bills_page(current_theme, page: ft.Page, BASE_URL: str):
                 bill_list = ft.ResponsiveRow(controls=weekly_bill_lists, spacing=10)
                 bill_list_container.controls = [ft.Column(controls=[bill_list], expand=True, scroll=True)]
                 page.update()
+            earnings_data = await ds.get_earnings()
+            #print(earnings_data)
+            if earnings_data["error"] is None:
+                e_data = earnings_data["data"]
+                for earnings in e_data["income"]:
+                    dd.options.append(EarningsDropdown(title=earnings["title"], hours=earnings["hours"], amount=earnings["amount"]))
+            
             '''profile_pic=None
             day_of_week=5
             if "profile_pic" in data:

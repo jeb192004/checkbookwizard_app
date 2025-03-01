@@ -22,7 +22,7 @@ async def delete_earnings(e, BASE_URL, id, user_id):
 
 def create_earnings_item(data, BASE_URL, current_theme):
     return ft.Container(
-                ft.Column(
+        content=ft.Column(
                     controls=[
                         Title(value=data["title"], size=18, color=current_theme["earnings_list_title_color"]),
                         ft.Row(
@@ -34,14 +34,13 @@ def create_earnings_item(data, BASE_URL, current_theme):
                                        expand=True
                                        )
                             ],
-                            expand=True
+                            #expand=True
                         )
                     ]
                 ),
-              
         padding=ft.padding.all(10),
         margin=ft.margin.all(10),
         border_radius=10,
         border=ft.border.all(1,current_theme["border_color"]),
-        bgcolor=current_theme["list_item_colors"]["base"],
+        bgcolor=current_theme["list_item_colors"]["base"]
     )
