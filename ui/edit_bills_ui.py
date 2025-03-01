@@ -282,11 +282,12 @@ def edit_bills_page(current_theme, page:ft.Page, BASE_URL:str):
             page.update()
 
     def remove_bill(e, bill_id):
+        show_loader(page, loader)
         json_data = {
-            "user_id": user_id,
             "id": bill_id
         }
         response = ds.remove_bill_item(json_data)
+        hide_loader(page, loader)
         if response == "success":
             navigate_to(page, loader, "/bills")
         else:
@@ -368,7 +369,7 @@ def edit_bills_page(current_theme, page:ft.Page, BASE_URL:str):
             frequency_dropdown.value = "Weekly"  
         elif bill_frequency_to_update == "monthly":
             frequency_dropdown.value = "Monthly"
-            if len(bill["due"]) < 3 and bill["due_date"] is None:
+            if len(bill["due"]) < 3 and (bill["due_date"] is None or bill["due_date"]==""):
                 montly_row.visible = True
                 day_of_week_or_month_dropdown.value = "Day of Month (1st, 2nd, ect.)"
                 day_of_month_row.visible = True
@@ -513,17 +514,20 @@ def edit_bills_page(current_theme, page:ft.Page, BASE_URL:str):
 
 
     async def build_bill_list():
-        data = await ds.get_bills()
+        data = await ds.get_bill_list()
+        print(data)
         if data["error"] is not None or data["error"] != "":
             profile_pic=None
             if "profile_pic" in data:
                 profile_pic = data["profile_pic"]
-            #user_pay_hours = data["user_pay_hours"]
-            my_bills=[]
-            if "my_bills" in data:
-                my_bills = data["my_bills"]
-                bill_list = create_bill_list(page, current_theme, my_bills)
-                bottom_sheet_bill_list.controls = bill_list
+            if "data" in data:
+                data=data["data"]
+                my_bills=[]
+                if "bills" in data:
+                    my_bills = data["bills"]
+                    print(my_bills)
+                    bill_list = create_bill_list(page, current_theme, my_bills)
+                    bottom_sheet_bill_list.controls = bill_list
             if profile_pic:
                 appbar_actions = [ft.Container(content=ft.Image(src=profile_pic, width=40, height=40), border_radius=50, margin=ft.margin.only(right=10))]
                 appbar.actions = appbar_actions

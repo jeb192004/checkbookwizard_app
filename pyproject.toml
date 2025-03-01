@@ -1,6 +1,6 @@
 [project]
 name = "Checkbook Wizard"
-version = "0.0.22"
+version = "0.0.23"
 description = "Easily keep track of your bills"
 authors = [
   {name = "James Burnison", email = "jeb192004@gmail.com"}
@@ -14,7 +14,7 @@ dependencies = [
 org = "com.burnison.me" # --org
 product = "Checkbook Wizard" # --product
 company = "burnison.me" # --company
-build_number = 22 # --build-number
+build_number = 23 # --build-number
 
 [tool.uv]
 dev-dependencies = [

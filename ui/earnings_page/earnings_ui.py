@@ -34,7 +34,6 @@ def pay_page(current_theme, page:ft.Page, BASE_URL:str):
         print(payday_options.value)
         show_loader(page, loader)
         json_data = {
-            "user_id": user_id,
             "day_of_week": int(payday_options.value)
         }
         response = ds.update_payday(json_data)
@@ -179,10 +178,12 @@ def pay_page(current_theme, page:ft.Page, BASE_URL:str):
         data = await ds.get_earnings()
         #print(data)
         if data["error"] is None:
-            
-            if len(data["data"]) > 0:
-                profile_pic = data["data"][0]["image_url"]
-                day_of_week = data["data"][0]["day_of_week"]
+            data=data["data"]
+            if len(data) > 0:
+                user = data["user"]
+                income=data["income"]
+                day_of_week = user["day_of_week"]
+                profile_pic = user["image_url"]
                 payday_options.value = day_of_week
                 page.update()
                 if profile_pic:
@@ -190,26 +191,24 @@ def pay_page(current_theme, page:ft.Page, BASE_URL:str):
                     appbar.actions = appbar_actions
                     page.update()
 
-            try:
-                sorted_earnings = sort_earnings(data["data"], "amount")
-                #if len(sorted_earnings) > 0:
-
-                for item in sorted_earnings:
-                    if item["amount"] is not None:
-                        item["user_id"] = user_id
-                        if item["title"] == "Average Pay":
-                            avg_pay.value = item["amount"]
-                            avg_pay.label_style = {"color": current_theme["text_field"]["label_color_focused"]}
-                        elif item["title"] == "40 Hour Pay":
-                            fourty_hours.value = item["amount"]
-                            fourty_hours.label_style = {"color": current_theme["text_field"]["label_color_focused"]}
-                        else:
-                            pay_list.controls.append(create_earnings_item(item, BASE_URL, current_theme))
-                            if page.platform is page.platform.WINDOWS or page.platform is page.platform.LINUX or page.platform is page.platform.MACOS:
-                                pay_list.width = 600
-                page.update()
-            except KeyError:
-                print("Error: No earnings data found")
+                try:
+                    sorted_earnings = sort_earnings(income, "amount")
+                    for item in sorted_earnings:
+                        if item["amount"] is not None:
+                            #item["user_id"] = user_id
+                            if item["title"] == "Average Pay":
+                                avg_pay.value = item["amount"]
+                                avg_pay.label_style = {"color": current_theme["text_field"]["label_color_focused"]}
+                            elif item["title"] == "40 Hour Pay":
+                                fourty_hours.value = item["amount"]
+                                fourty_hours.label_style = {"color": current_theme["text_field"]["label_color_focused"]}
+                            else:
+                                pay_list.controls.append(create_earnings_item(item, BASE_URL, current_theme))
+                                if page.platform is page.platform.WINDOWS or page.platform is page.platform.LINUX or page.platform is page.platform.MACOS:
+                                    pay_list.width = 600
+                    page.update()
+                except KeyError:
+                    print("Error: No earnings data found")
         else:
             print(data["error"])
     

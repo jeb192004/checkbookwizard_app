@@ -8,6 +8,13 @@ __pycache__/
 
 # Distribution / packaging
 .Python
+.build/
+.swiftpm/
+.xcworkspace/
+.xcuserdata/ 
+Pods/ 
+ios/Flutter/ephemeral/ 
+ios/Flutter/Flutter.framework 
 build/
 develop-eggs/
 dist/

@@ -1,3 +1,4 @@
+from urllib.parse import urlencode
 from flet import Page, dropdown
 import httpx
 import json
@@ -33,12 +34,31 @@ class DataSync():
           self.page = page
           self.BASE_URL = BASE_URL
           self.user_id = page.client_storage.get("burnison.me.user.id")
+          self.token=page.client_storage.get("burnison.me.user.token")
           self.my_bills=page.client_storage.get("my_bills")
           self.unpaid_bills=page.client_storage.get("unpaid_bills")
           self.profile_pic=page.client_storage.get("profile_pic")
           self.day_of_week=5
           
      async def get_bills(self):
+          headers = {"Authorization": f"Bearer {self.token}"}
+          async with httpx.AsyncClient() as client:
+               response = await client.post(f"{self.BASE_URL}app/bills/", headers=headers)
+               if response.status_code == 200:
+                    return dict(data=response.json(), error=None)
+               else:
+                    return dict(data=None, error=f"HTTP Error: {response.status_code}")
+               
+     async def get_bill_list(self):
+          headers = {"Authorization": f"Bearer {self.token}"}
+          async with httpx.AsyncClient() as client:
+               response = await client.post(f"{self.BASE_URL}app/bill_list/", headers=headers)
+               if response.status_code == 200:
+                    return dict(data=response.json(), error=None, profile_pic=self.profile_pic)
+               else:
+                    return dict(data=None, error=f"HTTP Error: {response.status_code}")
+               
+     async def get_bills_old(self):
      
      
           if self.my_bills is None or self.my_bills == "" or updateData(self.page):
@@ -76,17 +96,25 @@ class DataSync():
                  
 
      def save_unpaid_bills(self, unpaid_bills):
-          response = httpx.post(f"{self.BASE_URL}add_unpaid", json={"unpaid": unpaid_bills})
-          
+          headers = {"Authorization": f"Bearer {self.token}"}
+          response = httpx.post(f"{self.BASE_URL}app/data/unpaid", json={"unpaid": unpaid_bills}, headers=headers)
           return response
 
      def remove_unpaid_bills(self, unpaid_bills):         
-          response = httpx.post(f"{self.BASE_URL}remove_past_due", json={"past_due": unpaid_bills})
-          print(response)
+          headers = {"Authorization": f"Bearer {self.token}"}
+          # Convert the list to a string of comma-separated values
+          unpaid_bill_ids_str = ",".join(map(str, unpaid_bills))
+
+          params = {"unpaid_bills": unpaid_bill_ids_str}  # Use a descriptive parameter name
+          encoded_params = urlencode(params)
+          url = f"{self.BASE_URL}app/data/unpaid?{encoded_params}"
+
+          response = httpx.delete(url, headers=headers)
+          return response
 
      def add_update_bills(self, data):
-          data["user_id"]=self.user_id
-          response = httpx.post(f"{self.BASE_URL}data/add_bill", json=data)
+          headers = {"Authorization": f"Bearer {self.token}"}
+          response = httpx.post(f"{self.BASE_URL}app/add_bill/", json=data, headers=headers)
           if response.status_code == 200:
                print(response)
                return "success"
@@ -94,8 +122,8 @@ class DataSync():
                return "error"
      
      def remove_bill_item(self, data):
-     
-          response = httpx.post(f"{self.BASE_URL}data/remove_bill", json=data)
+          headers = {"Authorization": f"Bearer {self.token}"}
+          response = httpx.post(f"{self.BASE_URL}app/remove_bill/", json=data, headers=headers)
           if response.status_code == 200:
                print(response)
                return "success"
@@ -103,8 +131,8 @@ class DataSync():
                return "error"
      
      def add_update_earnings(self, data):
-          data["user_id"]=self.user_id
-          response = httpx.post(f"{self.BASE_URL}data/earnings", json=data)
+          headers = {"Authorization": f"Bearer {self.token}"}
+          response = httpx.post(f"{self.BASE_URL}app/edit_income/", json=data, headers=headers)
           if response.status_code == 200:
                print(response)
                return dict(data=response, error=None)
@@ -112,24 +140,26 @@ class DataSync():
                return dict(data=None, error=f"HTTP Error: {response.status_code}")
      
      async def get_earnings(self):
+          headers = {"Authorization": f"Bearer {self.token}"}
           async with httpx.AsyncClient() as client:
-               response = await client.get(f"{self.BASE_URL}data/earnings/{self.user_id}")
+               response = await client.get(f"{self.BASE_URL}app/income/", headers=headers)
                if response.status_code == 200:
                     return dict(data=response.json(), error=None)
                else:
                     return dict(data=None, error=f"HTTP Error: {response.status_code}")
 
      async def delete_earning(self, id):
+          headers = {"Authorization": f"Bearer {self.token}"}
           async with httpx.AsyncClient() as client:
-               response = await client.delete(f"{self.BASE_URL}data/earnings/{id}/{self.user_id}")
+               response = await client.delete(f"{self.BASE_URL}app/delete/income/{id}/", headers=headers)
                if response.status_code == 200:
                     return dict(data=response.json(), error=None)
                else:
                     return dict(data=None, error=f"HTTP Error: {response.status_code}")
                
      def update_payday(self, data):
-     
-          response = httpx.post(f"{self.BASE_URL}data/day_of_week", json=data)
+          headers = {"Authorization": f"Bearer {self.token}"}
+          response = httpx.post(f"{self.BASE_URL}app/day_of_week/", json=data, headers=headers)
           if response.status_code == 200:
                print(response)
                return dict(data=response, error=None)

@@ -95,14 +95,14 @@ class Radio(ft.Container):
         self.padding=ft.padding.all(10)    
 
 class BillItem(ft.Container):
-    def __init__(self, bill, due_date, isEditable, week_date, past_due, website_onclick=None, phone_onclick=None, email_onclick=None):
+    def __init__(self, b, past_due, website_onclick=None, phone_onclick=None, email_onclick=None):
         super().__init__()
+        bill=b["bill"]
         checkbox = ft.Container()
-        checkbox_value = True
+        if b["isEditable"]:
+            checkbox = ft.Checkbox(label="Paid", value=True, label_position=ft.LabelPosition.LEFT, data={"name": bill["name"], "payday": b["week_date"], "website":bill["website"], "phone":bill["phone"], "email":bill["email"], "frequency":bill["frequency"], "amount":bill["amount"], "due_date":bill["due_date"], "due":bill["due"]}, visible=False)
         if past_due:
-            checkbox_value = False
-        if isEditable:
-            checkbox = ft.Checkbox(label="Paid", value=checkbox_value, label_position=ft.LabelPosition.LEFT, data={"bill_id": bill["id"], "payday": week_date}, visible=False)
+            checkbox = ft.Checkbox(label="Paid", value=False, label_position=ft.LabelPosition.LEFT, data={"id": bill["id"]}, visible=False)
         bill_item_text_size = 15
         bill_item_text_color = current_theme["list_item_colors"]["text_color"]
         website_row = ft.Row()
@@ -122,10 +122,10 @@ class BillItem(ft.Container):
                     ft.TextSpan(email, ft.TextStyle(decoration=ft.TextDecoration.UNDERLINE, decoration_color=current_theme["list_item_colors"]["link_color"], color=current_theme["list_item_colors"]["link_color"]), on_click=email_onclick),])
         self.content=ft.Column([
             ft.Row(controls=[ft.Text(bill["name"], size=20, color=current_theme["list_item_colors"]["bill_name_color"], style=ft.TextStyle(weight=ft.FontWeight.BOLD)), ft.Container(expand=True), checkbox],),
-            ft.Row(controls=[ft.Row(spacing=1, controls=[ft.Text(f"DUE: ", size=bill_item_text_size, color=current_theme["list_item_colors"]["title_color"],style=ft.TextStyle(weight=ft.FontWeight.BOLD)), ft.Text(f"{due_date}", size=bill_item_text_size, color=bill_item_text_color)]),
+            ft.Row(controls=[ft.Row(spacing=1, controls=[ft.Text(f"DUE: ", size=bill_item_text_size, color=current_theme["list_item_colors"]["title_color"],style=ft.TextStyle(weight=ft.FontWeight.BOLD)), ft.Text(b["due_date_text"], size=bill_item_text_size, color=bill_item_text_color)]),
                              ft.Row(expand=True),
                              ft.Row(spacing=1, controls=[ft.Text(f"Amount: ", size=bill_item_text_size,color=current_theme["list_item_colors"]["title_color"],style=ft.TextStyle(weight=ft.FontWeight.BOLD)), ft.Text(f"{bill['amount']}", size=bill_item_text_size, color=bill_item_text_color)])],
-                expand=True,
+                #expand=True,
                 spacing=2),
             website_row,
             phone_row,

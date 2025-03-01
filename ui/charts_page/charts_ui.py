@@ -158,27 +158,30 @@ def charts_page(current_theme, page:ft.Page, BASE_URL:str):
     )
 
     async def build_bill_list():
-        data = await ds.get_bills()
+        data = await ds.get_bill_list()
         if data["error"] is not None or data["error"] != "":
             profile_pic=None
             if "profile_pic" in data:
                 profile_pic = data["profile_pic"]
             earnings_data = await ds.get_earnings()
-            print(earnings_data)
             if earnings_data["error"] is None:
-                for earnings in earnings_data["data"]:
-                    if earnings["amount"] is None:
-                        bills_column.controls.append(NoDataInfo("earnings"))
-                    else:
-                        earnings_dropdown.options.append(EarningsDropdown(title=earnings["title"], hours=earnings["hours"], amount=earnings["amount"]))
+                if "data" in earnings_data:
+                    if "income" in earnings_data["data"]:
+                        for earnings in earnings_data["data"]["income"]:
+                            if earnings["amount"] is None:
+                                bills_column.controls.append(NoDataInfo("earnings"))
+                            else:
+                                earnings_dropdown.options.append(EarningsDropdown(title=earnings["title"], hours=earnings["hours"], amount=earnings["amount"]))
             
             if profile_pic:
                 appbar_actions = [ft.Container(content=ft.Image(src=profile_pic, width=40, height=40), border_radius=50, margin=ft.margin.only(right=10))]
                 appbar.actions = appbar_actions
                 page.update()
-            if "my_bills" in data:
-                create_check_list(page, data["my_bills"], bills_column, current_theme=current_theme)
-                return data["my_bills"]
+            if "data" in data:
+                data=data["data"]
+                if "bills" in data:
+                    create_check_list(page, data["bills"], bills_column, current_theme=current_theme)
+                return data["bills"]
             else:
                 bills_column.controls.append(NoDataInfo("bills"))
         else:

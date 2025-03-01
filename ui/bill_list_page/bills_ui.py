@@ -7,10 +7,12 @@ from ui.alert import create_loader, show_loader, hide_loader
 from ui.bill_list_page.bill_list_item import create_bill_item
 from data.utils import navigate_to
 import asyncio
-from ui.my_controls import ElevatedButton, InitMyControls, EarningsDropdown, NoDataInfo
+from ui.my_controls import ElevatedButton, InitMyControls, EarningsDropdown, NoDataInfo, BillItem
 from ui.ads import Ads
 
 selected_total_bills_amount = 0
+column_size = {"sm": 6, "md": 6, "lg":4, "xl": 3}
+unpaid_total=0
 
 def bills_page(current_theme, page: ft.Page, BASE_URL: str):
     ad = Ads(page)
@@ -391,11 +393,118 @@ def bills_page(current_theme, page: ft.Page, BASE_URL: str):
         )
     )
 
+
+    def save_unpaid(e):
+        selected = []
+        bill_list = e.control.parent.parent.parent.controls[1].content.controls
+        for bill in bill_list:
+            if "row" not in str(bill.content):
+                c_box = bill.content.controls[0].controls[2]
+                if c_box.visible ==True:
+                    c_box.visible = False
+                else:
+                    c_box.visible = True
+                if c_box.value == False:
+                    selected.append(c_box.data)
+        if e.control.icon == "edit":
+            e.control.icon = ft.Icons.SAVE
+        elif e.control.icon == "save":
+            e.control.icon = ft.Icons.EDIT
+        if len(selected)>0:
+            #print(selected)
+            show_loader(page, loader)
+            response = ds.save_unpaid_bills(selected)
+            page.go("/refresh_bills")
+            
+            selected = []
+            hide_loader(page, loader)
+        page.update()
+
+    def remove_unpaid(e):
+        selected = []
+        controls_to_remove = []
+        bill_list = e.control.parent.parent.parent.controls[1].content.controls
+        for bill in bill_list:
+            if "row" not in str(bill.content):
+                c_box = bill.content.controls[0].controls[2]
+                if c_box.visible ==True:
+                    c_box.visible = False
+                else:
+                    c_box.visible = True
+                if c_box.value == True:
+                    controls_to_remove.append(bill)
+                    selected.append(c_box.data["id"])
+        if e.control.icon == "edit":
+            e.control.icon = ft.Icons.SAVE
+        elif e.control.icon == "save":
+            e.control.icon = ft.Icons.EDIT
+        if len(selected)>0:
+            show_loader(page, loader)
+            response=ds.remove_unpaid_bills(selected)
+            page.go("/refresh_bills")
+            selected = []
+            hide_loader(page, loader)
+        
+        page.update()
+
+    
+
+
     async def build_bill_list():
         show_loader(page, loader)
         data = await ds.get_bills()
         if data["error"] is not None or data["error"] != "":
-            profile_pic=None
+            bill_data=data["data"]
+            if bill_data["bills"]:
+                weekly_bill_lists=[]
+                for index, bill in enumerate(bill_data["bills"]):
+                    bill_controls=[]
+                    isPastDue=bill["past_due"]
+                    for b in bill["bills"]:
+                        bill_controls.append(BillItem(b, isPastDue, website_onclick=lambda _: page.launch_url(b["website"]), phone_onclick=lambda _: page.launch_url(f"tel:{b['phone']}"), email_onclick=lambda _: page.launch_url(f"mailto:{b['email']}")),)
+                    date=bill["week_date"]
+                    date_object = datetime.strptime(date, "%Y-%m-%d").date()
+                    date_text = date_object.strftime("%b. %d, %Y")
+                    if isPastDue:
+                        date_text="Unpaid"
+                    edit_button = ft.Container()
+                    isEditable = bill["isEditable"]
+                    if isEditable:
+                        edit_button = ft.IconButton(ft.Icons.EDIT, bgcolor=current_theme['list_item_colors']['icon_color'], on_click=lambda e: save_unpaid(e))
+                        save_button = ft.IconButton(ft.Icons.SAVE, bgcolor=current_theme['list_item_colors']['icon_color'], on_click=lambda e: save_unpaid(e), visible=False)
+                    if isPastDue:
+                        edit_button = ft.IconButton(ft.Icons.EDIT, bgcolor=current_theme['list_item_colors']['icon_color'], on_click=lambda e: remove_unpaid(e))
+                        save_button = ft.IconButton(ft.Icons.SAVE, bgcolor=current_theme['list_item_colors']['icon_color'], on_click=lambda e: remove_unpaid(e), visible=False)
+    
+                    weekly_bill_lists.append(
+                        ft.Card(
+                            col=column_size,
+                            shadow_color=ft.Colors.WHITE,
+                            content=ft.Column(
+                                controls=[
+                                    ft.Container(
+                                        content=ft.Row(controls=[
+                                            ft.Text(f"{date_text}", size=22, color=current_theme['list_item_colors']['title_color'], style=ft.TextStyle(weight=ft.FontWeight.BOLD)),
+                                            ft.Container(
+                                                expand=True,),
+                                            edit_button,save_button],
+                                            expand=True),
+                                        margin=ft.margin.only(left=10, top=10, right=10),
+                                    ),
+                                    ft.Card(
+                                        content=ft.Column(controls=bill_controls, spacing=2),
+                                        color=current_theme['list_item_colors']['inner_container'],
+                                    ),
+                                ]),
+                                color=current_theme['list_item_colors']['base'],
+                        )
+                    )
+                    #print("\n------\n", bill, "\n")
+                    
+                bill_list = ft.ResponsiveRow(controls=weekly_bill_lists, spacing=10)
+                bill_list_container.controls = [ft.Column(controls=[bill_list], expand=True, scroll=True)]
+                page.update()
+            '''profile_pic=None
             day_of_week=5
             if "profile_pic" in data:
                 profile_pic = data["profile_pic"]
@@ -409,15 +518,19 @@ def bills_page(current_theme, page: ft.Page, BASE_URL: str):
             if "my_bills" in data:
                 my_bills = data["my_bills"]
                 unpaid_bills = data["unpaid_bills"]
+                
                 create_bill_item(page, current_theme, loader, BASE_URL, toggle_calc_bottom_sheet, bill_list_container, ds, day_of_week, my_bills, unpaid_bills)
             else:
                 bill_list_container.content=NoDataInfo("bills")
             if profile_pic:
                 appbar_actions = [ft.Container(content=ft.Image(src=profile_pic, width=40, height=40), border_radius=50, margin=ft.margin.only(right=10))]
                 appbar.actions = appbar_actions
-                page.update()
+                page.update()'''
+            hide_loader(page, loader)
         else:
             print(data["error"])
-        hide_loader(page, loader)
+            hide_loader(page, loader)
+        
+        
     asyncio.run(build_bill_list())
     

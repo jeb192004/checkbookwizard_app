@@ -7,6 +7,10 @@ from data.utils import day_of_week_to_day_of_month
 
 column_size = {"sm": 6, "md": 6, "lg":4, "xl": 3}
 unpaid_total=0
+
+
+
+
 def create_bill_item(page, current_theme, loader, BASE_URL, toggle_calc_bottom_sheet, bill_list_container, ds:DataSync, day_of_week, my_bills, unpaid_bills):
     start_date = datetime.now()
     end_date = start_date + timedelta(days=365)#365
@@ -79,53 +83,7 @@ def create_bill_item(page, current_theme, loader, BASE_URL, toggle_calc_bottom_s
         
         page.update()
 
-    def edit_bill_list(e):
-        selected = []
-        bill_list = e.control.parent.parent.parent.controls[1].content.content.controls
-        for bill in bill_list:
-            if "row" not in str(bill.content):
-                c_box = bill.content.controls[0].controls[2]
-                if c_box.visible ==True:
-                    c_box.visible = False
-                else:
-                    c_box.visible = True
-                if c_box.value == False:
-                    for m_bill in my_bills:
-                        if m_bill["id"] == c_box.data["bill_id"]:
-                            m_bill["payday"] = c_box.data["payday"].strftime("%Y-%m-%d")
-                            if len(m_bill["due"]) > 3:
-                                dueDate, due_date_text, due = day_of_week_to_day_of_month(due=m_bill["due"], current_date=week_date)
-                                m_bill["due"] = due
-                            selected.append(m_bill)
-        if e.control.icon == "edit":
-            e.control.icon = ft.Icons.SAVE
-        elif e.control.icon == "save":
-            e.control.icon = ft.Icons.EDIT
-        if len(selected)>0:
-            show_loader(page, loader)
-            response = ds.save_unpaid_bills(selected)
-            page.go("/refresh_bills")
-            '''if response.status_code == 200:
-                if response.json()["error"] == "":
-                    for bill in response.json()["data"]:
-                        if unpaid_card.visible==True:
-                            unpaid_bills_list = unpaid_bills_container.content.controls
-                            unpaid_bills_list.insert(-1, BillItem(bill, bill["payday"], isEditable=True, week_date=datetime.today(), past_due=True, website_onclick=lambda _: page.launch_url(bill["website"]), phone_onclick=lambda _: page.launch_url(f"tel:{bill['phone']}"), email_onclick=lambda _: page.launch_url(f"mailto:{bill['email']}")))
-                            if len(unpaid_bills_list)>0:
-                                total_text = unpaid_bills_list[-1].content.controls[2].controls[-1]
-                                total_value = float(total_text.value.replace("$", "").replace(",",""))
-                                new_total = total_value+float(bill["amount"].replace("$","").replace(",",""))
-                                print(total_value, bill["amount"], new_total)
-                                total_text.value=f"${new_total:.2f}"
-                        else:
-                            unpaid_card.visible=True
-                            unpaid_total_info = BillTotalDue(bills_total_amount=bill["amount"], toggle_click=lambda e: toggle_calc_bottom_sheet(bill["amount"]))
-                            unpaid_bills_container.content = ft.Column(controls=[BillItem(bill, bill["payday"], isEditable=True, week_date=datetime.today(), past_due=True, website_onclick=lambda _: page.launch_url(bill["website"]), phone_onclick=lambda _: page.launch_url(f"tel:{bill['phone']}"), email_onclick=lambda _: page.launch_url(f"mailto:{bill['email']}")), unpaid_total_info], expand=True)
-            '''        
-            selected = []
-            hide_loader(page, loader)
-        page.update()
-
+    
     
     def get_weekly_dates(start_date, day_of_week, end_date):
         day_of_week=day_of_week if day_of_week!=0 else 7
@@ -224,8 +182,8 @@ def create_bill_item(page, current_theme, loader, BASE_URL, toggle_calc_bottom_s
             #if bill['name'] == 'Credit Card':# and str(week_date) == '2025-02-07':
                 #print(f"displayed date - {week_date} >= due date: {dueDate} <= {week_date2}(next week), {bill['name']}, {due_date_text}")
             if (dueDate >= week_date and dueDate <= week_date2) or past_due:
-                if bill['name'] == 'Truck Insurance':# and str(week_date) == '2025-02-07':
-                    print(f"displayed date - {week_date} >= due date: {dueDate} <= {week_date2}(next week), {bill['name']}, {due_date_text}")
+                #if bill['name'] == 'Truck Insurance':# and str(week_date) == '2025-02-07':
+                    #print(f"displayed date - {week_date} >= due date: {dueDate} <= {week_date2}(next week), {bill['name']}, {due_date_text}")
             
                 if due_date_text is None:
                     due_date_text = dueDate.strftime('%a %b %d')
@@ -278,13 +236,10 @@ def create_bill_item(page, current_theme, loader, BASE_URL, toggle_calc_bottom_s
                 color=current_theme['list_item_colors']['base'],
             )
         )
-    '''def page_resize(e):
-        pw = f"{page.width} px"
-        print(pw)
-    page.on_resized = page_resize'''
+    
     bill_list = ft.ResponsiveRow(controls=weekly_bill_lists, spacing=10)
     #bill_list = ft.ListView(controls=weekly_bill_lists,expand=1, spacing=10, padding=ft.padding.only(left=5, right=5, top=10, bottom=10))
     bill_list_container.controls = [ft.Column(controls=[bill_list], expand=True, scroll=True)]
-    #bill_stack.controls.insert(0, bill_list_container)
+    
     page.update()
     
