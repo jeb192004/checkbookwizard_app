@@ -46,8 +46,8 @@ def settings_page(current_theme, page:ft.Page):
             ],
         label="Pick A Theme",
         on_change=lambda e: update_theme(e.control.value),
-        color=current_theme["calc_theme"]["dropdown_text"],
-        bgcolor=current_theme["calc_theme"]["dropdown_background"],
+        color=current_theme["settings_theme"]["dropdown_text"],
+        bgcolor=current_theme["settings_theme"]["dropdown_background"],
         border_color=current_theme["calc_theme"]["dropdown_border_color"],
         select_icon_enabled_color=current_theme["calc_theme"]["dropdown_icon_color"],
     )

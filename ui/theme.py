@@ -77,6 +77,10 @@ def green_theme():
             "dropdown_background": "#4caf50",
             "dropdown_border_color": "#4caf50",
             "dropdown_icon_color": ft.Colors.WHITE
+        },
+        "settings_theme": {
+            "dropdown_background": ft.Colors.GREY,
+            "dropdown_text": ft.Colors.WHITE
         }
     }
 
@@ -151,6 +155,10 @@ def dark_theme():
             "dropdown_background": ft.Colors.GREY,
             "dropdown_border_color": "#262626",
             "dropdown_icon_color": ft.Colors.WHITE
+        },
+         "settings_theme": {
+            "dropdown_background": ft.Colors.GREY,
+            "dropdown_text": ft.Colors.WHITE
         }
     }
 
@@ -224,5 +232,9 @@ def light_theme():
             "dropdown_background": ft.Colors.WHITE,
             "dropdown_border_color": ft.Colors.GREY,
             "dropdown_icon_color": ft.Colors.BLACK
+        },
+        "settings_theme": {
+            "dropdown_background": ft.Colors.GREY,
+            "dropdown_text": ft.Colors.WHITE
         }
     }

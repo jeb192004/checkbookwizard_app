@@ -392,6 +392,7 @@ def bills_page(current_theme, page: ft.Page, BASE_URL: str):
             ],
             appbar=appbar,
             bottom_appbar=bottom_appbar,
+            bgcolor=current_theme["background"],
         )
     )
 
