@@ -105,12 +105,13 @@ def charts_page(current_theme, page:ft.Page, BASE_URL:str):
     earnings_dropdown = ft.Dropdown()
     chosen_pay=ft.Text(f"{earnings_dropdown.value if earnings_dropdown.value else 'Monthly Earnings: $0.00'}", size=18, color=current_theme['calc_theme']['text'])
     def update_chosen_pay(e):
-            selected_item_column=page.get_control(e.value).content.content.controls
-            selected_item_title=selected_item_column[0].controls[0].value
-            selected_item_amount=selected_item_column[1].controls[1].value
+            #print(e)
+            #selected_item_column=page.get_control(e.value).content.content.controls
+            #selected_item_title=selected_item_column[0].controls[0].value
+            #selected_item_amount=selected_item_column[1].controls[1].value
             #print(selected_total_bills_amount, selected_item_amount)
-            earnings_dropdown.value=selected_item_title
-        
+            #earnings_dropdown.value=selected_item_title
+            selected_item_amount=e.data
             monthly_pay = float(selected_item_amount.replace('$', "").replace(',', ''))*4
             chosen_pay.value = f"Monthly Earnings: ${monthly_pay:,.2f}"
             pie_chart.sections = []
@@ -120,7 +121,7 @@ def charts_page(current_theme, page:ft.Page, BASE_URL:str):
     earnings_dropdown = ft.Dropdown(
             width=300,
             label="Earnings",
-            on_change=lambda e: update_chosen_pay(e.control),
+            on_change=lambda e: update_chosen_pay(e),
             color=current_theme["calc_theme"]["dropdown_text"],
             bgcolor=current_theme["calc_theme"]["dropdown_background"],
             border_color=current_theme["calc_theme"]["dropdown_border_color"],

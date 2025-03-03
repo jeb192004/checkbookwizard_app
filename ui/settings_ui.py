@@ -65,7 +65,7 @@ def settings_page(current_theme, page:ft.Page):
         color=current_theme["calc_theme"]["dropdown_text"],
         bgcolor=current_theme["calc_theme"]["dropdown_background"],
         border_color=current_theme["calc_theme"]["dropdown_border_color"],
-        select_icon_enabled_color=current_theme["calc_theme"]["dropdown_icon_color"],
+        #select_icon_enabled_color=current_theme["calc_theme"]["dropdown_icon_color"],
     )
     update_frequency_info = ft.Text("How often do you want to check the server for your updated data", size=12, color=current_theme["text_color"])
 

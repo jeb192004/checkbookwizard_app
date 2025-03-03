@@ -63,6 +63,7 @@ def edit_bills_page(current_theme, page:ft.Page, BASE_URL:str):
     error_text = ft.TextField(bgcolor=ft.Colors.RED, color="white", visible=False)
     bill_id_text = ft.TextField(visible=False)
     name_text = ft.TextField(label="Company/Person/Name: ", bgcolor=current_theme["list_item_colors"]['base'], color=current_theme["text_color"], label_style=ft.TextStyle(color=current_theme["text_color"]))
+    item_width=name_text.width
     amount_due = ft.TextField(label="Amount Due: ", prefix_text="$", bgcolor=current_theme["list_item_colors"]['base'], color=current_theme["text_color"], label_style=ft.TextStyle(color=current_theme["text_color"]), on_change=on_amount_due_change)
     website = ft.TextField(label="Website(optional): ", bgcolor=current_theme["list_item_colors"]['base'], color=current_theme["text_color"], label_style=ft.TextStyle(color=current_theme["text_color"]))
     phone_number = ft.TextField(label="Phone Number(optional): ", bgcolor=current_theme["list_item_colors"]['base'], color=current_theme["text_color"], label_style=ft.TextStyle(color=current_theme["text_color"]))
@@ -72,13 +73,13 @@ def edit_bills_page(current_theme, page:ft.Page, BASE_URL:str):
                                                     bgcolor=current_theme["list_item_colors"]['base'], color=current_theme["text_color"]
                                                     )
     due_date_column = ft.Row(controls=[ft.Column(controls=[due_date_picker, date_text], expand=True)], expand=True, visible=False)
-    frequency_dropdown = ft.Dropdown(label="Frequency(how often bill is paid)",expand=True, bgcolor=current_theme["list_item_colors"]['base'], color=current_theme["text_color"], label_style=ft.TextStyle(color=current_theme["text_color"]))
+    frequency_dropdown = ft.Dropdown(label="Frequency(how often bill is paid)", width=360,expand=True, bgcolor=current_theme["list_item_colors"]['base'], color=current_theme["text_color"], label_style=ft.TextStyle(color=current_theme["text_color"]))
 
-    day_of_week_or_month_dropdown = ft.Dropdown(label="Day of Week or Month",expand=True, bgcolor=current_theme["list_item_colors"]['base'], color=current_theme["text_color"], label_style=ft.TextStyle(color=current_theme["text_color"]))
-    week_of_month_dropdown = ft.Dropdown(label="Select a week of the month",expand=True, bgcolor=current_theme["list_item_colors"]['base'], color=current_theme["text_color"], label_style=ft.TextStyle(color=current_theme["text_color"]))
-    day_of_week_dropdown = ft.Dropdown(label="Select a day of the week",expand=True, bgcolor=current_theme["list_item_colors"]['base'], color=current_theme["text_color"], label_style=ft.TextStyle(color=current_theme["text_color"]))
+    day_of_week_or_month_dropdown = ft.Dropdown(label="Day of Week or Month", width=340,expand=True, bgcolor=current_theme["list_item_colors"]['base'], color=current_theme["text_color"], label_style=ft.TextStyle(color=current_theme["text_color"]))
+    week_of_month_dropdown = ft.Dropdown(label="Select a week of the month", width=340,expand=True, bgcolor=current_theme["list_item_colors"]['base'], color=current_theme["text_color"], label_style=ft.TextStyle(color=current_theme["text_color"]))
+    day_of_week_dropdown = ft.Dropdown(label="Select a day of the week", width=340,expand=True, bgcolor=current_theme["list_item_colors"]['base'], color=current_theme["text_color"], label_style=ft.TextStyle(color=current_theme["text_color"]))
     day_of_week_row = ft.Row(controls=[ft.Column(controls=[week_of_month_dropdown,day_of_week_dropdown],expand=True)], expand=True,visible=False)
-    day_of_month_dropdown = ft.Dropdown(label="Select a day of the month",expand=True, bgcolor=current_theme["list_item_colors"]['base'], color=current_theme["text_color"], label_style=ft.TextStyle(color=current_theme["text_color"]))
+    day_of_month_dropdown = ft.Dropdown(label="Select a day of the month", width=340,expand=True, bgcolor=current_theme["list_item_colors"]['base'], color=current_theme["text_color"], label_style=ft.TextStyle(color=current_theme["text_color"]))
     for i in range(1,32):
         day_of_month_dropdown.options.append(ft.dropdown.Option(str(i)))
     day_of_month_row = ft.Row(controls=[day_of_month_dropdown,], expand=True,visible=False)
@@ -457,7 +458,7 @@ def edit_bills_page(current_theme, page:ft.Page, BASE_URL:str):
                                         
                                       ],
                                       #expand=True,
-                                      #horizontal_alignment="center",
+                                      horizontal_alignment="center",
                                       #scroll=ft.ScrollMode.AUTO
                                       ),
                                       bill_bottom_sheet

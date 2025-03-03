@@ -146,7 +146,7 @@ class BillTotalDue(ft.Container):
         self.border_radius=ft.border_radius.all(5)
         self.padding=ft.padding.all(10)
 
-class EarningsDropdown(ft.Container):
+class EarningsDropdown(ft.DropdownOption):
     def __init__(self, title, hours, amount):
         super().__init__()
         self.content=ft.Container(content=ft.Column(controls=[
@@ -154,10 +154,11 @@ class EarningsDropdown(ft.Container):
             ft.Row(controls=[TextField(label="Hours", value=hours, width=75), TextField(label="Amount", value=amount, width=125)])
         ]),
         padding=ft.padding.all(10),
-        margin=ft.margin.only(bottom=10),
+        margin=ft.margin.only(bottom=5, top=5),
         border_radius=10,
         bgcolor=current_theme["list_item_colors"]["inner_container"]
         )
+        self.key=amount
 
 class NoDataInfo(ft.Column):
     def __init__(self, type):
