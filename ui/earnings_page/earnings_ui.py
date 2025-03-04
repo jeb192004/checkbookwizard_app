@@ -176,9 +176,10 @@ def pay_page(current_theme, page:ft.Page, BASE_URL:str):
 
     async def build_earnings_list():
         data = await ds.get_earnings()
-        #print(data)
+        
         if data["error"] is None:
             data=data["data"]
+            print(data)
             if len(data) > 0:
                 user = data["user"]
                 income=data["income"]

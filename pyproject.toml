@@ -1,6 +1,6 @@
 [project]
 name = "Checkbook Wizard"
-version = "0.0.23"
+version = "0.0.25"
 description = "Easily keep track of your bills"
 authors = [
   {name = "James Burnison", email = "jeb192004@gmail.com"}
@@ -14,7 +14,7 @@ dependencies = [
 org = "com.burnison.me" # --org
 product = "Checkbook Wizard" # --product
 company = "burnison.me" # --company
-build_number = 23 # --build-number
+build_number = 25 # --build-number
 
 [tool.uv]
 dev-dependencies = [
@@ -36,12 +36,16 @@ dark_color = "#000000"
 # for iOS
 [tool.flet.ios.info]
 GADApplicationIdentifier = "ca-app-pub-1830788262544752~1986225467"
+NSPhotoLibraryUsageDescription = "This app uses the photo library during the build process to generate app icons."
+
 
 [tool.flet.ios]
 ios-team-id = "YS6MHH4WM9"
 provisioning_profile = "7b4ebd8a-957c-40db-bc7e-3d3848fd77d9"
 signing_certificate = "Apple Distribution"
 export_options = { uploadSymbols = false }
+
+
 
 [tool.flet.android.signing]
 #key_store = "/Users/jamesburnison/checkbookwizard.jks"
