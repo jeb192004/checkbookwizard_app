@@ -28,7 +28,7 @@ def bills_page(current_theme, page: ft.Page, BASE_URL: str):
     total_after_bills_paid = ft.Text()
 
     dd = ft.Dropdown(
-        width=100,
+        width=300,
         label="Pay Options",
         label_style = {"color": current_theme["text_field"]["label_color"]},
         color=current_theme["calc_theme"]["dropdown_text"],
@@ -37,11 +37,13 @@ def bills_page(current_theme, page: ft.Page, BASE_URL: str):
         #select_icon_enabled_color=current_theme["calc_theme"]["dropdown_icon_color"],
     )
     def update_chosen_pay(e):
-        selected_item_column=page.get_control(e.value).content.content.controls
-        selected_item_title=selected_item_column[0].controls[0].value
-        selected_item_amount=selected_item_column[1].controls[1].value
+        #selected_item_column=page.get_control(e.value).content.content.controls
+        #selected_item_title=selected_item_column[0].controls[0].value
+        #selected_item_amount=selected_item_column[1].controls[1].value
+        selected_item_amount=e.data
+        print(selected_item_amount, e)
         #print(selected_total_bills_amount, selected_item_amount)
-        dd.value=selected_item_title
+        #dd.value=selected_item_title
         pay = float(selected_item_amount.replace("$", "").replace(",", ""))
         chosen_pay.value = pay
         total_bills_due = float(total_due.value)
@@ -49,7 +51,7 @@ def bills_page(current_theme, page: ft.Page, BASE_URL: str):
         page.update()
         
     
-    dd.on_change=lambda e: update_chosen_pay(e.control)
+    dd.on_change=lambda e: update_chosen_pay(e)
 
     
     chosen_pay = ft.Text(

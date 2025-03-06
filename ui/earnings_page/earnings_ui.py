@@ -179,7 +179,7 @@ def pay_page(current_theme, page:ft.Page, BASE_URL:str):
         
         if data["error"] is None:
             data=data["data"]
-            print(data)
+            #print(data)
             if len(data) > 0:
                 user = data["user"]
                 income=data["income"]

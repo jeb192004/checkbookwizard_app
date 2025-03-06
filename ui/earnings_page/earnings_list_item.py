@@ -21,6 +21,7 @@ async def delete_earnings(e, BASE_URL, id, user_id):
 
 
 def create_earnings_item(data, BASE_URL, current_theme):
+    print(data)
     return ft.Container(
         content=ft.Column(
                     controls=[

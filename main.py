@@ -11,7 +11,7 @@ from ui.charts_page.charts_ui import charts_page
 from ui.alert import create_loader, hide_loader
 
 BASE_URL = "https://checkbookwizard.com/"
-BASE_URL = 'http://localhost:1337/'  # For development
+#BASE_URL = 'http://localhost:1338/'  # For development
 
 def main(page: ft.Page):
 

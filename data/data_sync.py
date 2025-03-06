@@ -131,7 +131,7 @@ class DataSync():
                return "error"
      
      def add_update_earnings(self, data):
-          print(data)
+          
           headers = {"Authorization": f"Bearer {self.token}"}
           response = httpx.post(f"{self.BASE_URL}app/edit_income/", json=data, headers=headers)
           if response.status_code == 200:
