@@ -31,8 +31,8 @@ dark_color = "#000000"
 [tool.flet.android.meta_data]
 "com.google.android.gms.ads.APPLICATION_ID" = "ca-app-pub-1830788262544752~9544887950"
 
-[tool.flet.android.permission]
-"com.google.android.gms.permission.AD_ID" = true
+#[tool.flet.android.permission]
+#"com.google.android.gms.permission.AD_ID" = true
 
 [tool.flet.android.signing]
 #key_store = "/Users/jamesburnison/checkbookwizard.jks"

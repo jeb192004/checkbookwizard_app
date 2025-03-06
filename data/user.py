@@ -1,4 +1,4 @@
-from flet import Page
+from flet import Page, SnackBar, Text
 import httpx
 import json
 from ui.alert import show_loader, hide_loader
@@ -26,3 +26,91 @@ def login(page: Page, code: str, BASE_URL: str, loader):
             # Handle failed login attempt
             print(f"Error: {response.status_code}")
             hide_loader(page, loader)
+
+
+
+def login_or_register(e, email, password, BASE_URL, page, loader):
+    show_loader(page, loader)
+    action = e.control.data  # login or register
+    url = f"{BASE_URL}custom_login/"  # allauth login URL
+    user_data={
+                    "email":email,
+                    "password": password
+                    
+                }
+    if action == "Register":
+        url = f"{BASE_URL}custom_signup/"  # allauth login and register urls
+        user_data={
+                    "email":email,
+                    "password1": password,
+                    "password2": password
+                    
+                }
+    try:
+        with httpx.Client() as client:
+            # Get CSRF token
+            csrf_response = client.get(f"{BASE_URL}accounts/login/")
+            if action=="Register":
+                csrf_response = client.get(f"{BASE_URL}accounts/signup/")
+            #print(csrf_response.cookies) #check cookies.
+            csrf_token = csrf_response.cookies.get("csrftoken")
+            if csrf_token: #check if csrf_token is not None.
+                headers = {"X-CSRFToken": csrf_token}
+            else:
+                print("CSRF token not found.")
+                return #or raise an exception.
+            client.cookies.update(csrf_response.cookies) #update the clients cookies.
+            user_data["csrfmiddlewaretoken"]=csrf_token
+            response = client.post(
+                url,
+                data=user_data,
+                headers=headers
+            )
+            #response.raise_for_status()
+            # Check for redirect (successful login/registration)
+            hide_loader(page, loader)
+            if response.status_code == 200:
+                print(f"{action.capitalize()} successful!")
+                data=response.json()
+                token = data["api_key"]
+                page.client_storage.set("burnison.me.user.token", token)
+                page.go("/bills")
+            elif response.status_code == 400:
+                print(response)
+                data=response.json()
+                if "errors" in data:
+                    print(data["errors"])
+                    try:
+                        django_response = data["errors"]
+                        error_message = django_response["non_field_errors"]
+                        if error_message:
+                            print(f"{action.capitalize()} failed: {error_message[0]}")
+                            page.open(SnackBar(Text(f"{error_message[0]}")))
+                        else:
+                            print(f"{action.capitalize()} failed.")
+                            page.open(SnackBar(Text(f"{action.capitalize()} failed.")))
+                        
+                    except json.JSONDecodeError as e:
+                        print(f"{action.capitalize()} failed. Unexpected server response: {e}")
+                    page.update()
+    except httpx.RequestError as err:
+        print(f"Error communicating with server: {err}")
+        print(f"Server error: {err}")
+        page.open(SnackBar(Text(f"Error communicating with server: {err}")))
+        page.update()
+    except httpx.HTTPStatusError as err:
+        print(f"HTTP Error: {err}")
+        print(f"Server error: {err}")
+        page.open(SnackBar(Text(f"HTTP Error: {err}")))
+        page.update()
+    except httpx.TimeoutException as err:
+        print(f"Timeout Error: {err}")
+        print(f"Server error: {err}")
+        page.open(SnackBar(Text(f"Timeout Error: {err}")))
+        page.update()
+    except Exception as err:
+        print(f"General Error: {err}")
+        print(f"Server error: {err}")
+        page.open(SnackBar(Text(f"General Error: {err}")))
+        page.update()
+

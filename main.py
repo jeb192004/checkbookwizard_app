@@ -11,7 +11,7 @@ from ui.charts_page.charts_ui import charts_page
 from ui.alert import create_loader, hide_loader
 
 BASE_URL = "https://checkbookwizard.com/"
-#BASE_URL = 'http://localhost:1338/'  # For development
+BASE_URL = 'http://localhost:1338/'  # For development
 
 def main(page: ft.Page):
 
@@ -24,8 +24,8 @@ def main(page: ft.Page):
 
     user_info = {}
     #page.client_storage.clear()
-    user_id = page.client_storage.get("burnison.me.user.id")
-    print(user_id)
+    token = page.client_storage.get("burnison.me.user.token")
+    
     loader = create_loader(page)
     #show_loader(page, loader)
     # page.close(loader)
@@ -69,11 +69,11 @@ def main(page: ft.Page):
 
     page.on_route_change = route_change
     page.on_view_pop = view_pop
-    if user_id is None:
+    if token is None:
         hide_loader(page, loader)
         page.go("/login")
     else:
-        print(f"Welcome, user {user_id}")
+        #print(f"Welcome, user {user_id}")
         page.go("/bills")
 
 

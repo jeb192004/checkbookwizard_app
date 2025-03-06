@@ -174,7 +174,7 @@ class DataSync():
           self.unpaid_bills=None
           self.profile_pic=None
           self.day_of_week=5
-          self.page.client_storage.remove("burnison.me.user.id")
+          self.page.client_storage.remove("burnison.me.user.token")
           self.page.client_storage.remove("my_bills")
           self.page.client_storage.remove("unpaid_bills")
           self.page.client_storage.remove("profile_pic")

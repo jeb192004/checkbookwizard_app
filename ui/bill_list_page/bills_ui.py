@@ -460,7 +460,7 @@ def bills_page(current_theme, page: ft.Page, BASE_URL: str):
         data = await ds.get_bills()
         if data["error"] is not None or data["error"] != "":
             bill_data=data["data"]
-            if bill_data["bills"]:
+            if bill_data is not None:
                 weekly_bill_lists=[]
                 for index, bill in enumerate(bill_data["bills"]):
                     bill_controls=[]
@@ -518,28 +518,7 @@ def bills_page(current_theme, page: ft.Page, BASE_URL: str):
                 for earnings in e_data["income"]:
                     dd.options.append(EarningsDropdown(title=earnings["title"], hours=earnings["hours"], amount=earnings["amount"]))
             
-            '''profile_pic=None
-            day_of_week=5
-            if "profile_pic" in data:
-                profile_pic = data["profile_pic"]
-            if "day_of_week" in data:
-                day_of_week=data["day_of_week"]
-            earnings_data = await ds.get_earnings()
-            #print(earnings_data)
-            if earnings_data["error"] is None and earnings_data["data"][0]["amount"] is not None:
-                for earnings in earnings_data["data"]:
-                    dd.options.append(EarningsDropdown(title=earnings["title"], hours=earnings["hours"], amount=earnings["amount"]))
-            if "my_bills" in data:
-                my_bills = data["my_bills"]
-                unpaid_bills = data["unpaid_bills"]
-                
-                create_bill_item(page, current_theme, loader, BASE_URL, toggle_calc_bottom_sheet, bill_list_container, ds, day_of_week, my_bills, unpaid_bills)
-            else:
-                bill_list_container.content=NoDataInfo("bills")
-            if profile_pic:
-                appbar_actions = [ft.Container(content=ft.Image(src=profile_pic, width=40, height=40), border_radius=50, margin=ft.margin.only(right=10))]
-                appbar.actions = appbar_actions
-                page.update()'''
+            
             hide_loader(page, loader)
         else:
             print(data["error"])
