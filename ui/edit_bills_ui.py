@@ -524,7 +524,7 @@ def edit_bills_page(current_theme, page:ft.Page, BASE_URL:str):
             if "data" in data:
                 data=data["data"]
                 my_bills=[]
-                if "bills" in data:
+                if data is not None:
                     my_bills = data["bills"]
                     print(my_bills)
                     bill_list = create_bill_list(page, current_theme, my_bills)

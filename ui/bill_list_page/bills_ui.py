@@ -511,6 +511,8 @@ def bills_page(current_theme, page: ft.Page, BASE_URL: str):
                 bill_list = ft.ResponsiveRow(controls=weekly_bill_lists, spacing=10)
                 bill_list_container.controls = [ft.Column(controls=[bill_list], expand=True, scroll=True)]
                 page.update()
+            else:
+                bill_list_container.controls.append(NoDataInfo("bills"))
             earnings_data = await ds.get_earnings()
             #print(earnings_data)
             if earnings_data["error"] is None:

@@ -178,16 +178,19 @@ def charts_page(current_theme, page:ft.Page, BASE_URL:str):
                                 bills_column.controls.append(NoDataInfo("earnings"))
                             else:
                                 earnings_dropdown.options.append(EarningsDropdown(title=earnings["title"], hours=earnings["hours"], amount=earnings["amount"]))
-            
+            else:
+                bills_column.controls.append(NoDataInfo("earnings"))
             if profile_pic:
                 appbar_actions = [ft.Container(content=ft.Image(src=profile_pic, width=40, height=40), border_radius=50, margin=ft.margin.only(right=10))]
                 appbar.actions = appbar_actions
                 page.update()
             if "data" in data:
                 data=data["data"]
-                if "bills" in data:
+                if data is not None:
                     create_check_list(page, data["bills"], bills_column, current_theme=current_theme)
-                return data["bills"]
+                    return data["bills"]
+                else:
+                    bills_column.controls.append(NoDataInfo("bills"))
             else:
                 bills_column.controls.append(NoDataInfo("bills"))
         else:
