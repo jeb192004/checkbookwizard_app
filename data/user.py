@@ -2,6 +2,8 @@ from flet import Page, SnackBar, Text
 import httpx
 import json
 from ui.alert import show_loader, hide_loader
+from tzlocal import get_localzone  # Import tzlocal
+
 
 def login(page: Page, code: str, BASE_URL: str, loader):
         show_loader(page, loader)
@@ -32,19 +34,27 @@ def login(page: Page, code: str, BASE_URL: str, loader):
 def login_or_register(e, email, password, BASE_URL, page, loader):
     show_loader(page, loader)
     action = e.control.data  # login or register
+    #print(action)
     url = f"{BASE_URL}custom_login/"  # allauth login URL
     user_data={
                     "email":email,
                     "password": password
                     
                 }
-    if action == "Register":
+    if action == "signup":
         url = f"{BASE_URL}custom_signup/"  # allauth login and register urls
+        user_timezone="UTC"
+        try:
+            # Detect time zone using tzlocal
+            local_timezone = str(get_localzone())
+            timezone = local_timezone  # Add timezone to user_data
+        except:
+            pass
         user_data={
                     "email":email,
                     "password1": password,
-                    "password2": password
-                    
+                    "password2": password,
+                    "timezone":timezone
                 }
     try:
         with httpx.Client() as client:
@@ -76,14 +86,18 @@ def login_or_register(e, email, password, BASE_URL, page, loader):
                 page.client_storage.set("burnison.me.user.token", token)
                 page.go("/bills")
             elif response.status_code == 400:
-                print(response)
+                #print(response)
                 data=response.json()
                 if "errors" in data:
                     print(data["errors"])
                     try:
                         django_response = data["errors"]
-                        error_message = django_response["non_field_errors"]
-                        if error_message:
+                        if "non_field_errors" in django_response:
+                            error_message = django_response["non_field_errors"]
+                            print(f"{action.capitalize()} failed: {error_message[0]}")
+                            page.open(SnackBar(Text(f"{error_message[0]}")))
+                        elif "email" in django_response:
+                            error_message = django_response["email"]
                             print(f"{action.capitalize()} failed: {error_message[0]}")
                             page.open(SnackBar(Text(f"{error_message[0]}")))
                         else:

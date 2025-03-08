@@ -179,3 +179,22 @@ class DataSync():
           self.page.client_storage.remove("unpaid_bills")
           self.page.client_storage.remove("profile_pic")
           self.page.go("/login")
+
+     def update_timezone(self, data):
+          headers = {"Authorization": f"Bearer {self.token}"}
+          response = httpx.post(f"{self.BASE_URL}app/timezone/", json=data, headers=headers)
+          if response.status_code == 200:
+               print(response)
+               return dict(data=response, error=None)
+          else:
+               return dict(data=None, error=f"HTTP Error: {response.status_code}")
+               
+     async def get_timezone(self):
+          headers = {"Authorization": f"Bearer {self.token}"}
+          response = httpx.get(f"{self.BASE_URL}app/timezone/", headers=headers)
+          if response.status_code == 200:
+               print(response)
+               return dict(data=response.json(), error=None)
+          else:
+               return dict(data=None, error=f"HTTP Error: {response.status_code}")
+               

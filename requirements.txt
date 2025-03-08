@@ -1,2 +1,4 @@
 flet>=0.26.0
 flet-ads
+pytz
+tzlocal

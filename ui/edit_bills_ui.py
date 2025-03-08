@@ -276,7 +276,7 @@ def edit_bills_page(current_theme, page:ft.Page, BASE_URL:str):
         print(json_data)
         response = ds.add_update_bills(json_data)
         if response == "success":
-            navigate_to(page, loader, "/bills")
+            navigate_to(page, loader, "/refresh_edit_bills")
         else:
             error_text.value = "Something went wrong, please try again"
             error_text.visible = True
@@ -290,7 +290,7 @@ def edit_bills_page(current_theme, page:ft.Page, BASE_URL:str):
         response = ds.remove_bill_item(json_data)
         hide_loader(page, loader)
         if response == "success":
-            navigate_to(page, loader, "/bills")
+            navigate_to(page, loader, "/refresh_edit_bills")
         else:
             error_text.value = "Something went wrong, please try again"
             error_text.visible = True

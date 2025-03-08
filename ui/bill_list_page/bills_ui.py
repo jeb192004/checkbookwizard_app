@@ -458,9 +458,11 @@ def bills_page(current_theme, page: ft.Page, BASE_URL: str):
     async def build_bill_list():
         show_loader(page, loader)
         data = await ds.get_bills()
+        total_due=0
         if data["error"] is not None or data["error"] != "":
             bill_data=data["data"]
             if bill_data is not None:
+                #print(bill_data)
                 weekly_bill_lists=[]
                 for index, bill in enumerate(bill_data["bills"]):
                     bill_controls=[]
@@ -473,15 +475,17 @@ def bills_page(current_theme, page: ft.Page, BASE_URL: str):
                     if isPastDue:
                         date_text="Unpaid"
                     edit_button = ft.Container()
+                    save_button = ft.Container()
                     isEditable = bill["isEditable"]
-                    if isEditable:
+                    bills_total_amount = bill['bills_total_amount']
+                    total_due += bills_total_amount
+                    if isEditable and bills_total_amount > 0:
                         edit_button = ft.IconButton(ft.Icons.EDIT, bgcolor=current_theme['list_item_colors']['icon_color'], on_click=lambda e: save_unpaid(e))
                         save_button = ft.IconButton(ft.Icons.SAVE, bgcolor=current_theme['list_item_colors']['icon_color'], on_click=lambda e: save_unpaid(e), visible=False)
                     if isPastDue:
                         edit_button = ft.IconButton(ft.Icons.EDIT, bgcolor=current_theme['list_item_colors']['icon_color'], on_click=lambda e: remove_unpaid(e))
                         save_button = ft.IconButton(ft.Icons.SAVE, bgcolor=current_theme['list_item_colors']['icon_color'], on_click=lambda e: remove_unpaid(e), visible=False)
-                    #print(f"{bill['bills_total_amount']:.2f}")
-                    bills_total_amount = bill['bills_total_amount']
+                    
                     bill_controls.append(BillTotalDue(bills_total_amount, toggle_click=lambda e: toggle_calc_bottom_sheet(e)))
                     weekly_bill_lists.append(
                         ft.Card(
@@ -507,9 +511,11 @@ def bills_page(current_theme, page: ft.Page, BASE_URL: str):
                         )
                     )
                     #print("\n------\n", bill, "\n")
-                    
-                bill_list = ft.ResponsiveRow(controls=weekly_bill_lists, spacing=10)
-                bill_list_container.controls = [ft.Column(controls=[bill_list], expand=True, scroll=True)]
+                if total_due > 0:
+                    bill_list = ft.ResponsiveRow(controls=weekly_bill_lists, spacing=10)
+                    bill_list_container.controls = [ft.Column(controls=[bill_list], expand=True, scroll=True)]
+                else:
+                    bill_list_container.controls.append(NoDataInfo("bills"))
                 page.update()
             else:
                 bill_list_container.controls.append(NoDataInfo("bills"))

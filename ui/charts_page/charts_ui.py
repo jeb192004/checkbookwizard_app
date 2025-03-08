@@ -172,12 +172,15 @@ def charts_page(current_theme, page:ft.Page, BASE_URL:str):
             earnings_data = await ds.get_earnings()
             if earnings_data["error"] is None:
                 if "data" in earnings_data:
-                    if "income" in earnings_data["data"]:
+                    #print(earnings_data["data"])
+                    if len(earnings_data["data"]["income"])>0:
                         for earnings in earnings_data["data"]["income"]:
                             if earnings["amount"] is None:
                                 bills_column.controls.append(NoDataInfo("earnings"))
                             else:
                                 earnings_dropdown.options.append(EarningsDropdown(title=earnings["title"], hours=earnings["hours"], amount=earnings["amount"]))
+                    else:
+                        bills_column.controls.append(NoDataInfo("earnings"))
             else:
                 bills_column.controls.append(NoDataInfo("earnings"))
             if profile_pic:
@@ -187,8 +190,12 @@ def charts_page(current_theme, page:ft.Page, BASE_URL:str):
             if "data" in data:
                 data=data["data"]
                 if data is not None:
-                    create_check_list(page, data["bills"], bills_column, current_theme=current_theme)
-                    return data["bills"]
+                    #print(data)
+                    if len(data["bills"])>0:
+                        create_check_list(page, data["bills"], bills_column, current_theme=current_theme)
+                        return data["bills"]
+                    else:
+                        bills_column.controls.append(NoDataInfo("bills"))
                 else:
                     bills_column.controls.append(NoDataInfo("bills"))
             else:

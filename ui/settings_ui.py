@@ -1,11 +1,38 @@
+import asyncio
 import flet as ft
+import pytz
 from ui.theme import light_theme, dark_theme, green_theme
 from data.utils import navigate_to
-from ui.alert import create_loader
-def settings_page(current_theme, page:ft.Page):
+from ui.alert import create_loader, show_loader, hide_loader
+from data.data_sync import DataSync
+def settings_page(current_theme, page:ft.Page, BASE_URL):
+    ds = DataSync(page, BASE_URL)
     loader = create_loader(page)
     appbar = ft.AppBar(leading=ft.Row(controls=[ft.IconButton(icon=ft.Icons.ARROW_BACK, icon_color=current_theme["top_appbar_colors"]["icon_color"], on_click=lambda _: navigate_to(page, loader, "/bills")),ft.Image(src=current_theme["top_appbar_colors"]["icon"], fit=ft.ImageFit.CONTAIN)]), leading_width=200, bgcolor=current_theme["top_appbar_colors"]["background"])
-    
+    divider=ft.Divider(color=current_theme["divider_color"])
+    timezones = {
+    "America/New_York": "EST/EDT",
+    "America/Chicago": "CST/CDT",
+    "America/Denver": "MST/MDT",
+    "America/Los_Angeles": "PST/PDT",
+    "America/Anchorage": "AKST/AKDT",
+    "Pacific/Honolulu": "HST/HDT",
+    "America/Toronto": "EST/EDT",  # Canada - Eastern
+    "America/Vancouver": "PST/PDT",  # Canada - Pacific
+    "America/Edmonton": "MST/MDT",  # Canada - Mountain
+    "Europe/London": "GMT/BST",  # UK
+    "Europe/Dublin": "GMT/IST",  # Ireland
+    "Australia/Sydney": "AEST/AEDT",
+    "Australia/Melbourne": "AEST/AEDT",
+    "Australia/Brisbane": "AEST",
+    "Australia/Adelaide": "ACST/ACDT",
+    "Australia/Perth": "AWST",
+    "Pacific/Auckland": "NZST/NZDT",  # New Zealand
+    "Africa/Johannesburg": "SAST",  # South Africa
+    "UTC": "UTC",
+    "America/Halifax": "AST/ADT", #Canada - Atlantic
+    "America/St_Johns": "NST/NDT" #Canada - Newfoundland
+}
     def update_page_theme(page: ft.Page, theme: dict):
         # Update relevant controls in the page with the new theme colors
         appbar.bgcolor = theme["top_appbar_colors"]["background"]
@@ -15,12 +42,13 @@ def settings_page(current_theme, page:ft.Page):
         theme_dropdown.color = theme["calc_theme"]["dropdown_text"]
         theme_dropdown.bgcolor = theme["calc_theme"]["dropdown_background"]
         theme_dropdown.border_color = theme["calc_theme"]["dropdown_border_color"]
-        theme_dropdown.select_icon_enabled_color = theme["calc_theme"]["dropdown_icon_color"]
         theme_info.color = theme["text_color"]
-
+        divider.color = theme["divider_color"]
+        timezone_dropdown.color = theme["calc_theme"]["dropdown_text"]
+        timezone_dropdown.label_style = {"color": current_theme["text_field"]["label_color"]},
+        timezone_dropdown.border_color=current_theme["calc_theme"]["dropdown_border_color"],
         # Potentially update other controls in the page based on the new theme
 
-        # Call page.update() again if necessary to trigger a re-render
         page.update()
 
     def update_theme(value):
@@ -34,31 +62,53 @@ def settings_page(current_theme, page:ft.Page):
             new_theme = green_theme()
         update_page_theme(page, new_theme)  # Call a function to apply the new theme
 
-        
-        
+
 
     theme_dropdown = ft.Dropdown(
         width=300,
         options=[
-            ft.dropdown.Option("Light"),
-            ft.dropdown.Option("Dark"), 
-            ft.dropdown.Option("Green")
+            ft.DropdownOption("Light"),
+            ft.DropdownOption("Dark"), 
+            ft.DropdownOption("Green")
             ],
         label="Pick A Theme",
         on_change=lambda e: update_theme(e.control.value),
         color=current_theme["settings_theme"]["dropdown_text"],
+        label_style = {"color": current_theme["text_field"]["label_color"]},
         bgcolor=current_theme["settings_theme"]["dropdown_background"],
         border_color=current_theme["calc_theme"]["dropdown_border_color"],
-        select_icon_enabled_color=current_theme["calc_theme"]["dropdown_icon_color"],
+        #select_icon_enabled_color=current_theme["calc_theme"]["dropdown_icon_color"],
     )
     theme_info = ft.Text("Theme will update upon navigating from this page", size=12, color=current_theme["text_color"])
+
+
+    def update_timezone(e):
+        show_loader(page, loader)
+        print("timezone", e.control.value)
+        ds.update_timezone(data={"timezone": e.control.value})
+        hide_loader(page, loader)
+
+    timezone_dropdown=ft.Dropdown(width=300,
+                                  label="Timezone",
+                                  color=current_theme["calc_theme"]["dropdown_text"],
+                                  label_style = {"color": current_theme["text_field"]["label_color"]},
+                                  border_color=current_theme["calc_theme"]["dropdown_border_color"],
+                                  options=[ft.DropdownOption(
+                text=f"{abbr} ({iana})",
+                key=iana,
+                #tooltip=f"{iana} (IANA Time Zone): This is the most accurate identifier for {abbr}. It automatically adjusts for daylight saving time.",
+            )
+            for iana, abbr in timezones.items()],
+    )
+    timezone_dropdown.on_change=lambda e: update_timezone(e)
+    timezone_info = ft.Text("Timezone will update on Changing the selection", size=12, color=current_theme["text_color"])
 
     update_frequency_dropdown = ft.Dropdown(
         width=300,
         options=[
-            ft.dropdown.Option("Once a day(default)"),
-            ft.dropdown.Option("Once a week"), 
-            ft.dropdown.Option("Once a month")
+            ft.DropdownOption("Once a day(default)"),
+            ft.DropdownOption("Once a week"), 
+            ft.DropdownOption("Once a month")
             ],
         label="Update Frequency",
         on_change=lambda e: page.client_storage.set("update_frequency", e.control.value),
@@ -69,16 +119,36 @@ def settings_page(current_theme, page:ft.Page):
     )
     update_frequency_info = ft.Text("How often do you want to check the server for your updated data", size=12, color=current_theme["text_color"])
 
-    return ft.View(
+    
+    page.views.append(ft.View(
         "/settings",
         bgcolor=current_theme["background"],
         controls=[
             ft.Column(controls=[theme_dropdown,
                                  theme_info,
-                                 ft.Divider(color=current_theme["border_color"]),
-                                 #update_frequency_dropdown,
+                                 divider,
+                                 timezone_dropdown,
+                                 timezone_info,
+                                 divider,
                                  #update_frequency_info
                                  ], width=400, expand=True, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
             ],
             appbar=appbar
         )
+    )
+    page.update()
+
+
+    async def build_bill_list():
+        show_loader(page, loader)
+        data= await ds.get_timezone()
+        if data["error"] is not None or data["error"] != "":
+            print(data)
+            tzone_data=data["data"]
+            
+            if tzone_data is not None:
+                timezone=tzone_data["timezone"]
+                timezone_dropdown.value=timezone
+                page.update()
+        hide_loader(page, loader)
+    asyncio.run(build_bill_list())

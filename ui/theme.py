@@ -16,6 +16,7 @@ def green_theme():
         "progress_bar_color": "#fed831",
         "border_color":"#fed831",
         "shadow_color": "#000000",
+        "divider_color":"#fed831",
         "text_field":{
             "label_color_focused": "#fed831",
             "label_color": "#ffffff",
@@ -95,6 +96,7 @@ def dark_theme():
         "text_field_label_color": "#fed831",
         "header_text_color": "#ffffff",
         "earnings_list_title_color": "#ffffff",
+         "divider_color":"#ffffff",
         "text_field":{
             "label_color_focused": "#ffffff",
             "label_color": "#ffffff",
@@ -172,6 +174,7 @@ def light_theme():
         "shadow_color": "#000000",
         "header_text_color": "#000000",
         "earnings_list_title_color": "#000000",
+         "divider_color":"#000000",
         "text_field":{
             "label_color_focused": "#000000",
             "label_color": "#000000",

@@ -50,12 +50,14 @@ def main(page: ft.Page):
             bills_page(current_theme, page, BASE_URL)
         elif page.route == "/edit_bills":
             edit_bills_page(current_theme, page, BASE_URL)
+        elif page.route == "/refresh_edit_bills":
+            page.go("/edit_bills")
         elif page.route == "/charts":
             charts_page(current_theme, page, BASE_URL)
         elif page.route == "/pay":
             pay_page(current_theme, page, BASE_URL)
         elif page.route == "/settings":
-            page.views.append(settings_page(current_theme, page))
+            settings_page(current_theme, page, BASE_URL)
         elif page.route == "/refresh_bills":
             page.go("/bills")
 
