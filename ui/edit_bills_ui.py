@@ -6,6 +6,7 @@ import asyncio
 from data.data_sync import DataSync
 from ui.alert import create_loader, show_loader, hide_loader
 from data.utils import navigate_to
+from ui.my_controls import ElevatedButton
 
 appbar = []
 def edit_bills_page(current_theme, page:ft.Page, BASE_URL:str):
@@ -15,9 +16,11 @@ def edit_bills_page(current_theme, page:ft.Page, BASE_URL:str):
     bill_id_to_update = None
 
     date_text = ft.Text(bgcolor=current_theme["list_item_colors"]['base'], color=current_theme["text_color"])
+    selected_text=ft.TextField(label="Selected Frequency", border_color=current_theme["text_field"]["border_color"], read_only=True, bgcolor=current_theme["list_item_colors"]['base'], color=current_theme["text_color"], label_style=ft.TextStyle(color=current_theme["text_color"]))
+
     def handle_change(e):
         print(f"Date changed: {e.control.value.strftime('%Y-%m-%d')}")
-        date_text.value = f"{e.control.value.strftime('%Y-%m-%d')}"
+        selected_text.value = f"{e.control.value.strftime('%Y-%m-%d')}"
         page.update()
     def handle_dismissal(e):
         print(f"DatePicker dismissed")
@@ -62,58 +65,111 @@ def edit_bills_page(current_theme, page:ft.Page, BASE_URL:str):
                                 )
     error_text = ft.TextField(bgcolor=ft.Colors.RED, color="white", visible=False)
     bill_id_text = ft.TextField(visible=False)
-    name_text = ft.TextField(label="Company/Person/Name: ", bgcolor=current_theme["list_item_colors"]['base'], color=current_theme["text_color"], label_style=ft.TextStyle(color=current_theme["text_color"]))
+    name_text = ft.TextField(label="Company/Person/Name: ", border_color=current_theme["text_field"]["border_color"], bgcolor=current_theme["list_item_colors"]['base'], color=current_theme["text_color"], label_style=ft.TextStyle(color=current_theme["text_color"]))
     item_width=name_text.width
-    amount_due = ft.TextField(label="Amount Due: ", prefix_text="$", bgcolor=current_theme["list_item_colors"]['base'], color=current_theme["text_color"], label_style=ft.TextStyle(color=current_theme["text_color"]), on_change=on_amount_due_change)
-    website = ft.TextField(label="Website(optional): ", bgcolor=current_theme["list_item_colors"]['base'], color=current_theme["text_color"], label_style=ft.TextStyle(color=current_theme["text_color"]))
-    phone_number = ft.TextField(label="Phone Number(optional): ", bgcolor=current_theme["list_item_colors"]['base'], color=current_theme["text_color"], label_style=ft.TextStyle(color=current_theme["text_color"]))
-    email = ft.TextField(label="Email(optional): ", bgcolor=current_theme["list_item_colors"]['base'], color=current_theme["text_color"], label_style=ft.TextStyle(color=current_theme["text_color"]))
+    amount_due = ft.TextField(label="Amount Due: ", border_color=current_theme["text_field"]["border_color"], prefix_text="$", bgcolor=current_theme["list_item_colors"]['base'], color=current_theme["text_color"], label_style=ft.TextStyle(color=current_theme["text_color"]), on_change=on_amount_due_change)
+    website = ft.TextField(label="Website(optional): ", border_color=current_theme["text_field"]["border_color"], bgcolor=current_theme["list_item_colors"]['base'], color=current_theme["text_color"], label_style=ft.TextStyle(color=current_theme["text_color"]))
+    phone_number = ft.TextField(label="Phone Number(optional): ", border_color=current_theme["text_field"]["border_color"], bgcolor=current_theme["list_item_colors"]['base'], color=current_theme["text_color"], label_style=ft.TextStyle(color=current_theme["text_color"]))
+    email = ft.TextField(label="Email(optional): ", border_color=current_theme["text_field"]["border_color"], bgcolor=current_theme["list_item_colors"]['base'], color=current_theme["text_color"], label_style=ft.TextStyle(color=current_theme["text_color"]))
     due_date_picker = ft.ElevatedButton("Pick date",icon=ft.Icons.CALENDAR_MONTH,
                                         on_click=lambda e: open_date_picker(e, date_picker=date_picker),
                                                     bgcolor=current_theme["list_item_colors"]['base'], color=current_theme["text_color"]
                                                     )
     due_date_column = ft.Row(controls=[ft.Column(controls=[due_date_picker, date_text], expand=True)], expand=True, visible=False)
-    frequency_dropdown = ft.Dropdown(label="Frequency(how often bill is paid)", width=360,expand=True, bgcolor=current_theme["list_item_colors"]['base'], color=current_theme["text_color"], label_style=ft.TextStyle(color=current_theme["text_color"]))
-
-    day_of_week_or_month_dropdown = ft.Dropdown(label="Day of Week or Month", width=340,expand=True, bgcolor=current_theme["list_item_colors"]['base'], color=current_theme["text_color"], label_style=ft.TextStyle(color=current_theme["text_color"]))
-    week_of_month_dropdown = ft.Dropdown(label="Select a week of the month", width=340,expand=True, bgcolor=current_theme["list_item_colors"]['base'], color=current_theme["text_color"], label_style=ft.TextStyle(color=current_theme["text_color"]))
-    day_of_week_dropdown = ft.Dropdown(label="Select a day of the week", width=340,expand=True, bgcolor=current_theme["list_item_colors"]['base'], color=current_theme["text_color"], label_style=ft.TextStyle(color=current_theme["text_color"]))
-    day_of_week_row = ft.Row(controls=[ft.Column(controls=[week_of_month_dropdown,day_of_week_dropdown],expand=True)], expand=True,visible=False)
-    day_of_month_dropdown = ft.Dropdown(label="Select a day of the month", width=340,expand=True, bgcolor=current_theme["list_item_colors"]['base'], color=current_theme["text_color"], label_style=ft.TextStyle(color=current_theme["text_color"]))
+    frequency_dropdown = ft.Dropdown(label="Frequency(how often bill is paid)", width=300, fill_color=current_theme["dropdown"]['background'], filled=True, bgcolor=current_theme["list_item_colors"]['base'],expand=True, color=current_theme["text_color"], border_color=current_theme["text_field"]["border_color"], label_style=ft.TextStyle(color=current_theme["text_color"]))
+    day_of_week_or_month_dropdown = ft.Dropdown(label="Day of Week or Month", width=300, bgcolor=current_theme["list_item_colors"]['base'], border_color=current_theme["text_field"]["border_color"], color=current_theme["text_color"], label_style=ft.TextStyle(color=current_theme["text_color"]))
+    week_of_month_dropdown = ft.Dropdown(label="Select a week of the month", width=200, bgcolor=current_theme["list_item_colors"]['base'], border_color=current_theme["text_field"]["border_color"], color=current_theme["text_color"], label_style=ft.TextStyle(color=current_theme["text_color"]))
+    day_of_week_dropdown = ft.Dropdown(label="Select a day of the week", width=200, bgcolor=current_theme["list_item_colors"]['base'], border_color=current_theme["text_field"]["border_color"], color=current_theme["text_color"], label_style=ft.TextStyle(color=current_theme["text_color"]))
+    day_of_week_row = ft.Container(content=ft.Column(controls=[week_of_month_dropdown,day_of_week_dropdown]), expand=True, alignment=ft.alignment.center)
+    day_of_month_dropdown = ft.Dropdown(label="Select a day of the month", max_menu_height=300, width=200, bgcolor=current_theme["dropdown"]['background'], border_color=current_theme["text_field"]["border_color"], color=current_theme["text_color"], label_style=ft.TextStyle(color=current_theme["text_color"]))
     for i in range(1,32):
-        day_of_month_dropdown.options.append(ft.dropdown.Option(str(i)))
-    day_of_month_row = ft.Row(controls=[day_of_month_dropdown,], expand=True,visible=False)
+        day_of_month_dropdown.options.append(ft.DropdownOption(text=str(i), style=ft.ButtonStyle(color=current_theme["text_color"])))
+    day_of_month_row = ft.Row(controls=[day_of_month_dropdown,])
     montly_row = ft.Row(controls=[
         ft.Column(controls=[
             day_of_week_or_month_dropdown,day_of_week_row,day_of_month_row
-            ],expand=True),
+            ],
+            expand=True,
+            alignment=ft.alignment.center,),
         ], expand=True,visible=False)
     
+    frequency_modal = ft.AlertDialog()
 
+    def week_modal_submit(e):
+        page.close(week_modal)
+        if week_of_month_dropdown.value and day_of_week_dropdown.value:
+            date_to_save = f"{week_of_month_dropdown.value.split()[0]}-{day_of_week_dropdown.value}"
+        selected_text.value=date_to_save
+        page.update()
+
+    week_modal = ft.AlertDialog(
+        modal=True,
+        content=ft.Container(content=ft.Column(controls=[
+            day_of_week_row
+        ]),
+        height=100,
+        alignment=ft.alignment.center,
+        expand=True),
+        actions_alignment=ft.MainAxisAlignment.END,
+        actions=[
+            ft.TextButton("Submit", on_click=lambda e: week_modal_submit(week_modal),style=ft.ButtonStyle(color=current_theme["text_color"])),
+            ft.TextButton("Cancel", on_click=lambda e: page.close(week_modal),style=ft.ButtonStyle(color=current_theme["text_color"])),
+        ],
+        bgcolor=current_theme["alert_background_color"]
+    )
+
+    def day_modal_submit(e):
+        page.close(day_modal)
+        selected_text.value=day_of_month_dropdown.value
+        page.update()
+        
+    day_modal = ft.AlertDialog(
+        modal=True,
+        content=ft.Container(content=ft.Column(controls=[
+            day_of_month_dropdown
+        ]),
+        height=50,
+        alignment=ft.alignment.center,
+        expand=True),
+        actions_alignment=ft.MainAxisAlignment.END,
+        actions=[
+            ft.TextButton("Submit", on_click=lambda e: day_modal_submit(day_modal),style=ft.ButtonStyle(color=current_theme["text_color"])),
+            ft.TextButton("Cancel", on_click=lambda e: page.close(day_modal),style=ft.ButtonStyle(color=current_theme["text_color"])),
+        ],
+        bgcolor=current_theme["alert_background_color"]
+    )
+    def open_month_modal(e):
+        page.close(frequency_modal)
+        if e=="week":
+            page.open(week_modal)
+        elif e=="day":
+            page.open(day_modal)
+        else:
+            pass
+        
+    
+    frequency_modal.modal=True
+    frequency_modal.content=ft.Container(content=ft.Column(controls=[
+            ft.Row(controls=[ElevatedButton(text="Day of Week (Mon, Tues, ect.)",  on_click=lambda e:open_month_modal("week"), expand=True, bgcolor=current_theme["alert_button_color"], color=current_theme["text_color"])]),
+            ft.Row(controls=[ElevatedButton(text="Day of Month (1st, 2nd, ect.)",  on_click=lambda e:open_month_modal("day"), expand=True, bgcolor=current_theme["alert_button_color"], color=current_theme["text_color"])]),
+        ], spacing=20),
+        height=100,
+        )
+    frequency_modal.actions=[
+            ft.TextButton("Cancel", on_click=lambda e: page.close(frequency_modal), style=ft.ButtonStyle(color=current_theme["text_color"])),
+        ]
+    frequency_modal.actions_alignment=ft.MainAxisAlignment.END
+    frequency_modal.bgcolor=current_theme["alert_background_color"]
 
     def frequency_dropdown_change(e):
-        day_of_week_or_month_dropdown.value = None
-        day_of_month_dropdown.value = None
-        week_of_month_dropdown.value = None
-        date_text.value = ""
-        print(e.control.value)
-        if e.control.value == "Weekly":
-            if due_date_column.visible == True:
-                due_date_column.visible = False
-            if montly_row.visible == True:
-                montly_row.visible = False
-        
-        if e.control.value == "Monthly":
-            if due_date_column.visible == True:
-                due_date_column.visible = False
-            if montly_row.visible == False:
-                montly_row.visible = True
-
         if e.control.value == "One Time":
-            due_date_column.visible = True
-            if montly_row.visible == True:
-                montly_row.visible = False
-        page.update()
+            open_date_picker(e, date_picker=date_picker)
+        elif e.control.value == "Weekly":
+            selected_text.value=e.control.value
+            page.update()
+        else:
+            page.open(frequency_modal)
+        
 
     def day_of_week_or_month_dropdown_change(e):
         print(e.control.value)
@@ -132,51 +188,39 @@ def edit_bills_page(current_theme, page:ft.Page, BASE_URL:str):
     
     
     frequency_dropdown.options=[
-            ft.dropdown.Option("Monthly"),
-            ft.dropdown.Option("Weekly"),
-            ft.dropdown.Option("One Time"),
+            ft.DropdownOption(text="Monthly", style=ft.ButtonStyle(color=current_theme["text_color"])),
+            ft.DropdownOption(text="Weekly", style=ft.ButtonStyle(color=current_theme["text_color"])),
+            ft.DropdownOption(text="One Time", style=ft.ButtonStyle(color=current_theme["text_color"])),
         ]
     frequency_dropdown.on_change=lambda e: frequency_dropdown_change(e)
 
-    day_of_week_or_month_dropdown.options=[
+    '''day_of_week_or_month_dropdown.options=[
             ft.dropdown.Option("Day of Week (Mon, Tues, ect.)"),
             ft.dropdown.Option("Day of Month (1st, 2nd, ect.)"),
         ]
     day_of_week_or_month_dropdown.on_change=lambda e: day_of_week_or_month_dropdown_change(e)
-
+'''
     week_of_month_dropdown.options=[
-            ft.dropdown.Option("First Week of the Month"),
-            ft.dropdown.Option("Second Week of the Month"),
-            ft.dropdown.Option("Third Week of the Month"),
-            ft.dropdown.Option("Fourth Week of the Month"),
+            ft.dropdown.Option(text="First Week of the Month", style=ft.ButtonStyle(color=current_theme["text_color"])),
+            ft.dropdown.Option(text="Second Week of the Month", style=ft.ButtonStyle(color=current_theme["text_color"])),
+            ft.dropdown.Option(text="Third Week of the Month", style=ft.ButtonStyle(color=current_theme["text_color"])),
+            ft.dropdown.Option(text="Fourth Week of the Month", style=ft.ButtonStyle(color=current_theme["text_color"])),
         ]
     #week_of_month_dropdown.on_change=lambda e: week_of_month_dropdown_change(e)
 
     day_of_week_dropdown.options=[
-            ft.dropdown.Option("Sunday"),
-            ft.dropdown.Option("Monday"),
-            ft.dropdown.Option("Tuesday"),
-            ft.dropdown.Option("Wednesday"),
-            ft.dropdown.Option("Thursday"),
-            ft.dropdown.Option("Friday"),
-            ft.dropdown.Option("Saturday"),
+            ft.dropdown.Option(text="Sunday", style=ft.ButtonStyle(color=current_theme["text_color"])),
+            ft.dropdown.Option(text="Monday", style=ft.ButtonStyle(color=current_theme["text_color"])),
+            ft.dropdown.Option(text="Tuesday", style=ft.ButtonStyle(color=current_theme["text_color"])),
+            ft.dropdown.Option(text="Wednesday", style=ft.ButtonStyle(color=current_theme["text_color"])),
+            ft.dropdown.Option(text="Thursday", style=ft.ButtonStyle(color=current_theme["text_color"])),
+            ft.dropdown.Option(text="Friday", style=ft.ButtonStyle(color=current_theme["text_color"])),
+            ft.dropdown.Option(text="Saturday", style=ft.ButtonStyle(color=current_theme["text_color"])),
         ]
     #day_of_week_dropdown.on_change=lambda e: day_of_week_dropdown_change(e)
 
-
-    due_date_container = ft.Container(
-        content=ft.Column(
-            controls=[due_date_column,
-                      montly_row,
-            ],
-            #expand=True,
-        ),
-        expand=True,
-    )
-
     def save(e):
         show_loader(page, loader)
-        date_to_save = ""
         if name_text.value == "":
             name_text.border_color = ft.Colors.RED
             name_text.update()
@@ -185,63 +229,12 @@ def edit_bills_page(current_theme, page:ft.Page, BASE_URL:str):
         else:
             name_text.border_color = None
             name_text.update()
-        if frequency_dropdown.value is not None:
+        if selected_text.value != "":
             frequency_dropdown.border_color = None
-            frequency_dropdown.update()
-            if frequency_dropdown.value == "Weekly":
-                date_to_save = ""
-            if frequency_dropdown.value == "One Time":
-                if date_text.value != "":
-                    date_text.bgcolor = current_theme["list_item_colors"]['base']
-                    page.update()
-                    date_to_save = date_text.value #format = 2024-11-05
-                    print("date_to_save: ", date_to_save)
-                else:
-                    date_text.value = "Please select a due date"
-                    date_text.bgcolor = ft.Colors.RED
-                    page.update()
-                    hide_loader(page, loader)
-                    return
-            if frequency_dropdown.value == "Monthly":
-                if day_of_week_or_month_dropdown.value is not None:
-                    day_of_week_or_month_dropdown.border_color = None
-                    day_of_week_or_month_dropdown.update()
-                    if day_of_week_or_month_dropdown.value == "Day of Week (Mon, Tues, ect.)":
-                        if week_of_month_dropdown.value is not None:
-                            week_of_month_dropdown.border_color = None
-                            week_of_month_dropdown.update()
-                        else:
-                            week_of_month_dropdown.border_color = ft.Colors.RED
-                            week_of_month_dropdown.update()
-                            hide_loader(page, loader)
-                            return
-                        if day_of_week_dropdown.value is not None:
-                            day_of_week_dropdown.border_color = None
-                            day_of_week_dropdown.update()
-                            hide_loader(page, loader)
-                        else:
-                            day_of_week_dropdown.border_color = ft.Colors.RED
-                            day_of_week_dropdown.update()
-                            hide_loader(page, loader)
-                            return
-                        if week_of_month_dropdown.value and day_of_week_dropdown.value:
-                            date_to_save = f"{week_of_month_dropdown.value.split()[0]}-{day_of_week_dropdown.value}"
-                    if day_of_week_or_month_dropdown.value == "Day of Month (1st, 2nd, ect.)":
-                        if day_of_month_dropdown.value is not None:
-                            day_of_month_dropdown.border_color = None
-                            date_to_save = day_of_month_dropdown.value
-                            day_of_month_dropdown.update()
-                        else:
-                            day_of_month_dropdown.border_color = ft.Colors.RED
-                            day_of_month_dropdown.update()
-                            hide_loader(page, loader)
-                            return
-                else:
-                    day_of_week_or_month_dropdown.border_color = ft.Colors.RED
-                    day_of_week_or_month_dropdown.update()
-                    hide_loader(page, loader)
-                    return
+            selected_text.border_color = None
+            selected_text.update()
         else:
+            selected_text.boarder_color=ft.Colors.RED
             frequency_dropdown.border_color = ft.Colors.RED
             frequency_dropdown.update()
             hide_loader(page, loader)
@@ -259,11 +252,12 @@ def edit_bills_page(current_theme, page:ft.Page, BASE_URL:str):
         
         if bill_id_text.value != "":
             new_update = "update"
-        print(bill_id_text.value, new_update)
+        #print(bill_id_text.value, new_update)
         json_data = {
             "new_update": new_update,
             "id": bill_id_text.value,
-            "due": date_to_save,
+            "due": "" if frequency_dropdown.value == "One Time" else selected_text.value,
+            "due_date": selected_text.value if frequency_dropdown.value == "One Time" else "",
             "name": name_text.value,
             "amount": f"${amount_due.value}",
             "frequency": "single" if frequency_dropdown.value == "One Time" else frequency_dropdown.value.lower(),
@@ -273,7 +267,7 @@ def edit_bills_page(current_theme, page:ft.Page, BASE_URL:str):
         }
         error_text.visible = True
         page.update()
-        print(json_data)
+        #print(json_data)
         response = ds.add_update_bills(json_data)
         if response == "success":
             navigate_to(page, loader, "/refresh_edit_bills")
@@ -357,7 +351,7 @@ def edit_bills_page(current_theme, page:ft.Page, BASE_URL:str):
         day_of_week_or_month_dropdown.value = None
         day_of_month_dropdown.value = None
         week_of_month_dropdown.value = None
-        date_text.value = ""
+        #date_text.value = ""
 
         bill_id_text.value = bill["id"] if e != "clear" else ""
         name_text.value = bill["name"] if e != "clear" else ""
@@ -368,20 +362,16 @@ def edit_bills_page(current_theme, page:ft.Page, BASE_URL:str):
         bill_frequency_to_update = bill["frequency"] if e != "clear" else "clear"
         if bill_frequency_to_update == "weekly":
             frequency_dropdown.value = "Weekly"  
+            selected_text.value="Weekly"
         elif bill_frequency_to_update == "monthly":
             frequency_dropdown.value = "Monthly"
-            if len(bill["due"]) < 3 and (bill["due_date"] is None or bill["due_date"]==""):
-                montly_row.visible = True
-                day_of_week_or_month_dropdown.value = "Day of Month (1st, 2nd, ect.)"
-                day_of_month_row.visible = True
-                day_of_month_dropdown.value = bill["due"]
-            else:
-                day_of_week_row.visible = True
-                week_of_month_dropdown.value = bill["due"].split(' ')[0]
-                day_of_week_dropdown.value = bill["due"].split(' ')[1]
-        elif bill_frequency_to_update == "one_time":
+            selected_text.value = bill["due"]
+        elif bill_frequency_to_update == "single":
             frequency_dropdown.value = "One Time"
-        
+            selected_text.value = bill["due_date"]
+        else:
+            frequency_dropdown.value = None
+            selected_text.value = ""
         bill_bottom_sheet.visible = False
         page.update()
                 
@@ -450,7 +440,7 @@ def edit_bills_page(current_theme, page:ft.Page, BASE_URL:str):
                                         bill_id_text,
                                         name_text,
                                         frequency_dropdown,
-                                        due_date_container,
+                                        selected_text,
                                         amount_due,
                                         website,
                                         phone_number,
@@ -516,7 +506,7 @@ def edit_bills_page(current_theme, page:ft.Page, BASE_URL:str):
 
     async def build_bill_list():
         data = await ds.get_bill_list()
-        print(data)
+        #print(data)
         if data["error"] is not None or data["error"] != "":
             profile_pic=None
             if "profile_pic" in data:
@@ -526,7 +516,7 @@ def edit_bills_page(current_theme, page:ft.Page, BASE_URL:str):
                 my_bills=[]
                 if data is not None:
                     my_bills = data["bills"]
-                    print(my_bills)
+                    #print(my_bills)
                     bill_list = create_bill_list(page, current_theme, my_bills)
                     bottom_sheet_bill_list.controls = bill_list
             if profile_pic:

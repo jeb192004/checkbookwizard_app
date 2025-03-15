@@ -17,6 +17,8 @@ def green_theme():
         "border_color":"#fed831",
         "shadow_color": "#000000",
         "divider_color":"#fed831",
+        "alert_background_color":"#85bb65",
+        "alert_button_color":"#1b4a00",
         "text_field":{
             "label_color_focused": "#fed831",
             "label_color": "#ffffff",
@@ -40,6 +42,12 @@ def green_theme():
         },
         "earnings_list_title_color": "#ffffff",
         "header_text_color": "#000000",
+         "dropdown":{
+            "background":"#E0E0E0"
+        },
+         "dropdown":{
+            "background":"#1b4a00"
+        },
         "list_item_colors": {
             "base": "#1b4a00",
             "inner_container": "#2F6D23",
@@ -96,7 +104,9 @@ def dark_theme():
         "text_field_label_color": "#fed831",
         "header_text_color": "#ffffff",
         "earnings_list_title_color": "#ffffff",
-         "divider_color":"#ffffff",
+        "divider_color":"#ffffff",
+        "alert_background_color":"#4E4E4E",
+        "alert_button_color":"#3A3A3A",
         "text_field":{
             "label_color_focused": "#ffffff",
             "label_color": "#ffffff",
@@ -118,7 +128,9 @@ def dark_theme():
             "background_color": "#4E4E4E",
             "border_color": "#ffffff"
         },
-
+         "dropdown":{
+            "background":"#4E4E4E"
+        },
         "list_item_colors": {
             "base": "#262626",
             "inner_container": "#3A3A3A",
@@ -174,7 +186,9 @@ def light_theme():
         "shadow_color": "#000000",
         "header_text_color": "#000000",
         "earnings_list_title_color": "#000000",
-         "divider_color":"#000000",
+        "divider_color":"#000000",
+        "alert_background_color":ft.Colors.WHITE,
+        "alert_button_color":"#E0E0E0E0",
         "text_field":{
             "label_color_focused": "#000000",
             "label_color": "#000000",
@@ -196,7 +210,9 @@ def light_theme():
             "background_color": "#E0E0E0E0",
             "border_color": "#000000"
         },
-
+        "dropdown":{
+            "background":"#E0E0E0"
+        },
         "list_item_colors": {
             "base": "#BDBDBD",
             "inner_container": "#E0E0E0E0",

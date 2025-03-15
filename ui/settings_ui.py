@@ -1,6 +1,5 @@
 import asyncio
 import flet as ft
-import pytz
 from ui.theme import light_theme, dark_theme, green_theme
 from data.utils import navigate_to
 from ui.alert import create_loader, show_loader, hide_loader
@@ -9,7 +8,10 @@ def settings_page(current_theme, page:ft.Page, BASE_URL):
     ds = DataSync(page, BASE_URL)
     loader = create_loader(page)
     appbar = ft.AppBar(leading=ft.Row(controls=[ft.IconButton(icon=ft.Icons.ARROW_BACK, icon_color=current_theme["top_appbar_colors"]["icon_color"], on_click=lambda _: navigate_to(page, loader, "/bills")),ft.Image(src=current_theme["top_appbar_colors"]["icon"], fit=ft.ImageFit.CONTAIN)]), leading_width=200, bgcolor=current_theme["top_appbar_colors"]["background"])
-    divider=ft.Divider(color=current_theme["divider_color"])
+    divider1=ft.Divider(color=current_theme["divider_color"])
+    divider2=ft.Divider(color=current_theme["divider_color"])
+    divider3=ft.Divider(color=current_theme["divider_color"])
+    
     timezones = {
     "America/New_York": "EST/EDT",
     "America/Chicago": "CST/CDT",
@@ -43,12 +45,16 @@ def settings_page(current_theme, page:ft.Page, BASE_URL):
         theme_dropdown.bgcolor = theme["calc_theme"]["dropdown_background"]
         theme_dropdown.border_color = theme["calc_theme"]["dropdown_border_color"]
         theme_info.color = theme["text_color"]
-        divider.color = theme["divider_color"]
+        divider1.color = theme["divider_color"]
+        divider2.color = theme["divider_color"]
+        divider3.color = theme["divider_color"]
         timezone_dropdown.color = theme["calc_theme"]["dropdown_text"]
-        timezone_dropdown.label_style = {"color": current_theme["text_field"]["label_color"]},
+        timezone_dropdown.border_color = theme["calc_theme"]["dropdown_border_color"]
+        delete_data_info.color = theme["text_color"]
+        #timezone_dropdown.label_style = {"color": current_theme["text_field"]["label_color"]},
         timezone_dropdown.border_color=current_theme["calc_theme"]["dropdown_border_color"],
-        # Potentially update other controls in the page based on the new theme
-
+        
+        
         page.update()
 
     def update_theme(value):
@@ -103,6 +109,33 @@ def settings_page(current_theme, page:ft.Page, BASE_URL):
     timezone_dropdown.on_change=lambda e: update_timezone(e)
     timezone_info = ft.Text("Timezone will update on Changing the selection", size=12, color=current_theme["text_color"])
 
+
+    async def delete_user_data():
+        show_loader(page, loader)
+        print("delete user data")
+        await ds.delete_user_data()
+        hide_loader(page, loader)
+
+    delete_modal = ft.AlertDialog()
+    def close_modal(e):
+        page.close(delete_modal)
+    delete_modal.modal=True
+    delete_modal.title=ft.Text("Please confirm")
+    delete_modal.content=ft.Text("Do you really want to delete all of your data?\nThis will also delete your account.")
+    delete_modal.actions=[
+            ft.TextButton("Yes", on_click=lambda _: asyncio.run(delete_user_data())),
+            ft.TextButton("No", on_click=close_modal),
+        ]
+    delete_modal.actions_alignment=ft.MainAxisAlignment.END
+    delete_modal.on_dismiss=lambda e: page.add(
+            ft.Text("Modal dialog dismissed"),
+        )
+    #page.overlay.append(delete_modal)
+    
+    delete_user_data_button=ft.ElevatedButton("Delete My Data", color=ft.Colors.BLACK, bgcolor=ft.Colors.RED, on_click=lambda _: page.open(delete_modal))
+    delete_data_info = ft.Text("This will delete all of your data from the server and log you out.", size=12, color=current_theme["text_color"])
+
+
     update_frequency_dropdown = ft.Dropdown(
         width=300,
         options=[
@@ -126,10 +159,13 @@ def settings_page(current_theme, page:ft.Page, BASE_URL):
         controls=[
             ft.Column(controls=[theme_dropdown,
                                  theme_info,
-                                 divider,
+                                 divider1,
                                  timezone_dropdown,
                                  timezone_info,
-                                 divider,
+                                 divider2,
+                                 delete_user_data_button,
+                                 delete_data_info,
+                                 divider3,
                                  #update_frequency_info
                                  ], width=400, expand=True, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
             ],

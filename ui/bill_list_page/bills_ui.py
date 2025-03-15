@@ -69,11 +69,14 @@ def bills_page(current_theme, page: ft.Page, BASE_URL: str):
         size=18,
         color=current_theme["calc_theme"]["text"],
     )
+    calc_bottom_sheet_button=ft.IconButton(icon=ft.Icons.CLOSE, icon_color=ft.Colors.RED)
     calc_bottom_sheet = ft.Container(
         content=ft.Container(
-            content=ft.ListView(
-                [
-                    dd,
+            content=ft.Column(controls=[
+                ft.Container(content=calc_bottom_sheet_button, alignment=ft.alignment.top_right),
+                    
+                ft.ListView([
+                    ft.Container(content=dd, expand=True, alignment=ft.alignment.center),
                     ft.Row(
                         controls=[
                             ft.Text(
@@ -116,27 +119,32 @@ def bills_page(current_theme, page: ft.Page, BASE_URL: str):
                 ],
                 expand=False,
                 spacing=10,
+                )
+            ],
+            spacing=10,
             ),
             bgcolor=current_theme["bottom_sheet"]["background_color"],
             border=None,
             border_radius=ft.border_radius.only(top_left=5, top_right=5),
-            padding=ft.padding.all(20),
+            #padding=ft.padding.only(left=20, right=20),
             margin=ft.margin.only(left=10, right=10, top=0, bottom=0),
             alignment=ft.alignment.bottom_center,
             width=400,
-            height=300,
+            
             expand=False,
         ),
-        visible=False,
+        #visible=False,
         bottom=0,
         left=10,
         right=10,
+        height=0,
         shadow=ft.BoxShadow(
             blur_radius=10,
             spread_radius=2,
             color=current_theme["shadow_color"],
             offset=ft.Offset(0, -4),  # Negative offset for top shadow
         ),
+        animate=ft.animation.Animation(900, ft.AnimationCurve.EASE_IN_OUT)
     )
 
     
@@ -282,41 +290,45 @@ def bills_page(current_theme, page: ft.Page, BASE_URL: str):
             width=400,
             expand=False,
         ),
-        visible=False,
+        #visible=False,
         bottom=0,
         left=10,
         right=10,
+        height=0,
         shadow=ft.BoxShadow(
             blur_radius=10,
             spread_radius=2,
             color=current_theme["shadow_color"],
             offset=ft.Offset(0, -4),  # Negative offset for top shadow
         ),
+        animate=ft.animation.Animation(900, ft.AnimationCurve.EASE_IN_OUT)
     )
 
     def toggle_calc_bottom_sheet(e):
-        #print(e.control.parent.controls[1].value)
-        total_amount=float(e.control.parent.controls[1].value.replace("$", "").replace(",", ""))
-        total_due.value = f"{total_amount:.2f}"
-        chosen_pay.value = "0.00"
-        total_after_bills_paid.value = "0.00"
-        dd.value = None
+        if e is not None:
+            total_amount=float(e.control.parent.controls[1].value.replace("$", "").replace(",", ""))
+            total_due.value = f"{total_amount:.2f}"
+            chosen_pay.value = "0.00"
+            total_after_bills_paid.value = "0.00"
+            dd.value = None
 
-        if bottom_sheet.visible:
-            bottom_sheet.visible = False
-        if calc_bottom_sheet.visible:
-            calc_bottom_sheet.visible = False
+        if bottom_sheet.height==200:
+            bottom_sheet.height = 0
+        if calc_bottom_sheet.height==0:
+            calc_bottom_sheet.height = 300
         else:
-            calc_bottom_sheet.visible = True
+            calc_bottom_sheet.height=0
         page.update()
 
+    calc_bottom_sheet_button.on_click=lambda _: toggle_calc_bottom_sheet(None)
+
     def toggle_bottom_sheet(e):
-        if calc_bottom_sheet.visible:
-            calc_bottom_sheet.visible = False
-        elif bottom_sheet.visible:
-            bottom_sheet.visible = False
+        if calc_bottom_sheet.height==300:
+            calc_bottom_sheet.height = 0
+        if bottom_sheet.height==0:
+            bottom_sheet.height = 200
         else:
-            bottom_sheet.visible = True
+            bottom_sheet.height = 0
         page.update()
 
     

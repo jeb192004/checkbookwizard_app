@@ -198,3 +198,25 @@ class DataSync():
           else:
                return dict(data=None, error=f"HTTP Error: {response.status_code}")
                
+     async def delete_user_data(self):
+          headers = {"Authorization": f"Bearer {self.token}"}
+          try:
+               async with httpx.AsyncClient() as client: #use async client.
+                    response = await client.get(f"{self.BASE_URL}app/delete_all/", headers=headers) #await the response.
+                    print(response)
+                    response.raise_for_status() #raise exception for error status codes.
+                    self.logout()
+
+          except httpx.HTTPStatusError as e:
+               if e.response.status_code == 403:
+                    print("Caught 403 Forbidden response.")
+                    self.logout()
+                    print("Forbidden: You do not have permission to delete user data.")
+               else:
+                    print(f"HTTP Error: {e.response.status_code}")
+                    print(f"HTTP Error: {e.response.status_code}")
+
+          except httpx.RequestError as e:
+               print(f"Request Error: {e}")
+          except Exception as e:
+               print(f"General Error: {e}")

@@ -2,6 +2,7 @@ from flet import Page, SnackBar, Text
 import httpx
 import json
 from ui.alert import show_loader, hide_loader
+
 from tzlocal import get_localzone  # Import tzlocal
 
 
@@ -81,10 +82,13 @@ def login_or_register(e, email, password, BASE_URL, page, loader):
             hide_loader(page, loader)
             if response.status_code == 200:
                 print(f"{action.capitalize()} successful!")
-                data=response.json()
-                token = data["api_key"]
-                page.client_storage.set("burnison.me.user.token", token)
-                page.go("/bills")
+                if action=="login":
+                    data=response.json()
+                    token = data["api_key"]
+                    page.client_storage.set("burnison.me.user.token", token)
+                    page.go("/bills")
+                else:
+                    page.open(SnackBar(Text(f"Registration successful!  You can now log in.")))
             elif response.status_code == 400:
                 #print(response)
                 data=response.json()
@@ -107,22 +111,27 @@ def login_or_register(e, email, password, BASE_URL, page, loader):
                     except json.JSONDecodeError as e:
                         print(f"{action.capitalize()} failed. Unexpected server response: {e}")
                     page.update()
+        
     except httpx.RequestError as err:
+        hide_loader(page, loader)
         print(f"Error communicating with server: {err}")
         print(f"Server error: {err}")
         page.open(SnackBar(Text(f"Error communicating with server: {err}")))
         page.update()
     except httpx.HTTPStatusError as err:
+        hide_loader(page, loader)
         print(f"HTTP Error: {err}")
         print(f"Server error: {err}")
         page.open(SnackBar(Text(f"HTTP Error: {err}")))
         page.update()
     except httpx.TimeoutException as err:
+        hide_loader(page, loader)
         print(f"Timeout Error: {err}")
         print(f"Server error: {err}")
         page.open(SnackBar(Text(f"Timeout Error: {err}")))
         page.update()
     except Exception as err:
+        hide_loader(page, loader)
         print(f"General Error: {err}")
         print(f"Server error: {err}")
         page.open(SnackBar(Text(f"General Error: {err}")))

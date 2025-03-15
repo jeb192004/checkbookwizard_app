@@ -100,9 +100,9 @@ class BillItem(ft.Container):
         bill=b["bill"]
         checkbox = ft.Container()
         if b["isEditable"]:
-            checkbox = ft.Checkbox(label="Paid", value=True, label_position=ft.LabelPosition.LEFT, data={"name": bill["name"], "payday": b["week_date"], "website":bill["website"], "phone":bill["phone"], "email":bill["email"], "frequency":bill["frequency"], "amount":bill["amount"], "due_date":bill["due_date"], "due":bill["due"]}, visible=False)
+            checkbox = ft.Checkbox(label="Paid", value=True, label_style=ft.TextStyle(color=current_theme["text_color"]), label_position=ft.LabelPosition.LEFT, data={"name": bill["name"], "payday": b["week_date"], "website":bill["website"], "phone":bill["phone"], "email":bill["email"], "frequency":bill["frequency"], "amount":bill["amount"], "due_date":bill["due_date"], "due":bill["due"]}, visible=False)
         if past_due:
-            checkbox = ft.Checkbox(label="Paid", value=False, label_position=ft.LabelPosition.LEFT, data={"id": bill["id"]}, visible=False)
+            checkbox = ft.Checkbox(label="Paid", value=False, label_style=ft.TextStyle(color=current_theme["text_color"]), label_position=ft.LabelPosition.LEFT, data={"id": bill["id"]}, visible=False)
         bill_item_text_size = 15
         bill_item_text_color = current_theme["list_item_colors"]["text_color"]
         website_row = ft.Row()
