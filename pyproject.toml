@@ -1,6 +1,6 @@
 [project]
 name = "Checkbook Wizard"
-version = "0.0.28"
+version = "0.0.30"
 description = "Easily keep track of your bills"
 authors = [
   {name = "James Burnison", email = "jeb192004@gmail.com"}
@@ -10,18 +10,18 @@ authors = [
 org = "com.burnison.me" # --org
 product = "Checkbook Wizard" # --product
 company = "burnison.me" # --company
-build_number = 28 # --build-number
+build_number = 30 # --build-number
 
 dependencies = [
   "flet-ads",
-  "flet==0.27.6",
+  "flet==0.27.5",
   "tzlocal",
   "tzdata",
 ]
 
 [tool.uv]
 dev-dependencies = [
-    "flet==0.27.6",
+    "flet==0.27.5",
     "flet-ads",
     "tzlocal",
     "tzdata"

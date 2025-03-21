@@ -312,7 +312,7 @@ def bills_page(current_theme, page: ft.Page, BASE_URL: str):
             total_after_bills_paid.value = "0.00"
             dd.value = None
 
-        if bottom_sheet.height==200:
+        if bottom_sheet.height==220:
             bottom_sheet.height = 0
         if calc_bottom_sheet.height==0:
             calc_bottom_sheet.height = 300
@@ -326,7 +326,7 @@ def bills_page(current_theme, page: ft.Page, BASE_URL: str):
         if calc_bottom_sheet.height==300:
             calc_bottom_sheet.height = 0
         if bottom_sheet.height==0:
-            bottom_sheet.height = 200
+            bottom_sheet.height = 220
         else:
             bottom_sheet.height = 0
         page.update()
@@ -480,7 +480,7 @@ def bills_page(current_theme, page: ft.Page, BASE_URL: str):
                     bill_controls=[]
                     isPastDue=bill["past_due"]
                     for b in bill["bills"]:
-                        bill_controls.append(BillItem(b, isPastDue, website_onclick=lambda _: page.launch_url(b["website"]), phone_onclick=lambda _: page.launch_url(f"tel:{b['phone']}"), email_onclick=lambda _: page.launch_url(f"mailto:{b['email']}")),)
+                        bill_controls.append(BillItem(b, isPastDue, website_onclick=lambda _: page.launch_url(website) if website else None, phone_onclick=lambda _: page.launch_url(f"tel:{b['phone']}"), email_onclick=lambda _: page.launch_url(f"mailto:{b['email']}")),)
                     date=bill["week_date"]
                     date_object = datetime.strptime(date, "%Y-%m-%d").date()
                     date_text = date_object.strftime("%b. %d, %Y")

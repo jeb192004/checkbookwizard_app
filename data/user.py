@@ -3,9 +3,6 @@ import httpx
 import json
 from ui.alert import show_loader, hide_loader
 
-from tzlocal import get_localzone  # Import tzlocal
-
-
 def login(page: Page, code: str, BASE_URL: str, loader):
         show_loader(page, loader)
         # Send the login code to your server to retrieve the user ID
@@ -46,6 +43,8 @@ def login_or_register(e, email, password, BASE_URL, page, loader):
         url = f"{BASE_URL}custom_signup/"  # allauth login and register urls
         user_timezone="UTC"
         try:
+            from tzlocal import get_localzone  # Import tzlocal
+
             # Detect time zone using tzlocal
             local_timezone = str(get_localzone())
             timezone = local_timezone  # Add timezone to user_data

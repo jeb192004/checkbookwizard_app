@@ -1,5 +1,4 @@
-flet>=0.26.0
+flet>=0.27.5
 flet-ads
-pytz
 tzlocal
 tzdata
