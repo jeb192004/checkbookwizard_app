@@ -144,7 +144,7 @@ def bills_page(current_theme, page: ft.Page, BASE_URL: str):
             color=current_theme["shadow_color"],
             offset=ft.Offset(0, -4),  # Negative offset for top shadow
         ),
-        animate=ft.animation.Animation(900, ft.AnimationCurve.EASE_IN_OUT)
+        animate=ft.animation.Animation(700, ft.AnimationCurve.EASE_IN_OUT)
     )
 
     
@@ -301,7 +301,7 @@ def bills_page(current_theme, page: ft.Page, BASE_URL: str):
             color=current_theme["shadow_color"],
             offset=ft.Offset(0, -4),  # Negative offset for top shadow
         ),
-        animate=ft.animation.Animation(900, ft.AnimationCurve.EASE_IN_OUT)
+        animate=ft.animation.Animation(700, ft.AnimationCurve.EASE_IN_OUT)
     )
 
     def toggle_calc_bottom_sheet(e):
